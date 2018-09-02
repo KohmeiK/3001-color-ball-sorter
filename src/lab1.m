@@ -58,7 +58,8 @@ try
 
       % Send packet to the server and get the response
       returnPacket = pp.command(SERV_ID, packet);
-      returnPacket = pp.command(66, packet);
+      
+      
       if DEBUG
           disp('Sent Packet:');
           disp(packet);
