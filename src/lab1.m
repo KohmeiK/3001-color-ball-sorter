@@ -14,7 +14,7 @@ clear java;
 %clear import;
 clear classes;
 vid = hex2dec('3742');
-pid = hex2dec('0008');
+pid = hex2dec('0007');
 disp (vid );
 disp (pid);
 javaaddpath ../lib/SimplePacketComsJavaFat-0.5.2.jar;
