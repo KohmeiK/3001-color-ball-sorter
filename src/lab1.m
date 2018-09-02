@@ -23,7 +23,7 @@ import edu.wpi.SimplePacketComs.device.*;
 import edu.wpi.SimplePacketComs.phy.*;
 import java.util.*;
 import org.hid4java.*;
-version -java;
+version -java
 myHIDSimplePacketComs=HIDfactory.get();
 myHIDSimplePacketComs.setPid(pid);
 myHIDSimplePacketComs.setVid(vid);
@@ -58,7 +58,7 @@ try
 
       % Send packet to the server and get the response
       returnPacket = pp.command(SERV_ID, packet);
-      
+      toc
 
       if DEBUG
           disp('Sent Packet:');
@@ -66,7 +66,7 @@ try
           disp('Received Packet:');
           disp(returnPacket);
       end
-      toc
+      
       pause(1) %timeit(returnPacket) !FIXME why is this needed?
       
   end
