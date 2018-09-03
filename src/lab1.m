@@ -10,7 +10,8 @@
 % 
 % IMPORTANT - understanding the code below requires being familiar
 % with the Nucleo firmware. Read that code first.
-clear java;
+clear
+clear java
 %clear import;
 clear classes;
 vid = hex2dec('3742');
@@ -52,19 +53,31 @@ try
   for k = viaPts
       tic
       %incremtal = (single(k) / sinWaveInc);
-
+      packet = zeros(15, 1, 'single');
       packet(1) = k;
 
-
+     
       % Send packet to the server and get the response
       returnPacket = pp.command(SERV_ID, packet);
       
+      %myHIDSimplePacketComs.getPacket(java.lang.Integer(SERV_ID)).oneShotMode()
       
       if DEBUG
           disp('Sent Packet:');
           disp(packet);
           disp('Received Packet:');
           disp(returnPacket);
+      end
+      
+      for x = 0:3
+          packet((x*3)+1)=0.1;
+          packet((x*3)+2)=0;
+          packet((x*3)+3)=0;
+      end
+     returnPacket2= pp.command(65, packet);
+      if DEBUG
+          disp('Received Packet 2:');
+          disp(returnPacket2);
       end
       toc
       pause(1) %timeit(returnPacket) !FIXME why is this needed?
