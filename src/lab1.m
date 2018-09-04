@@ -74,6 +74,7 @@ try
           packet((x*3)+3)=0;
       end
       pp.write(65, packet);
+      pause(0.003);
       returnPacket2=  pp.read(65);
       if DEBUG
           disp('Received Packet 2:');
