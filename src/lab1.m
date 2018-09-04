@@ -18,11 +18,7 @@ vid = hex2dec('3742');
 pid = hex2dec('0007');
 disp (vid );
 disp (pid);
-<<<<<<< HEAD
 javaaddpath ../lib/SimplePacketComsJavaFat-0.6.4.jar;
-=======
-javaaddpath ../lib/SimplePacketComsJavaFat-0.6.3.jar;
->>>>>>> 755d32c8d5e9831370adf28a44b387d73f839c38
 import edu.wpi.SimplePacketComs.*;
 import edu.wpi.SimplePacketComs.device.*;
 import edu.wpi.SimplePacketComs.phy.*;
