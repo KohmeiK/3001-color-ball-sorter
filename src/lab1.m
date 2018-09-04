@@ -10,14 +10,19 @@
 % 
 % IMPORTANT - understanding the code below requires being familiar
 % with the Nucleo firmware. Read that code first.
-clear java;
+clear
+clear java
 %clear import;
 clear classes;
 vid = hex2dec('3742');
 pid = hex2dec('0007');
 disp (vid );
 disp (pid);
+<<<<<<< HEAD
+javaaddpath ../lib/SimplePacketComsJavaFat-0.6.4.jar;
+=======
 javaaddpath ../lib/SimplePacketComsJavaFat-0.6.3.jar;
+>>>>>>> 755d32c8d5e9831370adf28a44b387d73f839c38
 import edu.wpi.SimplePacketComs.*;
 import edu.wpi.SimplePacketComs.device.*;
 import edu.wpi.SimplePacketComs.phy.*;
@@ -52,10 +57,10 @@ try
   for k = viaPts
       tic
       %incremtal = (single(k) / sinWaveInc);
-
+      packet = zeros(15, 1, 'single');
       packet(1) = k;
 
-
+     
       % Send packet to the server and get the response
       returnPacket = pp.command(SERV_ID, packet);
       
@@ -65,6 +70,18 @@ try
           disp(packet);
           disp('Received Packet:');
           disp(returnPacket);
+      end
+      
+      for x = 0:3
+          packet((x*3)+1)=0.1;
+          packet((x*3)+2)=0;
+          packet((x*3)+3)=0;
+      end
+      pp.write(65, packet);
+      returnPacket2=  pp.read(65);
+      if DEBUG
+          disp('Received Packet 2:');
+          disp(returnPacket2);
       end
       toc
       pause(1) %timeit(returnPacket) !FIXME why is this needed?
