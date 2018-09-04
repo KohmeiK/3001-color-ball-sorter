@@ -73,9 +73,13 @@ try
           packet((x*3)+2)=0;
           packet((x*3)+3)=0;
       end
+      %THis version will send the command once per call of pp.write
       pp.write(65, packet);
       pause(0.003);
       returnPacket2=  pp.read(65);
+      %this version will start an auto-polling server and read back the
+      %current data
+      %returnPacket2=  pp.command(65, packet);
       if DEBUG
           disp('Received Packet 2:');
           disp(returnPacket2);
