@@ -19,10 +19,14 @@ pid = hex2dec('0007');
 disp (vid );
 disp (pid);
 <<<<<<< HEAD
+<<<<<<< HEAD
 javaaddpath ../lib/SimplePacketComsJavaFat-0.6.4.jar;
 =======
 javaaddpath ../lib/SimplePacketComsJavaFat-0.6.3.jar;
 >>>>>>> 755d32c8d5e9831370adf28a44b387d73f839c38
+=======
+javaaddpath ../lib/SimplePacketComsJavaFat-0.6.4.jar;
+>>>>>>> 71ecd354cd0778192b3dedec2ab3809a77479508
 import edu.wpi.SimplePacketComs.*;
 import edu.wpi.SimplePacketComs.device.*;
 import edu.wpi.SimplePacketComs.phy.*;
@@ -78,6 +82,7 @@ try
           packet((x*3)+3)=0;
       end
       pp.write(65, packet);
+      pause(0.003);
       returnPacket2=  pp.read(65);
       if DEBUG
           disp('Received Packet 2:');
