@@ -32,7 +32,7 @@ myHIDSimplePacketComs.connect();
 % Create a PacketProcessor object to send data to the nucleo firmware
 pp = PacketProcessor(myHIDSimplePacketComs); 
 try
-  SERV_ID = 37;            % we will be talking to server ID 37 on
+  SERV_ID = 01;            % we will be talking to server ID 37 on
                            % the Nucleo
 
   DEBUG   = true;          % enables/disables debug prints
@@ -58,7 +58,14 @@ try
 
      
       % Send packet to the server and get the response
-      returnPacket = pp.command(SERV_ID, packet);
+      
+      %pp.write sends a 15 float packet to the micro controller
+       pp.write(SERV_ID, packet); 
+       
+       pause(0.003); % Minimum amount of time required between write and read
+       
+       %pp.read reads a returned 15 float backet from the nucleo.
+       returnPacket = pp.read(SERV_ID);
       toc
 
       if DEBUG
@@ -74,9 +81,9 @@ try
           packet((x*3)+3)=0;
       end
       %THis version will send the command once per call of pp.write
-      pp.write(65, packet);
+      pp.write(02, packet);
       pause(0.003);
-      returnPacket2=  pp.read(65);
+      returnPacket2=  pp.read(02);
       %this version will start an auto-polling server and read back the
       %current data
       %returnPacket2=  pp.command(65, packet);
