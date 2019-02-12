@@ -43,5 +43,7 @@ function T_cam_to_checker = getCamToCheckerboard(imOrig, cameraParams, worldPoin
     title('Undistorted Image with checkerboard axes');
     line(x1, y1,'lineWidth', 5, 'Color', 'red');
     line(x2, y2,'lineWidth', 5, 'Color', 'red');
-
+    axis on; hold on;
+    plot(x1(1), y1(1), '-x', 'MarkerSize', 30, 'LineWidth', 3, 'Color', 'blue');
+    hold off;
 end
