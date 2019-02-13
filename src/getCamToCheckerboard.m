@@ -58,8 +58,7 @@ function T_cam_to_checker = getCamToCheckerboard(cam, cameraParams)
     x1 = [axesPoints(1,1) axesPoints(2,1)]';
     y1 = [axesPoints(1,2) axesPoints(2,2)]';
 
-    im = insertText(im, [x1(2) y1(2)], 'Y Axis', 'TextColor', 'green', 'FontSize', 18);
-    
+    im = insertText(im, [x1(2) y1(2)], 'Y Axis', 'TextColor', 'green', 'FontSize', 18);    
     x2 = [axesPoints(1,1) axesPoints(3,1)]';
     y2 = [axesPoints(1,2) axesPoints(3,2)]';
     
@@ -67,6 +66,7 @@ function T_cam_to_checker = getCamToCheckerboard(cam, cameraParams)
     
     imshow(im)
     title('Undistorted Image with checkerboard axes');
+
     line(x1, y1,'lineWidth', 5, 'Color', 'green' );
     line(x2, y2,'lineWidth', 5, 'Color', 'red');
 end
