@@ -1,3 +1,5 @@
+% THIS FUNCTION IS NOW DEPRECATED - 2/12/2019 LF 
+%
 % This function is used to convert an m/n pixel coordinate to an x/y
 % position coordinate.  This function centers the x/y coordinate system
 % at the robot's end-effector's home position, with +x pointing towards
