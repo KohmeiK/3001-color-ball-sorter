@@ -6,14 +6,15 @@ This is template code for talking to the Default firmware
 git config --global user.name "John Doe"
 git config --global user.email johndoe@wpi.edu
 ```
-# 2. Fork and push template to private repo
+# 2. Fork and push template to private repo (ONCE AND ONLY ONCE)
 
-## 2.1 Clone the TEMPLATE Matlab ONCE AND ONLY ONCE
+## 2.1 Clone the TEMPLATE Matlab 
+
 The code comes from this source:
 ```
 git clone https://github.com/WPIRoboticsEngineering/RBE3001_Matlab.git
 ```
-## 2.2 Set up your private repo ONCE AND ONLY ONCE
+## 2.2 Set up your private repo 
 
 ```
 cd RBE3001_Matlab
