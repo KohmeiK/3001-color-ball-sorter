@@ -29,7 +29,7 @@ rm -rf RBE3001_Matlab
 
 ## 3.1 (Each team member should do this, AFTER the 2 steps above) 
 
-A private repository containing the robot firmware was created for every team prior to the start of this lab. You can clone the repository by running
+After you have set up your repository as the Step 2 suggested, you can clone the repository by running
 
 where `XX' should be replaced by your team number (for instance `01').
 ```
