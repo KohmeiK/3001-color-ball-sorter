@@ -25,6 +25,85 @@ At the prompt, DO NOT type a secure passphrase, hit enter to make it passwordles
 
 And then:  https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/
 
+#### 1.2.1 Checking for existing SSH keys
+￼
+1) Open Terminal.
+
+2) Enter ls -al ~/.ssh to see if existing SSH keys are present:
+```
+$ ls -al ~/.ssh
+# Lists the files in your .ssh directory, if they exist
+```
+3) Check the directory listing to see if you already have a public SSH key. By default, the filenames of the public keys are one of the following:
+```
+id_rsa.pub
+id_ecdsa.pub
+id_ed25519.pub
+```
+If the files exist go to 1.2.3
+
+#### 1.2.2 Generate SSH key is missing
+
+If there are no files in ~/.ssh then do this step to create them
+
+1) Open Terminal.
+
+2) Paste the text below, substituting in your GitHub email address.
+```
+$ ssh-keygen -t rsa -b 4096 -C "your_email@wpi.edu"
+```
+This creates a new ssh key, using the provided email as a label.
+```
+> Generating public/private rsa key pair.
+```
+3) When you're prompted to "Enter a file in which to save the key," press Enter. This accepts the default file location.
+```
+> Enter a file in which to save the key (/home/you/.ssh/id_rsa): [Press enter]
+```
+At the prompt, type a secure passphrase. For more information, see "Working with SSH key passphrases".
+```
+> Enter passphrase (empty for no passphrase): [Type a passphrase]
+> Enter sa
+```
+#### 1.2.3
+
+1) Copy the SSH key to your clipboard.
+
+If your SSH key file has a different name than the example code, modify the filename to match your current setup. When copying your key, don't add any newlines or whitespace.
+```
+$ sudo apt-get install xclip
+# Downloads and installs xclip. If you don't have `apt-get`, you might need to use another installer (like `yum`)
+
+$ xclip -sel clip < ~/.ssh/id_rsa.pub
+# Copies the contents of the id_rsa.pub file to your clipboard
+```
+2) In the upper-right corner of any page, click your profile photo, then click Settings.
+
+
+<img src="https://docs.github.com/assets/images/help/settings/userbar-account-settings.png">
+
+3) In the user settings sidebar, click SSH and GPG keys.
+
+<img src="https://docs.github.com/assets/images/help/settings/settings-sidebar-ssh-keys.png">
+
+
+4) Click New SSH key or Add SSH key.
+
+<img src="https://docs.github.com/assets/images/help/settings/ssh-add-ssh-key.png">
+
+
+5) In the "Title" field, add a descriptive label for the new key. For example, if you're using a personal Ubuntu, you might call this key "WPI Ubuntu".
+
+6) Paste your key into the "Key" field.
+
+<img src="https://docs.github.com/assets/images/help/settings/ssh-key-paste.png">
+
+7) Click Add SSH key.
+
+<img src="https://docs.github.com/assets/images/help/settings/ssh-add-key.png">
+
+
+
 # 1.3 Configure git
 ```bash
 git config --global user.name "John Doe"
