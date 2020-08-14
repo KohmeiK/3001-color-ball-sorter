@@ -1,7 +1,31 @@
 # RBE3001 Matlab Template
 This is template code for talking to the Default firmware
-
 # 1. Configure git
+## Generating a new SSH key
+If you wish to be able to push changes to this repository without having to enter your username and password all the time,
+you need to set up an SSH key with github. 
+### 1.1 Create SSH key
+Open Terminal
+
+Paste the text below, substituting in your GitHub email address.
+
+ `$ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
+ 
+This creates a new ssh key, using the provided email as a label.
+
+ `> Generating public/private rsa key pair.`
+ 
+When you're prompted to "Enter a file in which to save the key," press Enter. This accepts the default file location.
+
+ `> Enter a file in which to save the key (/home/you/.ssh/id_rsa): [Press enter]`
+ 
+At the prompt, DO NOT type a secure passphrase, hit enter to make it passwordless.
+
+### 1.2 Add ssh key to GitHub
+
+And then:  https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/
+
+# 1.3 Configure git
 ```bash
 git config --global user.name "John Doe"
 git config --global user.email johndoe@wpi.edu
