@@ -17,8 +17,8 @@ clear
 clear java
 clear classes;
 
-vid = hex2dec('3742');
-pid = hex2dec('0007');
+vid = hex2dec('16c0');
+pid = hex2dec('0486');
 
 disp (vid);
 disp (pid);
@@ -38,9 +38,9 @@ myHIDSimplePacketComs.connect();
 % Create a PacketProcessor object to send data to the nucleo firmware
 pp = PacketProcessor(myHIDSimplePacketComs); 
 try
-  SERV_ID = 01;            % we will be talking to server ID 01 on
+  SERV_ID = 1848;            % we will be talking to server ID 01 on
                            % the Nucleo
-
+  SERVER_ID_READ =1910;% ID of the read packet
   DEBUG   = true;          % enables/disables debug prints
 
   % Instantiate a packet - the following instruction allocates 64
@@ -51,21 +51,22 @@ try
   % The following code generates a sinusoidal trajectory to be
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
-  viaPts = [0, -400, 400, -400, 400, 0];
+  viaPts = [0, -40, 40, -40, 40, 0];
 
   for k = viaPts
       tic
       packet = zeros(15, 1, 'single');
-      packet(1) = k;
+      packet(1) = 1000;%one second time
+      packet(2) = 0;%linear interpolation
+      packet(3) = k;
+      packet(4) = 0;% Second link to 0
+      packet(5) = 0;% Third link to 0
 
       % Send packet to the server and get the response      
       %pp.write sends a 15 float packet to the micro controller
        pp.write(SERV_ID, packet); 
-       
-       pause(0.003); % Minimum amount of time required between write and read
-       
-       %pp.read reads a returned 15 float backet from the nucleo.
-       returnPacket = pp.read(SERV_ID);
+       %pp.read reads a returned 15 float backet from the micro controller.
+       returnPacket = pp.read(SERVER_ID_READ);
       toc
 
       if DEBUG
@@ -75,14 +76,8 @@ try
           disp(returnPacket);
       end
       
-      for x = 0:3
-          packet((x*3)+1)=0.1;
-          packet((x*3)+2)=0;
-          packet((x*3)+3)=0;
-      end
-      
       toc
-      pause(1) %timeit(returnPacket) !FIXME why is this needed?
+      pause(1) 
       
   end
   
