@@ -1,10 +1,51 @@
 # RBE3001 Matlab Template
 This is template code for talking to the Default firmware
+# 0.0 Install Matlab
+
+Befor begining install Matlab. 
+
+## 0.1 Matlab Install
+* [Matlab Installed using your WPI login](https://www.mathworks.com/academia/tah-portal/worcester-polytechnic-institute-40552010.html)
+  * Sign in with your WPI account
+  * Download the Linux version R2020a 
+  * matlab_R2020a_glnxa64.zip
+ ```
+ cd Downloads/ #the directory where the matlab_R2020a_glnxa64.zip is
+ ls matlab_R2020a_glnxa64.zip # Make sure you see the zip file
+ unzip matlab_R2020a_glnxa64.zip -d matlab
+ cd matlab
+ sudo ./install
+ ```
+ Sign in with you WPI account again to accuire licences.
+ 
+Under products add 
+
+* Image Acquisition Toolbox
+* Image Processing Toolbox
+
+Under Options check the check box
+
+Make simlinks to MATLAB scripts
+
+Install MATLAB
+
+## 0.2 Matlab configuration
+
+Open matlab by typing in the terminal
+
+```
+matlab
+```
+Under Environment -> Preferences -> MATLAB -> Keyboard Shortcuts
+
+switch Active  settings from Emacs Default Set to Windows Default Set
+
 # 1. Configure git
-## Generating a new SSH key
+
+## 1.1 Generating a new SSH key
 If you wish to be able to push changes to this repository without having to enter your username and password all the time,
 you need to set up an SSH key with github. 
-### 1.1 Create SSH key
+### 1.2 Create SSH key
 Open Terminal
 
 Paste the text below, substituting in your GitHub email address.
@@ -21,11 +62,11 @@ When you're prompted to "Enter a file in which to save the key," press Enter. Th
  
 At the prompt, DO NOT type a secure passphrase, hit enter to make it passwordless.
 
-### 1.2 Add ssh key to GitHub
+### 1.3 Add ssh key to GitHub
 
 And then:  https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/
 
-#### 1.2.1 Checking for existing SSH keys
+#### 1.3.1 Checking for existing SSH keys
 ￼
 1) Open Terminal.
 
@@ -42,7 +83,7 @@ id_ed25519.pub
 ```
 If the files exist go to 1.2.3
 
-#### 1.2.2 Generate SSH key is missing
+#### 1.3.2 Generate SSH key is missing
 
 If there are no files in ~/.ssh then do this step to create them
 
@@ -65,7 +106,7 @@ At the prompt, type a secure passphrase. For more information, see "Working with
 > Enter passphrase (empty for no passphrase): [Type a passphrase]
 > Enter sa
 ```
-#### 1.2.3
+#### 1.3.3
 
 1) Copy the SSH key to your clipboard.
 
@@ -102,9 +143,7 @@ $ xclip -sel clip < ~/.ssh/id_rsa.pub
 
 <img src="https://docs.github.com/assets/images/help/settings/ssh-add-key.png">
 
-
-
-# 1.3 Configure git
+# 1.4 Configure git
 ```bash
 git config --global user.name "John Doe"
 git config --global user.email johndoe@wpi.edu
