@@ -40,6 +40,33 @@ Under Environment -> Preferences -> MATLAB -> Keyboard Shortcuts
 
 switch Active  settings from Emacs Default Set to Windows Default Set
 
+## 0.3 Troubleshoting
+
+If you see:
+
+```
+License checkout failed.
+License Manager Error -9
+Your username does not match the username in the license file.
+To run on this computer, you must run the Activation client to reactivate your license.
+
+Troubleshoot this issue by visiting:
+https://www.mathworks.com/support/lme/R2020a/9
+
+Diagnostic Information:
+Feature: MATLAB
+License path: /home/mahdi/.matlab/R2020a_licenses:/usr/local/MATLAB/R2020a/licenses/license.dat:/usr/local/MATLAB/
+R2020a/licenses/license_mahdi-HP-EliteBook-8470w_40552010_R2020a.lic
+Licensing error: -9,57.
+```
+
+then run
+
+```
+cd /usr/local/MATLAB/R2020a/bin
+./activate_matlab.sh
+```
+
 # 1. Configure git
 
 ## 1.1 Generating a new SSH key
