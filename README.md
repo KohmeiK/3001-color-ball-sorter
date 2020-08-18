@@ -191,7 +191,7 @@ cd [name of the repository you just cloned]
 ```
 2. Set up a secondary remote server pointing to your repository
 ```bash
-git remote add default-code https://github.com/WPIRoboticsEngineering/RBE3001_Matlab.git
+git remote add default-code https://github.com/Hephaestus-Arm/RBE3001_Matlab.git
 ```
 You can confirm that the remote has been added by running the following command: 
 ```bash
@@ -214,7 +214,7 @@ git remote -v
 ```
 You should see `origin` (your main server repo) and another pointing to the following url:
 ```url
-https://github.com/WPIRoboticsEngineering/RBE3001_Matlab.git
+https://github.com/Hephaestus-Arm/RBE3001_Matlab.git
 ```
 **If you do not see a second remote, or your second remote points to another url, follow the instructions under [Section 3.2 Part 2](##3.2-Set-up-your-private-lab-repository-**[DO-ONLY-ONCE-PER-TEAM]**)**
 
