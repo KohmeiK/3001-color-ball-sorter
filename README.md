@@ -85,7 +85,7 @@ id_rsa.pub
 id_ecdsa.pub
 id_ed25519.pub
 ```
-If the files exist go to 1.2.3
+If the files exist go to 1.3
 
 #### 1.2 Generate SSH key is missing
 
