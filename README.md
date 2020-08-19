@@ -105,21 +105,18 @@ This creates a new ssh key, using the provided email as a label.
 ```
 > Enter a file in which to save the key (/home/you/.ssh/id_rsa): [Press enter]
 ```
-At the prompt, type a secure passphrase. For more information, see "Working with SSH key passphrases".
-```
-> Enter passphrase (empty for no passphrase): [Type a passphrase]
-> Enter sa
-```
-#### 1.3
+At the prompt, hit enter to make SSh passwordless
+
+#### 1.3 Copy SSH public key
 
 1) Copy the SSH key to your clipboard.
 
 If your SSH key file has a different name than the example code, modify the filename to match your current setup. When copying your key, don't add any newlines or whitespace.
 ```
-$ sudo apt-get install xclip
+sudo apt-get install xclip
 # Downloads and installs xclip. If you don't have `apt-get`, you might need to use another installer (like `yum`)
 
-$ xclip -sel clip < ~/.ssh/id_rsa.pub
+xclip -sel clip < ~/.ssh/id_rsa.pub
 # Copies the contents of the id_rsa.pub file to your clipboard
 ```
 2) In the upper-right corner of any page, click your profile photo, then click Settings.
