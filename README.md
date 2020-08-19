@@ -69,37 +69,14 @@ cd /usr/local/MATLAB/R2020a/bin
 
 # 1. Configure git
 
-## 1.1 Generating a new SSH key
-If you wish to be able to push changes to this repository without having to enter your username and password all the time,
-you need to set up an SSH key with github. 
-### 1.2 Create SSH key
-Open Terminal
 
-Paste the text below, substituting in your GitHub email address.
-
- `$ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
- 
-This creates a new ssh key, using the provided email as a label.
-
- `> Generating public/private rsa key pair.`
- 
-When you're prompted to "Enter a file in which to save the key," press Enter. This accepts the default file location.
-
- `> Enter a file in which to save the key (/home/you/.ssh/id_rsa): [Press enter]`
- 
-At the prompt, DO NOT type a secure passphrase, hit enter to make it passwordless.
-
-### 1.3 Add ssh key to GitHub
-
-And then:  https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/
-
-#### 1.3.1 Checking for existing SSH keys
+#### 1.1 Checking for existing SSH keys
 ￼
 1) Open Terminal.
 
 2) Enter ls -al ~/.ssh to see if existing SSH keys are present:
 ```
-$ ls -al ~/.ssh
+ls -al ~/.ssh
 # Lists the files in your .ssh directory, if they exist
 ```
 3) Check the directory listing to see if you already have a public SSH key. By default, the filenames of the public keys are one of the following:
@@ -110,7 +87,7 @@ id_ed25519.pub
 ```
 If the files exist go to 1.2.3
 
-#### 1.3.2 Generate SSH key is missing
+#### 1.2 Generate SSH key is missing
 
 If there are no files in ~/.ssh then do this step to create them
 
@@ -118,7 +95,7 @@ If there are no files in ~/.ssh then do this step to create them
 
 2) Paste the text below, substituting in your GitHub email address.
 ```
-$ ssh-keygen -t rsa -b 4096 -C "your_email@wpi.edu"
+ssh-keygen -t rsa -b 4096 -C "your_email@wpi.edu"
 ```
 This creates a new ssh key, using the provided email as a label.
 ```
@@ -133,7 +110,7 @@ At the prompt, type a secure passphrase. For more information, see "Working with
 > Enter passphrase (empty for no passphrase): [Type a passphrase]
 > Enter sa
 ```
-#### 1.3.3
+#### 1.3
 
 1) Copy the SSH key to your clipboard.
 
