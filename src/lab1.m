@@ -36,7 +36,7 @@ myHIDSimplePacketComs.setVid(vid);
 myHIDSimplePacketComs.connect();
 
 % Create a PacketProcessor object to send data to the nucleo firmware
-pp = PacketProcessor(myHIDSimplePacketComs); 
+pp = Robot(myHIDSimplePacketComs); 
 try
   SERV_ID = 1848;            % we will be talking to server ID 01 on
                            % the Nucleo
@@ -51,7 +51,7 @@ try
   % The following code generates a sinusoidal trajectory to be
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
-  viaPts = [0, -40, 40, -40, 40, 0];
+  viaPts = [0,40,0];
 
   for k = viaPts
       tic

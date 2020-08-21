@@ -1,5 +1,5 @@
 
-classdef PacketProcessor
+classdef Robot
     properties
         %hidDevice;
         %hidService;
@@ -13,7 +13,7 @@ classdef PacketProcessor
             packet.myHIDSimplePacketComs.disconnect();
         end
         % Create a packet processor for an HID device with USB PID 0x007
-        function packet = PacketProcessor(dev)
+        function packet = Robot(dev)
              packet.myHIDSimplePacketComs=dev; 
             packet.pol = java.lang.Boolean(false);
         end
