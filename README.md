@@ -25,9 +25,8 @@ Under products add
 
 Under Options check the check box
 
-Make simlinks to MATLAB scripts
-
-Install MATLAB
+* Make simlinks to MATLAB scripts
+* Install MATLAB
 
 ## 0.2 Matlab configuration
 
