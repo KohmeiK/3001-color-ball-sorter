@@ -205,3 +205,14 @@ Start in the directory with your checked out code.
 cd src
 matlab
 ```
+
+# 4. Run Lab1.m
+
+Plug your robot into the wall and connect to your computer with USB.
+(Protip: make sure putty is closed to avoid latency issues)
+
+In the Matlab GUI navigate to the "lab1.m" file and then click then run button.
+
+Your arm should move through the three setpoints in the viaPoints vector and print some data to the matlab console.
+
+If your arm moves through the setpoints and prints to the console successfully your arm is all set.
