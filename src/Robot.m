@@ -82,6 +82,7 @@ classdef Robot
                 end
         end
         
+        % Yongxiang (Josh) Jin
         function position = getPositions(Robot)
             returnPacket = read(Robot, 1910);
             position = zeros(3,1);
@@ -90,13 +91,16 @@ classdef Robot
             position(3) = returnPacket(7);
         end
         
-        function velocity = getVelocity(robot)
+        % Kohmei Kadoya
+        function velocity = getVelocitys(robot)
             returnPacket = read(robot, 1822);
             velocity = zeros(3, 1, 'single');
             velocity(1) = returnPacket(3);
             velocity(2) = returnPacket(6);
             velocity(3) = returnPacket(9);
         end
+        
+        % Jason will add setSetpoints here:
 
     end
 end
