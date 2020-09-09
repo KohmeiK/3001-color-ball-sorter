@@ -51,23 +51,34 @@ try
   % The following code generates a sinusoidal trajectory to be
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
+
   viaPts = [0,0,0];
 
   %{
   for k = viaPts
       tic
+
+  
+  motorValsArray = zeros(100,3,'single');
+
+  for k = 0:100
+      
+
       packet = zeros(15, 1, 'single');
       packet(1) = 1000;%one second time
       packet(2) = 0;%linear interpolation
-      packet(3) = k;
-      packet(4) = 0;% Second link to 0
-      packet(5) = 0;% Third link to 0
+      packet(3) = -90; % -90 -> 90
+      packet(4) = 0;% Second link to 90 -> -45
+      packet(5) = 0;% Third link to -90 -> 90
+        disp("Return Funciton Check")
+    disp(pp.getVelocity())
 
       % Send packet to the server and get the response      
       %pp.write sends a 15 float packet to the micro controller
-       pp.write(SERV_ID, packet); 
+        pp.write(SERV_ID, packet); 
        %pp.read reads a returned 15 float backet from the micro controller.
        returnPacket = pp.read(SERVER_ID_READ);
+
       toc
   
       if DEBUG
@@ -89,11 +100,11 @@ try
  
   for n = 1:5000
       packet2 = zeros(15, 1, 'single');
-      packet2(1) = 1000
+      packet2(1) = 1000;
       packet2(2) = 0;
-      packet2(3) = -90;
-      packet2(4) = 0;
-      packet2(5) = 0;
+      packet2(3) = 90;
+      packet2(4) = 50;
+      packet2(5) = 40;
       
       pp.write(SERV_ID, packet2);
       returnPacket2 = pp.read(SERVER_ID_READ);
@@ -123,14 +134,9 @@ xlabel("time")
 ylabel("motor angle")
 
 
-  
-  
 catch exception
-    getReport(exception)
+   getReport(exception)
     disp('Exited on error, clean shutdown');
 end
-
 % Clear up memory upon termination
 pp.shutdown()
-
-toc
