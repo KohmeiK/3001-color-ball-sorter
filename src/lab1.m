@@ -1,13 +1,13 @@
 %%
-% RBE3001 - Laboratory 1 
-% 
+% RBE3001 - Laboratory 1
+%
 % Instructions
 % ------------
 % Welcome again! This MATLAB script is your starting point for Lab
 % 1 of RBE3001. The sample code below demonstrates how to establish
 % communication between this script and the Nucleo firmware, send
 % setpoint commands and receive sensor data.
-% 
+%
 % IMPORTANT - understanding the code below requires being familiar
 % with the Nucleo firmware. Read that code first.
 
@@ -36,106 +36,68 @@ myHIDSimplePacketComs.setVid(vid);
 myHIDSimplePacketComs.connect();
 
 % Create a PacketProcessor object to send data to the nucleo firmware
-pp = Robot(myHIDSimplePacketComs); 
+pp = Robot(myHIDSimplePacketComs);
 try
-  SERV_ID = 1848;            % we will be talking to server ID 1848 on
-                           % the Nucleo
-  SERVER_ID_READ =1910;% ID of the read packet
-  DEBUG   = true;          % enables/disables debug prints
 
-  % Instantiate a packet - the following instruction allocates 64
-  % bytes for this purpose. Recall that the HID interface supports
-  % packet sizes up to 64 bytes.
-  packet = zeros(15, 1, 'single');
-
-  % The following code generates a sinusoidal trajectory to be
-  % executed on joint 1 of the arm and iteratively sends the list of
-  % setpoints to the Nucleo firmware. 
-
-  viaPts = [0,0,0];
-
-  %{
-  for k = viaPts
-      tic
-
-  
-  motorValsArray = zeros(100,3,'single');
-
-  for k = 0:100
-      
-
-      packet = zeros(15, 1, 'single');
-      packet(1) = 1000;%one second time
-      packet(2) = 0;%linear interpolation
-      packet(3) = -90; % -90 -> 90
-      packet(4) = 0;% Second link to 90 -> -45
-      packet(5) = 0;% Third link to -90 -> 90
-        disp("Return Funciton Check")
-    disp(pp.getVelocity())
-
-      % Send packet to the server and get the response      
-      %pp.write sends a 15 float packet to the micro controller
-        pp.write(SERV_ID, packet); 
-       %pp.read reads a returned 15 float backet from the micro controller.
-       returnPacket = pp.read(SERVER_ID_READ);
-
-      toc
-  
-      if DEBUG
-          disp('Sent Packet:');
-          disp(packet);
-          disp('Received Packet:');
-          disp(returnPacket);
-      end
-  
-      toc
-      pause(1) 
-      
-  end
-  %}
-  
- %Section 7
- 
-  motorvalues = zeros(5000, 3);
- 
-  for n = 1:5000
-      packet2 = zeros(15, 1, 'single');
-      packet2(1) = 1000;
-      packet2(2) = 0;
-      packet2(3) = 90;
-      packet2(4) = 50;
-      packet2(5) = 40;
-      
-      pp.write(SERV_ID, packet2);
-      returnPacket2 = pp.read(SERVER_ID_READ);
-      motorvalues(n, 1) = returnPacket2(3);
-      motorvalues(n, 2) = returnPacket2(5);
-      motorvalues(n, 3) = returnPacket2(7);
-      
-      if DEBUG
-          disp('Sent Packet:');
-          disp(packet2);
-          disp('Received Packet:');
-          disp(returnPacket2);
-      end
-  end
-  
-figure(1)  
-plot(motorvalues(:,1),'*')
-xlabel("time")
-ylabel("motor angle")
-figure(2)
-plot(motorvalues(:,2),'*')
-xlabel("time")
-ylabel("motor angle")
-figure(3)  
-plot(motorvalues(:,3),'*')
-xlabel("time")
-ylabel("motor angle")
-
-
+    SERV_ID = 1848;            % we will be talking to server ID 1848 on
+    % the Nucleo
+    SERVER_ID_READ =1910;% ID of the read packet
+    DEBUG   = true;          % enables/disables debug prints
+    
+    % Instantiate a packet - the following instruction allocates 64
+    % bytes for this purpose. Recall that the HID interface supports
+    % packet sizes up to 64 bytes.
+    packet = zeros(15, 1, 'single');
+    
+    % The following code generates a sinusoidal trajectory to be
+    % executed on joint 1 of the arm and iteratively sends the list of
+    % setpoints to the Nucleo firmware.
+    
+    motorValsArray = zeros(3000,3,'single');
+    
+    for k = 0:3000
+        
+        packet = zeros(15, 1, 'single');
+        packet(1) = 500;%one second time
+        packet(2) = 0;%linear interpolation
+        packet(3) = 90; % -90 -> 90
+        packet(4) = -45;% Second link to 90 -> -45
+        packet(5) = -90;% Third link to -90 -> 45
+        
+        % Send packet to the server and get the response
+        %pp.write sends a 15 float packet to the micro controller
+        pp.write(SERV_ID, packet);
+        %pp.read reads a returned 15 float backet from the micro controller.
+        returnPacket = pp.read(SERVER_ID_READ);
+        motorValsArray(k+1,1) = returnPacket(3);
+        motorValsArray(k+1,2) = returnPacket(5);
+        motorValsArray(k+1,3) = returnPacket(7);
+        disp(motorValsArray(k+1,:))
+        
+    end
+    
+    
+    
+    figure(1)
+    plot(1:length(motorValsArray),motorValsArray(:,1),"*r")
+    title("Motor 1 positon V.S. Time")
+    xlabel("Time (Number of for loops)")
+    ylabel("Angle of motor 1 (Degrees)")
+    
+    figure(2)
+    plot(1:length(motorValsArray),motorValsArray(:,2),"*r")
+    title("Motor 2 positon V.S. Time")
+    xlabel("Time (Number of for loops)")
+    ylabel("Angle of motor 2 (Degrees)")
+    
+    figure(3)
+    plot(1:length(motorValsArray),motorValsArray(:,3),"*r")
+    title("Motor 3 positon V.S. Time")
+    xlabel("Time (Number of for loops)")
+    ylabel("Angle of motor 3 (Degrees)")
+    
 catch exception
-   getReport(exception)
+    getReport(exception)
     disp('Exited on error, clean shutdown');
 end
 % Clear up memory upon termination
