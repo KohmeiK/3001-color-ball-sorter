@@ -57,6 +57,8 @@ try
     
     for k = 0:3000
         
+        %wating on converting this to setSetpoints untill Jason finsishes
+        %the fucntion...
         packet = zeros(15, 1, 'single');
         packet(1) = 500;%one second time
         packet(2) = 0;%linear interpolation
@@ -68,11 +70,8 @@ try
         %pp.write sends a 15 float packet to the micro controller
         pp.write(SERV_ID, packet);
         %pp.read reads a returned 15 float backet from the micro controller.
-        returnPacket = pp.read(SERVER_ID_READ);
-        motorValsArray(k+1,1) = returnPacket(3);
-        motorValsArray(k+1,2) = returnPacket(5);
-        motorValsArray(k+1,3) = returnPacket(7);
-        disp(motorValsArray(k+1,:))
+        motorValsArray(k+1,:) = pp.getPositions();
+        disp(pp.getVelocitys())
         
     end
     
