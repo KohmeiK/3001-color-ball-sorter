@@ -38,6 +38,7 @@ myHIDSimplePacketComs.connect();
 % Create a PacketProcessor object to send data to the nucleo firmware
 pp = Robot(myHIDSimplePacketComs);
 try
+
     SERV_ID = 1848;            % we will be talking to server ID 1848 on
     % the Nucleo
     SERVER_ID_READ =1910;% ID of the read packet
@@ -94,6 +95,7 @@ try
     title("Motor 3 positon V.S. Time")
     xlabel("Time (Number of for loops)")
     ylabel("Angle of motor 3 (Degrees)")
+    
 catch exception
     getReport(exception)
     disp('Exited on error, clean shutdown');
