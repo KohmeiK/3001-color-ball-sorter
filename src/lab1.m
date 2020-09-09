@@ -59,9 +59,11 @@ try
       packet = zeros(15, 1, 'single');
       packet(1) = 1000;%one second time
       packet(2) = 0;%linear interpolation
-      packet(3) = 90; % -90 -> 90
+      packet(3) = -90; % -90 -> 90
       packet(4) = 0;% Second link to 90 -> -45
       packet(5) = 0;% Third link to -90 -> 90
+        disp("Return Funciton Check")
+    disp(pp.getVelocity())
 
       % Send packet to the server and get the response      
       %pp.write sends a 15 float packet to the micro controller
@@ -72,8 +74,10 @@ try
         motorValsArray(k+1,1) = returnPacket(3);
         motorValsArray(k+1,2) = returnPacket(5);
         motorValsArray(k+1,3) = returnPacket(7);
-      
   end 
+  disp("Return Funciton Check")
+  disp(pp.getVelocity())
+  
   figure(1)
   plot(1:length(motorValsArray),motorValsArray(:,1),"*r")
   figure(2)
