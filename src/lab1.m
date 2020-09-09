@@ -51,8 +51,9 @@ try
   % The following code generates a sinusoidal trajectory to be
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
-  viaPts = [0,40,0];
+  viaPts = [0,0,0];
 
+  %{
   for k = viaPts
       tic
       packet = zeros(15, 1, 'single');
@@ -68,18 +69,61 @@ try
        %pp.read reads a returned 15 float backet from the micro controller.
        returnPacket = pp.read(SERVER_ID_READ);
       toc
-
+  
       if DEBUG
           disp('Sent Packet:');
           disp(packet);
           disp('Received Packet:');
           disp(returnPacket);
       end
-      
+  
       toc
       pause(1) 
       
   end
+  %}
+  
+ %Section 7
+ 
+  motorvalues = zeros(5000, 3);
+ 
+  for n = 1:5000
+      packet2 = zeros(15, 1, 'single');
+      packet2(1) = 1000
+      packet2(2) = 0;
+      packet2(3) = -90;
+      packet2(4) = 0;
+      packet2(5) = 0;
+      
+      pp.write(SERV_ID, packet2);
+      returnPacket2 = pp.read(SERVER_ID_READ);
+      motorvalues(n, 1) = returnPacket2(3);
+      motorvalues(n, 2) = returnPacket2(5);
+      motorvalues(n, 3) = returnPacket2(7);
+      
+      if DEBUG
+          disp('Sent Packet:');
+          disp(packet2);
+          disp('Received Packet:');
+          disp(returnPacket2);
+      end
+  end
+  
+figure(1)  
+plot(motorvalues(:,1),'*')
+xlabel("time")
+ylabel("motor angle")
+figure(2)
+plot(motorvalues(:,2),'*')
+xlabel("time")
+ylabel("motor angle")
+figure(3)  
+plot(motorvalues(:,3),'*')
+xlabel("time")
+ylabel("motor angle")
+
+
+  
   
 catch exception
     getReport(exception)

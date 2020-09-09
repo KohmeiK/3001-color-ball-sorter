@@ -81,5 +81,14 @@ classdef Robot
                     disp('Command error, reading too fast');
                 end
         end
+        
+        function position = getPositions(Robot)
+            returnPacket = read(Robot, 1910)
+            position = zeros(3,1)
+            position(1) = returnPacket(3)
+            position(2) = returnPacket(5)
+            position(3) = returnPacket(7)
+        end
+        
     end
 end
