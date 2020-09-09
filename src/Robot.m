@@ -81,5 +81,8 @@ classdef Robot
                     disp('Command error, reading too fast');
                 end
         end
+        function velocity = getVelocity()
+            read()
+        end
     end
 end
