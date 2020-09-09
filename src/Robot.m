@@ -81,5 +81,12 @@ classdef Robot
                     disp('Command error, reading too fast');
                 end
         end
+        function velocity = getVelocity(robot)
+            returnPacket = read(robot, 1822);
+            velocity = zeros(3, 1, 'single');
+            velocity(1) = returnPacket(3);
+            velocity(2) = returnPacket(6);
+            velocity(3) = returnPacket(9);
+        end
     end
 end

@@ -51,42 +51,42 @@ try
   % The following code generates a sinusoidal trajectory to be
   % executed on joint 1 of the arm and iteratively sends the list of
   % setpoints to the Nucleo firmware. 
-  viaPts = [0,40,0];
+  
+  motorValsArray = zeros(100,3,'single');
 
-  for k = viaPts
-      tic
+  for k = 0:100
+      
       packet = zeros(15, 1, 'single');
       packet(1) = 1000;%one second time
       packet(2) = 0;%linear interpolation
-      packet(3) = k;
-      packet(4) = 0;% Second link to 0
-      packet(5) = 0;% Third link to 0
+      packet(3) = -90; % -90 -> 90
+      packet(4) = 0;% Second link to 90 -> -45
+      packet(5) = 0;% Third link to -90 -> 90
+        disp("Return Funciton Check")
+    disp(pp.getVelocity())
 
       % Send packet to the server and get the response      
       %pp.write sends a 15 float packet to the micro controller
-       pp.write(SERV_ID, packet); 
+        pp.write(SERV_ID, packet); 
        %pp.read reads a returned 15 float backet from the micro controller.
        returnPacket = pp.read(SERVER_ID_READ);
-      toc
-
-      if DEBUG
-          disp('Sent Packet:');
-          disp(packet);
-          disp('Received Packet:');
-          disp(returnPacket);
-      end
-      
-      toc
-      pause(1) 
-      
-  end
+       disp(returnPacket(3))
+        motorValsArray(k+1,1) = returnPacket(3);
+        motorValsArray(k+1,2) = returnPacket(5);
+        motorValsArray(k+1,3) = returnPacket(7);
+  end 
+  disp("Return Funciton Check")
+  disp(pp.getVelocity())
   
+  figure(1)
+  plot(1:length(motorValsArray),motorValsArray(:,1),"*r")
+  figure(2)
+  plot(1:length(motorValsArray),motorValsArray(:,2),"*r")
+  figure(3)
+  plot(1:length(motorValsArray),motorValsArray(:,3),"*r")
 catch exception
-    getReport(exception)
+   getReport(exception)
     disp('Exited on error, clean shutdown');
 end
-
 % Clear up memory upon termination
 pp.shutdown()
-
-toc
