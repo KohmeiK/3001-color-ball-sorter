@@ -1,4 +1,4 @@
-function nothing = plotArm(jointAngles)
+function nothing = plotArm(jointAngles,ax1)
 
 %UNTITLED3 Summary of this function goes here
 nothing = 0;
@@ -16,10 +16,7 @@ for i = (1:size(transforms,3))
     end
 end
 %now all poses are ready
-
-clf
-ax1 = axes('Position',[0.1 0.1 0.8 0.8]);
-view(3);
+cla
 
 x = zeros(4,1);
 y = zeros(4,1);
@@ -28,7 +25,7 @@ z = zeros(4,1);
 triad('Parent',ax1,'Scale',30,'LineWidth',3);
 for i = (1:size(poses,3))
     triad('Parent',ax1,'Scale',30,'LineWidth',3,'Matrix',poses(:,:,i));
-    x(i+1) = poses(1,4,i);
+     x(i+1) = poses(1,4,i);
     y(i+1) = poses(2,4,i);
     z(i+1) = poses(3,4,i);
 end
