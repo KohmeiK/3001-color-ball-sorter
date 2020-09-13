@@ -44,73 +44,44 @@ try
     SERVER_ID_READ =1910;% ID of the read packet
     DEBUG   = true;          % enables/disables debug prints
     
-    % Instantiate a packet - the following instruction allocates 64
-    % bytes for this purpose. Recall that the HID interface supports
-    % packet sizes up to 64 bytes.
-    packet = zeros(15, 1, 'single');
     
-    % The following code generates a sinusoidal trajectory to be
-    % executed on joint 1 of the arm and iteratively sends the list of
-    % setpoints to the Nucleo firmware.
-    
-    
-    packet = zeros(15, 1, 'single');
-    packet(1) = 1000;%one second time
-    packet(2) = 0;%linear interpolation
-    packet(3) = 0; % -90 -> 90
-    packet(4) = 0;% Second link to 90 -> -45
-    packet(5) = 0;% Third link to -90 -> 45
-    
-    % Send packet to the server and get the response
-    %pp.write sends a 15 float packet to the micro controller
-    pp.write(SERV_ID, packet);
     tempPos = pp.getPositions();
-    pause(1);
-    
     virutalArm = Model();
     
-    for i =(1:1000)
+    pp.setSetpoints([0,0,0]);
+    while(pp.isRobotMoving() == 1)
+        virutalArm.plotArm(pp.getPositions());
+    end
+    pp.setSetpoints([-45,0,45]);
+    while(pp.isRobotMoving() == 0)
+        virutalArm.plotArm(pp.getPositions());
+    end
+    while(pp.isRobotMoving() == 1)
+        virutalArm.plotArm(pp.getPositions());
+    end
+    pp.setSetpoints([45,45,-45]);
+    while(pp.isRobotMoving() == 0)
+        virutalArm.plotArm(pp.getPositions());
+    end
+    while(pp.isRobotMoving() == 1)
+        virutalArm.plotArm(pp.getPositions());
+    end
+    pp.setSetpoints([-45,-45,45]);
+    while(pp.isRobotMoving() == 0)
+        virutalArm.plotArm(pp.getPositions());
+    end
+    while(pp.isRobotMoving() == 1)
+        virutalArm.plotArm(pp.getPositions());
+    end
+    pp.setSetpoints([0,0,0]);
+    while(pp.isRobotMoving() == 0)
+        virutalArm.plotArm(pp.getPositions());
+    end
+    while(pp.isRobotMoving() == 1)
         virutalArm.plotArm(pp.getPositions());
     end
     
-    %wating on converting this to setSetpoints untill Jason finsishes
-    %the fucntion...
-    %         packet = zeros(15, 1, 'single');
-    %         packet(1) = 500;%one second time
-    %         packet(2) = 0;%linear interpolation
-    %         packet(3) = 90; % -90 -> 90
-    %         packet(4) = -45;% Second link to 90 -> -45
-    %         packet(5) = -90;% Third link to -90 -> 45
     
-    % Send packet to the server and get the response
-    %pp.write sends a 15 float packet to the micro controller
-    %         pp.write(SERV_ID, packet);
-    %pp.read reads a returned 15 float backet from the micro controller.
-    %         motorValsArray(k+1,:) = pp.getPositions();
-    %         disp(pp.getVelocitys())
-    
-    
-    
-    
-    
-    
-    %     figure(1)
-    %     plot(1:length(motorValsArray),motorValsArray(:,1),"*r")
-    %     title("Motor 1 positon V.S. Time")
-    %     xlabel("Time (Number of for loops)")
-    %     ylabel("Angle of motor 1 (Degrees)")
-    %
-    %     figure(2)
-    %     plot(1:length(motorValsArray),motorValsArray(:,2),"*r")
-    %     title("Motor 2 positon V.S. Time")
-    %     xlabel("Time (Number of for loops)")
-    %     ylabel("Angle of motor 2 (Degrees)")
-    %
-    %     figure(3)
-    %     plot(1:length(motorValsArray),motorValsArray(:,3),"*r")
-    %     title("Motor 3 positon V.S. Time")
-    %     xlabel("Time (Number of for loops)")
-    %     ylabel("Angle of motor 3 (Degrees)")
     
 catch exception
     getReport(exception)
