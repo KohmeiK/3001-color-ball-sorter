@@ -67,10 +67,10 @@ try
     tempPos = pp.getPositions();
     pause(1);
     
-    ax1 = axes('Position',[0.1 0.1 0.8 0.8]);
-    view(3);
+    virutalArm = Model();
+    
     for i =(1:1000)
-        disp(plotArm(pp.getPositions(),ax1));
+        virutalArm.plotArm(pp.getPositions());
     end
     
     %wating on converting this to setSetpoints untill Jason finsishes
