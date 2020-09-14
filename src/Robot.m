@@ -85,10 +85,13 @@ classdef Robot
         % Yongxiang (Josh) Jin
         function position = getPositions(Robot)
             returnPacket = read(Robot, 1910);
-            position = zeros(3,1);
-            position(1) = returnPacket(3);
-            position(2) = returnPacket(5);
-            position(3) = returnPacket(7);
+            %{
+            disp(returnPacket(3));
+            disp(returnPacket(5));
+            disp(returnPacket(7));
+            %}
+            position = [returnPacket(3); returnPacket(5); returnPacket(7)];
+            %disp(position);
         end
         
         % Kohmei Kadoya
