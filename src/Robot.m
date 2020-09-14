@@ -5,6 +5,8 @@ classdef Robot
         %hidService;
         myHIDSimplePacketComs
         pol
+        prevMoving = 1;
+        setpointQueue
     end
     methods
         %The is a shutdown function to clear the HID hardware connection
@@ -13,9 +15,10 @@ classdef Robot
             packet.myHIDSimplePacketComs.disconnect();
         end
         % Create a packet processor for an HID device with USB PID 0x007
-        function packet = Robot(dev)
-            packet.myHIDSimplePacketComs=dev;
-            packet.pol = java.lang.Boolean(false);
+        function robot = Robot(oldRobot)
+            robot.myHIDSimplePacketComs=oldRobot;
+            robot.pol = java.lang.Boolean(false);
+            robot.setpointQueue = queue;
         end
         %Perform a command cycle. This function will take in a command ID
         %and a list of 32 bit floating point numbers and pass them over the
@@ -114,13 +117,39 @@ classdef Robot
             robot.write(1848, packet);
         end
         
-        function moving = isRobotMoving(robot)
+        function moving = isMoving(robot)
             velocities = robot.getVelocities();
-            if(velocities(1) == 0 && velocities(2) == 0 && velocities(3) == 0)
+            if(mean(abs(velocities)) < 10)
                 moving = 0;
             else
                 moving = 1;
             end
+        end
+        
+        function robot = updateRobot(robot)
+            moving = robot.isMoving();
+            if (robot.prevMoving == 1 && moving == 0)
+                %Last move just ended
+                if (robot.setpointQueue.Depth > 0)
+                    disp("Moving to next setpoint");
+                    robot.setSetpoints(robot.setpointQueue.dequeue())
+                else
+                    disp("No more setpoints left");
+                end
+            end
+            robot.prevMoving = moving;
+        end
+        
+        function deleteAllSetpoints(robot)
+            disp("List of next Setpoint(s):")
+            while robot.setpointQueue.Depth > 0
+                disp(robot.setpointQueue.dequeue);
+            end
+            disp("All have been deleted")
+        end
+        
+        function robot = queueSetpoint(robot,newSetpoint)
+            robot.setpointQueue.enqueue(newSetpoint);
         end
         
     end
