@@ -16,6 +16,7 @@
 clear
 clear java
 clear classes;
+clear all;
 
 vid = hex2dec('16c0');
 pid = hex2dec('0486');
@@ -45,7 +46,7 @@ try
     DEBUG   = true;          % enables/disables debug prints
     
     tempPos = pp.getPositions();
-    virutalArm = Model();
+%     virutalArm = Model();
     logger = Logger('log.txt');
     
     pp = pp.enqueueSetpoint([0,0,0]);
@@ -54,8 +55,8 @@ try
     pp = pp.enqueueSetpoint([0,0,0]);
     
     %give the simulation time to load
-    virutalArm.plotArm([0 0 0]);
-    pause(1);
+%     virutalArm.plotArm([0 0 0]);
+%     pause(1);
     
     pp.prevMoving = 1; %kickstart
     currPos = [0 0 0];
