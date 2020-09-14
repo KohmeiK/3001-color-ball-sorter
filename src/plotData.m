@@ -46,19 +46,28 @@ vertex(3,:) = kine.FKtoTip([90 61 -13]);
 
 figure
 hold on
-title("Path of EE on X-Z Plane")
+title("Path of EE on X-Z (Y)Plane")
 plot(posData(:,1),posData(:,3))
-plot(vertex(:,1),vertex(:,3),"r*")
+% plot(vertex(:,1),vertex(:,3),"r*")
 xlabel("X Position (mm)")
 ylabel("Z Position (mm)")
 hold off
 
 figure
 hold on
-title("Path of EE on X-Y Plane")
+title("Path of EE on X-Y (Z)Plane")
 plot(posData(:,1),posData(:,2))
-plot(vertex(:,1),vertex(:,2),"r*")
+% plot(vertex(:,1),vertex(:,2),"r*")
 xlabel("X Position (mm)")
 ylabel("Y Position (mm)")
+hold off
+
+figure
+hold on
+title("Path of EE on Y-Z ((X)Plane")
+plot(posData(:,2),posData(:,3))
+% plot(vertex(:,1),vertex(:,2),"r*")
+xlabel("X Position (mm)")
+ylabel("Z Position (mm)")
 hold off
 

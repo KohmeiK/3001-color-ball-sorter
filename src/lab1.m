@@ -59,8 +59,8 @@ try
     
     currPos = [0 0 0];
     while pp.isActive
-        pp = pp.updateRobot();
-        currPos = pp.getPositions();
+%         pp = pp.updateRobot();
+        currPos = pp.getPositions()
         
         logger.logPositions(round(currPos,2));
 %         virutalArm.plotArm(currPos);
