@@ -16,7 +16,8 @@
 clear
 clear java
 clear classes;
-clear all;
+clear functions;
+close all
 
 vid = hex2dec('16c0');
 pid = hex2dec('0486');
@@ -44,29 +45,26 @@ try
     % the Nucleo
     SERVER_ID_READ =1910;% ID of the read packet
     DEBUG   = true;          % enables/disables debug prints
-    
-    tempPos = pp.getPositions();
 %     virutalArm = Model();
     logger = Logger('log.txt');
     
     pp = pp.enqueueSetpoint([0,0,0]);
-    pp = pp.enqueueSetpoint([90,45,-45]);
-    pp = pp.enqueueSetpoint([-90,-45,0]);
+    pp = pp.enqueueSetpoint([-24,102,-72]);
+    pp = pp.enqueueSetpoint([90,61,-13]);
     pp = pp.enqueueSetpoint([0,0,0]);
     
     %give the simulation time to load
 %     virutalArm.plotArm([0 0 0]);
-%     pause(1);
+%     pause(3);
     
-    pp.prevMoving = 1; %kickstart
     currPos = [0 0 0];
     while pp.isActive
         pp = pp.updateRobot();
         currPos = pp.getPositions();
+        
         logger.logPositions(round(currPos,2));
 %         virutalArm.plotArm(currPos);
     end
-    
     logger = logger.close();
     
     

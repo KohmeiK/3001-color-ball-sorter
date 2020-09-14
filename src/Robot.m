@@ -5,9 +5,10 @@ classdef Robot
         %hidService;
         myHIDSimplePacketComs
         pol
-        prevMoving
+        prevAtTarget
         setpointQueue
         isActive
+        currentSetpoint
     end
     methods
         %The is a shutdown function to clear the HID hardware connection
@@ -20,7 +21,8 @@ classdef Robot
             robot.myHIDSimplePacketComs=comms;
             robot.pol = java.lang.Boolean(false);
             robot.setpointQueue = queue;
-            robot.prevMoving = 1;
+            robot.prevAtTarget = 0;
+            robot.currentSetpoint = [0 0 0];
         end
         %Perform a command cycle. This function will take in a command ID
         %and a list of 32 bit floating point numbers and pass them over the
@@ -96,6 +98,14 @@ classdef Robot
             position(3) = returnPacket(7);
         end
         
+        function setpoint = getSetpoints(Robot)
+            returnPacket = read(Robot, 1910);
+            setpoint = zeros(3,1);
+            setpoint(1) = returnPacket(2);
+            setpoint(2) = returnPacket(4);
+            setpoint(3) = returnPacket(6);
+        end
+        
         % Kohmei Kadoya
         function velocity = getVelocities(robot)
             returnPacket = read(robot, 1822);
@@ -119,28 +129,32 @@ classdef Robot
             robot.write(1848, packet);
         end
         
-        function moving = isMoving(robot)
-            velocities = robot.getVelocities();
-            if(mean(abs(velocities)) < 10)
-                moving = 0;
+        function atTarget = isAtTarget(robot)
+            positions = robot.getPositions();
+            setpoints = robot.currentSetpoint';
+            if(mean(abs(positions-setpoints)) < 2)
+                atTarget = 1;
             else
-                moving = 1;
+                atTarget = 0;
             end
         end
         
         function robot = updateRobot(robot)
-            moving = robot.isMoving();
-            if (robot.prevMoving == 1 && moving == 0)
+            atTarget = robot.isAtTarget();
+            if (robot.prevAtTarget == 0 && atTarget == 1)
                 %Last move just ended
                 if (robot.setpointQueue.Depth > 0)
                     disp("Moving to next setpoint");
-                    robot.setSetpoints(robot.setpointQueue.dequeue())
+                    robot.currentSetpoint = robot.setpointQueue.dequeue();
+                    disp(robot.currentSetpoint)
+                    robot.setSetpoints(robot.currentSetpoint);
+                    atTarget = 0;
                 else
-                    disp("No more setpoints left");
+                    disp("No more setpoints left!");
                     robot.isActive = 0;
                 end
             end
-            robot.prevMoving = moving;
+            robot.prevAtTarget = atTarget;
         end
         
         function robot = deleteAllSetpoints(robot)
@@ -148,7 +162,7 @@ classdef Robot
             while robot.setpointQueue.Depth > 0
                 disp(robot.setpointQueue.dequeue);
             end
-            disp("All have been deleted")
+            disp("All have been DELETED!")
             robot.isActive = 0;
         end
         

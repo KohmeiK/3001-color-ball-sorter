@@ -41,8 +41,8 @@ vertex = zeros(3,3);
 disp(vertex(1))
 disp(kine.FKtoTip([0 0 0]))
 vertex(1,:) = kine.FKtoTip([0 0 0]);
-vertex(2,:) = kine.FKtoTip([90 45 -45]);
-vertex(3,:) = kine.FKtoTip([-90 -45 0]);
+vertex(2,:) = kine.FKtoTip([-24 102 -72]);
+vertex(3,:) = kine.FKtoTip([90 61 -13]);
 
 figure
 hold on
