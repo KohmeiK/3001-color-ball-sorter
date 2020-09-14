@@ -44,23 +44,26 @@ try
     SERVER_ID_READ =1910;% ID of the read packet
     DEBUG   = true;          % enables/disables debug prints
     
-%     tempPos = pp.getPositions();
-%     virutalArm = Model();
+    %     tempPos = pp.getPositions();
+    virutalArm = Model();
     
-    pp.queueSetpoint([0,0,0]);
-    pp.queueSetpoint([90,45,-45]);
-    pp.queueSetpoint([-90,-45,0]);
-    pp.queueSetpoint([90,0,45]);
-    pp.queueSetpoint([0,0,0]);
-
+    pp = pp.enqueueSetpoint([0,0,0]);
+    pp = pp.enqueueSetpoint([90,45,-45]);
+    pp = pp.enqueueSetpoint([-90,-45,0]);
+    pp = pp.enqueueSetpoint([0,0,0]);
+    
     i = 1;
     y = zeros(100);
-    while true
-%         y(i) = pp.prevMoving() + 1;
+    virutalArm.plotArm([0 0 0]);
+    pause(1);
+    
+    while pp.isActive
+        %         y(i) = pp.prevMoving() + 1;
         pp = pp.updateRobot();
-%         i = i + 1;
-%         plot(y,"r*");
-%         disp(i);
+        virutalArm.plotArm(pp.getPositions());
+        %         i = i + 1;
+        %         plot(y,"r*");
+        %         disp(i);
     end
     
     

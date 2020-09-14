@@ -7,6 +7,7 @@ classdef Robot
         pol
         prevMoving = 1;
         setpointQueue
+        isActive;
     end
     methods
         %The is a shutdown function to clear the HID hardware connection
@@ -135,22 +136,26 @@ classdef Robot
                     robot.setSetpoints(robot.setpointQueue.dequeue())
                 else
                     disp("No more setpoints left");
+                    robot.isActive = 0;
                 end
             end
             robot.prevMoving = moving;
         end
         
-        function deleteAllSetpoints(robot)
+        function robot = deleteAllSetpoints(robot)
             disp("List of next Setpoint(s):")
             while robot.setpointQueue.Depth > 0
                 disp(robot.setpointQueue.dequeue);
             end
             disp("All have been deleted")
+            robot.isActive = 0;
         end
         
-        function robot = queueSetpoint(robot,newSetpoint)
+        function robot = enqueueSetpoint(robot,newSetpoint)
+            robot.isActive = 1;
             robot.setpointQueue.enqueue(newSetpoint);
         end
+        
         
     end
 end
