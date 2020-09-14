@@ -44,27 +44,30 @@ try
     SERVER_ID_READ =1910;% ID of the read packet
     DEBUG   = true;          % enables/disables debug prints
     
-    %     tempPos = pp.getPositions();
+    tempPos = pp.getPositions();
     virutalArm = Model();
+    logger = Logger('log.txt');
     
     pp = pp.enqueueSetpoint([0,0,0]);
     pp = pp.enqueueSetpoint([90,45,-45]);
     pp = pp.enqueueSetpoint([-90,-45,0]);
     pp = pp.enqueueSetpoint([0,0,0]);
     
-    i = 1;
-    y = zeros(100);
+    %give the simulation time to load
     virutalArm.plotArm([0 0 0]);
     pause(1);
     
+    pp.prevMoving = 1; %kickstart
+    currPos = [0 0 0];
     while pp.isActive
-        %         y(i) = pp.prevMoving() + 1;
         pp = pp.updateRobot();
-        virutalArm.plotArm(pp.getPositions());
-        %         i = i + 1;
-        %         plot(y,"r*");
-        %         disp(i);
+        currPos = pp.getPositions();
+        logger.logPositions(round(currPos,2));
+%         virutalArm.plotArm(currPos);
     end
+    
+    logger = logger.close();
+    
     
     
     

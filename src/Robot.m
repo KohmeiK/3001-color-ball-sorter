@@ -5,9 +5,9 @@ classdef Robot
         %hidService;
         myHIDSimplePacketComs
         pol
-        prevMoving = 1;
+        prevMoving
         setpointQueue
-        isActive;
+        isActive
     end
     methods
         %The is a shutdown function to clear the HID hardware connection
@@ -16,10 +16,11 @@ classdef Robot
             packet.myHIDSimplePacketComs.disconnect();
         end
         % Create a packet processor for an HID device with USB PID 0x007
-        function robot = Robot(oldRobot)
-            robot.myHIDSimplePacketComs=oldRobot;
+        function robot = Robot(comms)
+            robot.myHIDSimplePacketComs=comms;
             robot.pol = java.lang.Boolean(false);
             robot.setpointQueue = queue;
+            robot.prevMoving = 1;
         end
         %Perform a command cycle. This function will take in a command ID
         %and a list of 32 bit floating point numbers and pass them over the
