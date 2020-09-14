@@ -55,27 +55,25 @@ try
     
     motorValsArray = zeros(3000,3,'single');
     
-    for k = 0:3000
+    for k = 0:1
         
         %wating on converting this to setSetpoints untill Jason finsishes
         %the fucntion...
         packet = zeros(15, 1, 'single');
         packet(1) = 500;%one second time
         packet(2) = 0;%linear interpolation
-        packet(3) = 90; % -90 -> 90
-        packet(4) = -45;% Second link to 90 -> -45
-        packet(5) = -90;% Third link to -90 -> 45
+        packet(3) = 0; % -90 -> 90
+        packet(4) = 0;% Second link to 90 -> -45
+        packet(5) = 0;% Third link to -90 -> 45
         
         % Send packet to the server and get the response
         %pp.write sends a 15 float packet to the micro controller
         pp.write(SERV_ID, packet);
         %pp.read reads a returned 15 float backet from the micro controller.
-        motorValsArray(k+1,:) = pp.getPositions();
-        disp(pp.getVelocitys())
+        motorValsArray(k+1,:) = pp.getPositions;
+        disp(pp.getPositions);
         
     end
-    
-    
     
     figure(1)
     plot(1:length(motorValsArray),motorValsArray(:,1),"*r")
