@@ -154,7 +154,9 @@ Clone your private lab repository. **Note: The command below won't work! Use you
 ```bash
 git clone git@github.com:RBE300X-Lab/RBE3001_MatlabXX.git
 ```
-If your repository is empty, you may get a warning.
+If your repository is empty, you may get a warning. 
+
+Find your teams project here: https://github.com/RBE300X-Lab
 
 ## 2.2 Set up your private lab repository **[DO ONLY ONCE PER TEAM]**
 Note: Perform this **only if** you do not already have the starter Matlab code in your repository
