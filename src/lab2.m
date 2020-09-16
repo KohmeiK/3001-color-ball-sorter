@@ -1,18 +1,7 @@
 %%
-% RBE3001 - Laboratory 1
-%
-% Instructions
-% ------------
-% Welcome again! This MATLAB script is your starting point for Lab
-% 1 of RBE3001. The sample code below demonstrates how to establish
-% communication between this script and the Nucleo firmware, send
-% setpoint commands and receive sensor data.
-%
-% IMPORTANT - understanding the code below requires being familiar
-% with the Nucleo firmware. Read that code first.
+% RBE3001 - Main Controller File
+% Boilerplate until line 32
 
-% Lines 15-37 perform necessary library initializations. You can skip reading
-% to line 38.
 clear
 clear java
 clear classes;
@@ -39,35 +28,41 @@ myHIDSimplePacketComs.connect();
 
 % Create a PacketProcessor object to send data to the nucleo firmware
 pp = Robot(myHIDSimplePacketComs);
+
 try
     
-    SERV_ID = 1848;            % we will be talking to server ID 1848 on
-    % the Nucleo
-    SERVER_ID_READ =1910;% ID of the read packet
-    DEBUG   = true;          % enables/disables debug prints
-%     virutalArm = Model();
+    %Create a ball and stick model
+    virutalArm = Model();
+    %Create a new log file
     logger = Logger('log.txt');
     
+    %queue a 4 points to form a triangle
     pp = pp.enqueueSetpoint([0,0,0]);
     pp = pp.enqueueSetpoint([-24,102,-72]);
     pp = pp.enqueueSetpoint([90,61,-13]);
     pp = pp.enqueueSetpoint([0,0,0]);
     
     %give the simulation time to load
-%     virutalArm.plotArm([0 0 0]);
-%     pause(3);
+    %the plot starts loading when some values are added
+    virutalArm.plotArm([0 0 0]);
+    pause(3);
     
-    currPos = [0 0 0];
+    currPos = [0 0 0]; %give this a inital value
     while pp.isActive
-%         pp = pp.updateRobot();
-        currPos = pp.getPositions()
+        %run the arm upadte loop
+        pp = pp.updateRobot();
         
+        %get the most recent arm pos
+        currPos = pp.getPositions();
+        
+        %log that arm pos
         logger.logPositions(round(currPos,2));
-%         virutalArm.plotArm(currPos);
+        
+        %display the arm pos in the model
+        virutalArm.plotArm(currPos);
     end
+    %close the log file
     logger = logger.close();
-    
-    
     
     
 catch exception

@@ -1,6 +1,6 @@
 classdef Kinematics
-    %KINEMATICS Summary of this class goes here
-    %   Detailed explanation goes here
+    %KINEMATICS is responible for convering DH tables to matries
+    %and for running and FK neeed
     
     properties
     end

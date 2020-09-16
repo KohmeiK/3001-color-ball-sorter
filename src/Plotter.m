@@ -1,6 +1,6 @@
 classdef Plotter
-    %PLOTTER Summary of this class goes here
-    %   Detailed explanation goes here
+    %PLOTTER is respoisible for helping plotData retrevie data from
+    %the log file and converting it into a matrix
     
     properties
         file
