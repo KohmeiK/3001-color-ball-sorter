@@ -1,3 +1,4 @@
+
 function EEPos = fk3001(jointAngles)
 %FK3001 reutnrs a 3x1 matrix for end effector position based on a 3x1
 %matrix of join angles
