@@ -76,7 +76,7 @@ hold on
 title("Path of EE on Y-Z ((X)Plane")
 plot(posData(:,2),posData(:,3))
 plot(vertex(:,2),vertex(:,3),"r*")
-xlabel("X Position (mm)")
+xlabel("Y Position (mm)")
 ylabel("Z Position (mm)")
 hold off
 
