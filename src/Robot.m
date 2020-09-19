@@ -185,6 +185,5 @@ classdef Robot
             robot.setpointQueue.enqueue(newSetpoint);
         end
         
-        
     end
 end

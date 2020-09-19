@@ -3,12 +3,93 @@ classdef Kinematics
     %and for running and FK neeed
     
     properties
+        l1 = 0;
+        l2 = 0;
+        l3 = 0;
+        jointLimits
     end
     
     methods
-        function obj = Kinematics()
-            %KINEMATICS Construct an instance of this class
-            %   Detailed explanation goes here
+        function obj = Kinematics(joint1Length,joint2Length,joint3Length,jointMinMax)
+            obj.l1 = joint1Length;
+            obj.l2 = joint2Length;
+            obj.l3 = joint3Length;
+            obj.jointLimits = deg2rad(jointMinMax);
+            
+        end
+        
+        function theta = ik3001(obj, xyz)
+            theta = zeros(3,1);
+            x = xyz(1);
+            y = xyz(2);
+            z = xyz(3);
+            
+            sqrtX2y2 = sqrt(x^2+y^2);
+            z1d1 = z - obj.l1;
+            r = sqrt(sqrtX2y2^2 + z1d1^2);
+            
+            a2 = atan2(z1d1,sqrtX2y2);
+            
+            D1 = (obj.l2^2 + r^2 - obj.l3^2) / (2*obj.l2*r);
+            D3 = (obj.l2^2 + obj.l3^2 - r^2) / (2*obj.l2*obj.l3);
+            
+            C1 = sqrt(1-D1^2);
+            C3 = sqrt(1-D3^2);
+            
+            a1a = atan2(C1,D1);
+            a1b = atan2(-C1,D1);
+            
+            a3a = atan2(C3,D3);
+            a3b = atan2(-C3,D3);
+            
+            theta1 = atan2(y,x);
+            
+            theta2a = deg2rad(90)-a1a-a2;
+            theta2b = deg2rad(90)-a1b-a2;
+            
+            theta3a = deg2rad(90)-a3a;
+            theta3b = deg2rad(90)-a3b;
+            
+            Safe1 = obj.isInLimit(1,theta1);
+            
+            Safe2a = obj.isInLimit(2,theta2a);
+            Safe2b = obj.isInLimit(2,theta2b);
+            
+            Safe3a = obj.isInLimit(3,theta3a);
+            Safe3b = obj.isInLimit(3,theta3b);
+            
+            if Safe1 == 0
+                error("Theta 1 was not safe. Value: "+ string(theta1));
+            else
+                theta(1) = theta1;
+            end
+            
+            if Safe2a == 0 && Safe2b == 0
+                error("Theta 2 was not safe. Value: "+ string(theta2a)...
+                    + " and " + string(theta2b));
+            elseif Safe2a == 1 && Safe2b == 1
+                theta(2) = min(theta2a,theta2b);
+            elseif Safe2a == 1 && Safe2b == 0
+                theta(2) = theta2a;
+            elseif Safe2a == 0 && Safe2b == 1
+                theta(2) = theta2b;
+            else
+                error("Unknown error.");
+            end
+            
+            if Safe3a == 0 && Safe3b == 0
+                error("Theta 3 was not safe. Value: "+ string(theta3a)...
+                    + " and " + string(theta3b));
+            elseif Safe3a == 1 && Safe3b == 1
+                theta(3) = max(theta3a,theta3b);
+            elseif Safe3a == 1 && Safe3b == 0
+                theta(3) = theta3a;
+            elseif Safe3a == 0 && Safe3b == 1
+                theta(3) = theta3b;
+            else
+                error("Unknown error.");
+            end
+            
         end
         
         function tipPos = FKtoTip(obj,jointAngles)
@@ -50,6 +131,14 @@ classdef Kinematics
             
             Tmatrix(4,4) = 1;
         end
+        
+        function safe = isInLimit(obj,joint, angleRad)
+            safe = 0;
+            if  angleRad > obj.jointLimits(joint,1) && angleRad < obj.jointLimits(joint,2)
+                safe = 1;
+            end
+        end
+        
     end
 end
 

@@ -31,34 +31,40 @@ pp = Robot(myHIDSimplePacketComs);
 
 try
     
+    kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
+    disp(kine.FKtoTip([0 24.1679 13.5916]))
+    disp(rad2deg(kine.ik3001([120 0 125])));
+    
     %Create a ball and stick model
-%     virutalArm = Model();
+    %     virutalArm = Model();
     %Create a new log file
-%     logger = Logger('log.txt');
+    %     logger = Logger('log.txt');
     
     %queue a 4 points to form a triangle
     pp = pp.enqueueSetpoint([0,0,0]);
-    pp = pp.enqueueSetpoint([0,0,40]);
+    pp = pp.enqueueSetpoint([-120,0,0]);
     pp = pp.enqueueSetpoint([0,0,0]);
     
     %give the simulation time to load
     %the plot starts loading when some values are added
-%     virutalArm.plotArm([0 0 0]);
-%     pause(3);
+    %     virutalArm.plotArm([0 0 0]);
+    %     pause(3);
     
     currPos = [0 0 0]; %give this a inital value
-    while pp.isActive
+    while 0
         %run the arm upadte loop
         pp = pp.updateRobot();
         
         %get the most recent arm pos
-        currPos = pp.getPositions();
+        currPos = pp.getPositions()
         
         %log that arm pos
-%         logger.logPositions(round(currPos,2));
+        %         logger.logPositions(round(currPos,2));
         
         %display the arm pos in the model
-%         virutalArm.plotArm(currPos);
+        %         virutalArm.plotArm(currPos);
+        
+        
     end
     %close the log file
     logger = logger.close();
