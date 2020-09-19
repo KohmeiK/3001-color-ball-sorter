@@ -19,7 +19,7 @@ classdef Kinematics
         end
         
         function theta = ik3001(obj, xyz)
-            theta = zeros(3,1);
+            theta = zeros(1,3);
             x = xyz(1);
             y = xyz(2);
             z = xyz(3);
