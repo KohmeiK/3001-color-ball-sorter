@@ -63,35 +63,35 @@ try
     disp(p1);
     disp(p2);
     
-    q0x = p1(1);
-    q0y = p1(2);
-    q0z = p1(3);
+    n = 11;
     
-    q1x = p2(1);
-    q1y = p2(2);
-    q1z = p2(3);
-    
-    t0 = 0;
-    t1 = 970;
+    t = linspace(0,1,n)';
+    P = (1-t)*p1 + t*p2;
     
     planner = Traj_Planner();
-    planner = planner.cubic_traj([t0 t1],[q0x q1x],[0 0],1);
-    planner = planner.cubic_traj([t0 t1],[q0y q1y],[0 0],2);
-    planner = planner.cubic_traj([t0 t1],[q0z q1z],[0 0],3);
-    
-    starttime = datetime;
+    startTime = datetime;
+    lasttime = datetime;
     
     for i = 1:10
-        t = milliseconds(datetime - starttime);
-        t1 = planner.solveEQ(t,1);
-        t2 = planner.solveEQ(t,2);
-        t3 = planner.solveEQ(t,3);
-        disp(t)
-        disp(t1)
-        disp(t2)
-        disp(t3)
-        pp.setSetpoints([t1 t2 t3]);
-        pause(0.097);
+        t0 = milliseconds(lasttime-startTime);
+        t1 = milliseconds(datetime-startTime);
+        
+        planner = planner.cubic_traj([0 100],[P(i,1) P(i+1,1)],[0 0],1);
+        planner = planner.cubic_traj([0 100],[P(i,2) P(i+1,2)],[0 0],2);
+        planner = planner.cubic_traj([0 100],[P(i,3) P(i+1,3)],[0 0],3);
+        
+        lasttime = datetime;
+        k = 0;
+        while milliseconds(datetime - lasttime) < 100
+            k = k + 1;
+            disp(k);
+            tnow = milliseconds(datetime - lasttime);
+            t1 = planner.solveEQ(tnow,1);
+            t2 = planner.solveEQ(tnow,2);
+            t3 = planner.solveEQ(tnow,3);
+            disp([t1 t2 t3]);
+            pp.setSetpoints([t1 t2 t3]);
+        end
         disp(i);
     end
     
