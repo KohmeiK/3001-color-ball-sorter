@@ -21,7 +21,7 @@ ylabel("Servo Angle (deg)")
 legend("Motor 1","Motor 2","Motor 3")
 hold off
 
-kine = Kinematics(); %load kinematics for FK
+kine = Kinematics(95,100,100,[0]); %load kinematics for FK
 posData = zeros(size(data,1),3);
 
 %for each row in the matrix run a FK and store in posData
@@ -36,19 +36,20 @@ end
 %Now plot FK against time
 figure
 hold on
-title("X-Z pos V.S. Time")
+title("X, Y, Z pos V.S. Time")
 plot(data(:,1),posData(:,1))
+plot(data(:,1),posData(:,2))
 plot(data(:,1),posData(:,3))
 xlabel("Time (s)")
-ylabel("X-Z Position (mm)")
-legend("X Pos", "Z Pos")
+ylabel("X, Y, Z Position (mm)")
+legend("X Pos","Y Pos", "Z Pos")
 hold off
 
 vertex = zeros(3,3);
 %manually enter vertex points and run FK on them
-vertex(1,:) = kine.FKtoTip([0 0 0]);
-vertex(2,:) = kine.FKtoTip([-24 102 -72]);
-vertex(3,:) = kine.FKtoTip([90 61 -13]);
+vertex(1,:) = [100 -70 25];
+vertex(2,:) = [160 10 25];
+vertex(3,:) = [50 90 25];
 
 %now plot both FK data and Vertext FK
 figure

@@ -38,27 +38,19 @@ try
     %Create a ball and stick model
     %     virutalArm = Model();
     %Create a new log file
-    %     logger = Logger('log.txt');
+        logger = Logger('log.txt');
     
     %queue a 4 points to form a triangle
     disp(rad2deg(kine.ik3001([80 -70 0])));
     
-    pp = pp.enqueueSetpoint([0 0 0]);
-    pp = pp.enqueueSetpoint([0 0 0]);
-    
     height = 25;
     
-    pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([100 -70 height])));
-    pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([160 10 height])));
-    pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([50 90 height])));
-    
-    pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([100 -70 height])));
-    pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([160 10 height])));
-    pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([70 90 height])));
     
     pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([100 -70 height])));
     pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([160 10 height])));
     pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([50 90 height])));
+    pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([100 -70 height])));
+   
 
     %give the simulation time to load
     %the plot starts loading when some values are added
@@ -77,7 +69,7 @@ try
 %         disp(pp.currentSetpoint);
         
         %log that arm pos
-        %         logger.logPositions(round(currPos,2));
+        logger.logPositions(round(currPos,2));
         
         %display the arm pos in the model
         %         virutalArm.plotArm(currPos);
