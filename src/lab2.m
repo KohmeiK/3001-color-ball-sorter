@@ -11,8 +11,8 @@ close all
 vid = hex2dec('16c0');
 pid = hex2dec('0486');
 
-disp (vid);
-disp (pid);
+% disp (vid);
+% disp (pid);
 
 javaaddpath ../lib/SimplePacketComsJavaFat-0.6.4.jar;
 import edu.wpi.SimplePacketComs.*;
@@ -33,7 +33,7 @@ try
     
     kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
     %disp(kine.FKtoTip([0 24.1679 13.5916]))
-    disp(rad2deg(kine.ik3001([120 0 125])));
+%     disp(rad2deg(kine.ik3001([120 0 125])));
     
     %Create a ball and stick model
     %     virutalArm = Model();
@@ -41,9 +41,9 @@ try
         logger = Logger('log.txt');
     
     %queue a 4 points to form a triangle
-    disp(rad2deg(kine.ik3001([80 -70 0])));
+%     disp(rad2deg(kine.ik3001([80 -70 0])));
     
-    height = 25;
+    height = 35;
     
     
 %     pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([100 -70 height])));
@@ -59,43 +59,49 @@ try
     
     p1 = rad2deg(kine.ik3001([100 -70 height]));
     p2 = rad2deg(kine.ik3001([160 10 height]));
+    p3 = rad2deg(kine.ik3001([50 90 height]));
     
-    disp(p1);
-    disp(p2);
-    
-    q0x = p1(1);
-    q0y = p1(2);
-    q0z = p1(3);
-    
-    q1x = p2(1);
-    q1y = p2(2);
-    q1z = p2(3);
+%     disp(p1);
+%     disp(p2);
     
     t0 = 0;
+    numOfPoints = 10;
+    
+    
+    
     t1 = 970;
-    
+    duration = 0.097;
     planner = Traj_Planner();
-    planner = planner.cubic_traj([t0 t1],[q0x q1x],[0 0],1);
-    planner = planner.cubic_traj([t0 t1],[q0y q1y],[0 0],2);
-    planner = planner.cubic_traj([t0 t1],[q0z q1z],[0 0],3);
-    
+    planner = planner.pointTo(p1,p2,t0,t1);
     starttime = datetime;
+    for i = 1:numOfPoints
+        pp.setSetpoints(planner.trajExecute(starttime));
+        pause(duration);
+    end
+    pause(2);
     
-    for i = 1:10
-        t = milliseconds(datetime - starttime);
-        t1 = planner.solveEQ(t,1);
-        t2 = planner.solveEQ(t,2);
-        t3 = planner.solveEQ(t,3);
-        disp(t)
-        disp(t1)
-        disp(t2)
-        disp(t3)
-        pp.setSetpoints([t1 t2 t3]);
-        pause(0.097);
-        disp(i);
+    t1 = 1141;
+    duration = 0.114;
+    planner = Traj_Planner();
+    planner = planner.pointTo(p2,p3,t0,t1);
+    starttime = datetime;
+    for i = 1:numOfPoints
+        pp.setSetpoints(planner.trajExecute(starttime));
+        pause(duration);
+    end
+    pause(2);
+    
+    t1 = 1010;
+    duration = 0.101;
+    planner = Traj_Planner();
+    planner = planner.pointTo(p3,p1,t0,t1);
+    starttime = datetime;
+    for i = 1:numOfPoints
+        pp.setSetpoints(planner.trajExecute(starttime));
+        pause(duration);
     end
     
-    %close the log file
+%     close the log file
 %     logger = logger.close();
     
     
