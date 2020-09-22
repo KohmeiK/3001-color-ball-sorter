@@ -30,80 +30,55 @@ myHIDSimplePacketComs.connect();
 pp = Robot(myHIDSimplePacketComs);
 
 try
-    
+                     %D1  D2  D3 T1MinMax T2MinMax T3MinMax
     kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
-    %disp(kine.FKtoTip([0 24.1679 13.5916]))
-%     disp(rad2deg(kine.ik3001([120 0 125])));
-    
-    %Create a ball and stick model
-    %     virutalArm = Model();
-    %Create a new log file
-        logger = Logger('log.txt');
-    
-    %queue a 4 points to form a triangle
-%     disp(rad2deg(kine.ik3001([80 -70 0])));
     
     height = 35;
+    P1 = [100 -70 height];
+    P2 = [160 10 height];
+    P3 = [50 90 height];
     
-    
-%     pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([100 -70 height])));
-%     pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([160 10 height])));
-%     pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([50 90 height])));
-    pp = pp.enqueueSetpoint(rad2deg(kine.ik3001([100 -70 height])));
+    pp = pp.enqueueSetpoint(rad2deg(kine.ik3001(P1))); 
    
-    pp = pp.updateRobot();
-    pp = pp.updateRobot();
     pp = pp.updateRobot();
     pp = pp.updateRobot();
     pause(3);
     
-    p1 = rad2deg(kine.ik3001([100 -70 height]));
-    p2 = rad2deg(kine.ik3001([160 10 height]));
-    p3 = rad2deg(kine.ik3001([50 90 height]));
+    p1 = rad2deg(kine.ik3001(P1));
+    p2 = rad2deg(kine.ik3001(P2));
+    p3 = rad2deg(kine.ik3001(P3));
     
-%     disp(p1);
-%     disp(p2);
-    
-    t0 = 0;
-    numOfPoints = 10;
-    
-    
+    numOfPoints = 10.0;
+    t0 = 0;    
     
     t1 = 970;
-    duration = 0.097;
     planner = Traj_Planner();
     planner = planner.pointTo(p1,p2,t0,t1);
     starttime = datetime;
     for i = 1:numOfPoints
         pp.setSetpoints(planner.trajExecute(starttime));
-        pause(duration);
+        pause(t1/(1000.0*(numOfPoints)));
     end
     pause(2);
     
     t1 = 1141;
-    duration = 0.114;
     planner = Traj_Planner();
     planner = planner.pointTo(p2,p3,t0,t1);
     starttime = datetime;
     for i = 1:numOfPoints
         pp.setSetpoints(planner.trajExecute(starttime));
-        pause(duration);
+        pause(t1/(1000.0*(numOfPoints)));
     end
     pause(2);
     
     t1 = 1010;
-    duration = 0.101;
     planner = Traj_Planner();
     planner = planner.pointTo(p3,p1,t0,t1);
     starttime = datetime;
     for i = 1:numOfPoints
         pp.setSetpoints(planner.trajExecute(starttime));
-        pause(duration);
+        pause(t1/(1000.0*(numOfPoints)));
     end
-    
-%     close the log file
-%     logger = logger.close();
-    
     
 catch exception
     getReport(exception)
