@@ -77,7 +77,7 @@ classdef Traj_Planner
                 t2 = obj.solveEQ3(t,2);
                 t3 = obj.solveEQ3(t,3);
                 robot = [t1 t2 t3];
-                %disp(i);
+                disp(robot);
         end
         
         function robot = trajExecute5(obj, sTime)
