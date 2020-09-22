@@ -43,7 +43,6 @@ classdef Traj_Planner
                 obj.coeffs(4,index)*(t^4) + obj.coeffs(5,index)*(t^5);
         end
         
-        
         %this function takes a starting and ending point, initial and fina time 
         %--> plugs them into the cubic_traj function
         function obj = pointTo3(obj, p1, p2, t0, t1)
