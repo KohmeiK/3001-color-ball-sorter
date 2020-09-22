@@ -33,8 +33,16 @@ for i = (1:size(data,1))
     posData(i,3) = pos(3);
 end
 
-velo = smooth(diff(posData));
-accel = smooth(diff(velo));
+velo = diff(posData);
+accel = diff(velo);
+
+velo(:,1) = smooth(velo(:,1),150);
+velo(:,2) = smooth(velo(:,2),150);
+velo(:,3) = smooth(velo(:,3),150);
+
+accel(:,1) = smooth(accel(:,1),150);
+accel(:,2) = smooth(accel(:,2),150);
+accel(:,3) = smooth(accel(:,3),150);
 
 for i = (1:size(data,1))
     disp(i)
@@ -47,7 +55,7 @@ end
 %Now plot FK against time
 figure
 hold on
-title("X, Y, Z pos V.S. Time")
+title("X, Y, Z position V.S. Time")
 plot(data(:,1),posData(:,1))
 plot(data(:,1),posData(:,2))
 plot(data(:,1),posData(:,3))
@@ -58,23 +66,23 @@ hold off
 
 figure
 hold on
-title("X, Y, Z velo V.S. Time")
-plot(data(1:end-1,1),velo(:,1))
-plot(data(1:end-1,1),velo(:,2))
-plot(data(1:end-1,1),velo(:,3))
+title("X, Y, Z velocity V.S. Time")
+plot(data(1:length(velo(:,1)),1),velo(:,1))
+plot(data(1:length(velo(:,1)),1),velo(:,2))
+% plot(data(1:length(velo(:,1)),1),velo(:,3))
 xlabel("Time (s)")
-ylabel("X, Y, Z Velo (mm/sec)")
+ylabel("X, Y, Z Velocity (mm/sec)")
 legend("X Velo","Y Velo", "Z Velo")
 hold off
 
 figure
 hold on
-title("X, Y, Z acel V.S. Time")
-plot(data(2:end-1,1),accel(:,1))
-plot(data(2:end-1,1),accel(:,2))
-plot(data(2:end-1,1),accel(:,3))
+title("X, Y, Z acceleration V.S. Time")
+plot(data(2:length(velo(:,1)),1),accel(:,1))
+plot(data(2:length(velo(:,1)),1),accel(:,2))
+% plot(data(2:length(velo(:,1)),1),accel(:,3))
 xlabel("Time (s)")
-ylabel("X, Y, Z acel (mm/sec^2)")
+ylabel("X, Y, Z acceleration (mm/sec^2)")
 legend("X Acel","Y Acel", "Z Acel")
 hold off
 
