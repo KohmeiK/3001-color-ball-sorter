@@ -26,6 +26,7 @@ classdef Traj_Planner
         function res = solveEQ(obj,t, index)
             res = obj.coeffs(1,index) + obj.coeffs(2,index)*t + obj.coeffs(3,index)*(t^2) + obj.coeffs(4,index)*(t^3);
         end
+        
     end
 end
 
