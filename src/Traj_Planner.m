@@ -58,15 +58,23 @@ classdef Traj_Planner
         end
         
         
+        function obj = trajTask(obj, path, index, t)
+            obj = obj.cubic_traj([0 t],[path(index,1) path(index+1,1)],[0 0],1);
+            obj = obj.cubic_traj([0 t],[path(index,2) path(index+1,2)],[0 0],2);
+            obj = obj.cubic_traj([0 t],[path(index,3) path(index+1,3)],[0 0],3);
+        end
+            
+        
+        
         function robot = trajExecute(obj, sTime)
                 t = milliseconds(datetime - sTime);
                 t1 = obj.solveEQ(t,1);
                 t2 = obj.solveEQ(t,2);
                 t3 = obj.solveEQ(t,3);
-                disp(t)
-                disp(t1)
-                disp(t2)
-                disp(t3)
+%                 disp(t)
+%                 disp(t1)
+%                 disp(t2)
+%                 disp(t3)
                 robot = [t1 t2 t3];
                 %disp(i);
         end
