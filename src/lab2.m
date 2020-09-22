@@ -30,6 +30,7 @@ myHIDSimplePacketComs.connect();
 pp = Robot(myHIDSimplePacketComs);
 
 try
+    
     %D1  D2  D3 T1MinMax T2MinMax T3MinMax
     kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
     
@@ -49,8 +50,11 @@ try
     lasttime = datetime; %last time is when the last line segment is done
     
     
+    %from P1 to P2
     pathObj = Path_Planner();
     path = pathObj.linear_traj(P1,P2,viaPoints);
+    
+    logger = Logger("log.txt");
     
     for i = 1:viaPoints-1
         t0 = milliseconds(lasttime-startTime); %duration in ms since this line set started
@@ -61,11 +65,17 @@ try
         %     make sure this segment runs for 100ms only
         while milliseconds(datetime - lasttime) < 300
             pp.setSetpoints(rad2deg(kine.ik3001(planner.trajExecute3(lasttime))));
+            logger.logPositions(pp.getPositions());
             pause(0.03);
         end %we are done with this segment, now do the next segment
         disp(i)
     end
-    pause(2);
+
+    %from P2 to P3
+    timerStart = datetime;
+    while seconds(datetime - timerStart) < 2
+        logger.logPositions(pp.getPositions());
+    end
     
     startTime = datetime; %start time if when the whole loop starts
     lasttime = datetime; %last time is when the last line segment is done
@@ -78,12 +88,16 @@ try
         lasttime = datetime;
         while milliseconds(datetime - lasttime) < 300
             pp.setSetpoints(rad2deg(kine.ik3001(planner.trajExecute3(lasttime))));
+            logger.logPositions(pp.getPositions());
             pause(0.03);
         end %we are done with this segment, now do the next segment
     end
-    pause(2);
+    timerStart = datetime;
+    while seconds(datetime - timerStart) < 2
+        logger.logPositions(pp.getPositions());
+    end
     
-    
+    %from P3 to P1
     startTime = datetime; %start time if when the whole loop starts
     lasttime = datetime; %last time is when the last line segment is done
     path = pathObj.linear_traj(P3,P1,viaPoints);
@@ -95,9 +109,16 @@ try
         lasttime = datetime;
         while milliseconds(datetime - lasttime) < 300
             pp.setSetpoints(rad2deg(kine.ik3001(planner.trajExecute3(lasttime))));
+            logger.logPositions(pp.getPositions());
             pause(0.03);
         end %we are done with this segment, now do the next segment
     end
+    timerStart = datetime;
+    while seconds(datetime - timerStart) < 2
+        logger.logPositions(pp.getPositions());
+    end
+    
+    logger.close();
     
     %     LAB3 SECTION 4.2
     %     pp = pp.updateRobot();

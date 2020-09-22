@@ -33,8 +33,8 @@ for i = (1:size(data,1))
     posData(i,3) = pos(3);
 end
 
-velo = diff(posData);
-accel = diff(velo);
+velo = smooth(diff(posData));
+accel = smooth(diff(velo));
 
 for i = (1:size(data,1))
     disp(i)
