@@ -33,6 +33,17 @@ for i = (1:size(data,1))
     posData(i,3) = pos(3);
 end
 
+velo = diff(posData);
+accel = diff(velo);
+
+for i = (1:size(data,1))
+    disp(i)
+    pos = kine.FKtoTip([data(i,2) data(i,3) data(i,4)]);
+    posData(i,1) = pos(1);
+    posData(i,2) = pos(2);
+    posData(i,3) = pos(3);
+end
+
 %Now plot FK against time
 figure
 hold on
@@ -43,6 +54,28 @@ plot(data(:,1),posData(:,3))
 xlabel("Time (s)")
 ylabel("X, Y, Z Position (mm)")
 legend("X Pos","Y Pos", "Z Pos")
+hold off
+
+figure
+hold on
+title("X, Y, Z velo V.S. Time")
+plot(data(1:end-1,1),velo(:,1))
+plot(data(1:end-1,1),velo(:,2))
+plot(data(1:end-1,1),velo(:,3))
+xlabel("Time (s)")
+ylabel("X, Y, Z Velo (mm/sec)")
+legend("X Velo","Y Velo", "Z Velo")
+hold off
+
+figure
+hold on
+title("X, Y, Z acel V.S. Time")
+plot(data(2:end-1,1),accel(:,1))
+plot(data(2:end-1,1),accel(:,2))
+plot(data(2:end-1,1),accel(:,3))
+xlabel("Time (s)")
+ylabel("X, Y, Z acel (mm/sec^2)")
+legend("X Acel","Y Acel", "Z Acel")
 hold off
 
 vertex = zeros(3,3);

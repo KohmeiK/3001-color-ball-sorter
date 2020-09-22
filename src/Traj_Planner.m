@@ -3,7 +3,8 @@ classdef Traj_Planner
     %   Detailed explanation goes here
     
     properties
-        coeffs = zeros(6,3)
+        coeffs3 = zeros(4,3)
+        coeffs5 = zeros(6,3)
     end
     
     methods
@@ -19,7 +20,7 @@ classdef Traj_Planner
                 0    1     2*time(2) 3*time(2)^2;];
             Answer = [pos(1) vel(1) pos(2) vel(2)]';
             temp = linsolve(M,Answer);
-            obj.coeffs(:,index) = temp;
+            obj.coeffs3(:,index) = temp;
             
         end
         
@@ -33,15 +34,21 @@ classdef Traj_Planner
             
             Answer = [pos(1) vel(1) acel(1) pos(2) vel(2) acel(1)]';
             temp = linsolve(M,Answer);
-            obj.coeffs(:,index) = temp;
+            obj.coeffs5(:,index) = temp;
             
         end
         
-        function res = solveEQ(obj,t, index)
-            res = obj.coeffs(1,index) + obj.coeffs(2,index)*t +...
-                obj.coeffs(3,index)*(t^2) + obj.coeffs(4,index)*(t^3) +...
-                obj.coeffs(4,index)*(t^4) + obj.coeffs(5,index)*(t^5);
+        function res = solveEQ3(obj,t, index)
+            res = obj.coeffs3(1,index) + obj.coeffs3(2,index)*t +...
+                obj.coeffs3(3,index)*(t^2) + obj.coeffs3(4,index)*(t^3);
         end
+        
+        function res = solveEQ5(obj,t, index)
+            res = obj.coeffs5(1,index) + obj.coeffs5(2,index)*t +...
+                obj.coeffs5(3,index)*(t^2) + obj.coeffs5(4,index)*(t^3) +...
+                obj.coeffs5(4,index)*(t^4) + obj.coeffs5(5,index)*(t^5);
+        end
+        
         
         %this function takes a starting and ending point, initial and fina time 
         %--> plugs them into the cubic_traj function
@@ -58,15 +65,25 @@ classdef Traj_Planner
         end
         
         
-        function robot = trajExecute(obj, sTime)
+        function obj = trajTask(obj, path, index, t)
+            obj = obj.cubic_traj([0 t],[path(index,1) path(index+1,1)],[0 0],1);
+            obj = obj.cubic_traj([0 t],[path(index,2) path(index+1,2)],[0 0],2);
+            obj = obj.cubic_traj([0 t],[path(index,3) path(index+1,3)],[0 0],3);
+        end
+            
+        function robot = trajExecute3(obj, sTime)
                 t = milliseconds(datetime - sTime);
-                t1 = obj.solveEQ(t,1);
-                t2 = obj.solveEQ(t,2);
-                t3 = obj.solveEQ(t,3);
-                disp(t)
-                disp(t1)
-                disp(t2)
-                disp(t3)
+                t1 = obj.solveEQ3(t,1);
+                t2 = obj.solveEQ3(t,2);
+                t3 = obj.solveEQ3(t,3);
+                robot = [t1 t2 t3];
+        end
+        
+        function robot = trajExecute5(obj, sTime)
+                t = milliseconds(datetime - sTime);
+                t1 = obj.solveEQ5(t,1);
+                t2 = obj.solveEQ5(t,2);
+                t3 = obj.solveEQ5(t,3);
                 robot = [t1 t2 t3];
                 %disp(i);
         end
