@@ -40,6 +40,7 @@ try
     P2 = [160 10 height];
     P3 = [50 90 height];
     viaPoints = 30;
+    tIn = 100;
 
     pp.setSetpoints(rad2deg(kine.ik3001(P1)));
     %Make sure the robot is at the first point
@@ -56,14 +57,19 @@ try
     
     logger = Logger("log.txt");
     
+    timerStart = datetime;
+    while seconds(datetime - timerStart) < 2
+        logger.logPositions(pp.getPositions());
+    end
+    
     for i = 1:viaPoints-1
         t0 = milliseconds(lasttime-startTime); %duration in ms since this line set started
         t1 = milliseconds(datetime-startTime); %duration in ms since the whole movement started
         % 100ms  from p(i) => p(i+1) no velocity
-        planner = planner.trajTask(path, i, 300);
+        planner = planner.trajTask(path, i, tIn);
         lasttime = datetime;
         %     make sure this segment runs for 100ms only
-        while milliseconds(datetime - lasttime) < 300
+        while milliseconds(datetime - lasttime) < tIn
             pp.setSetpoints(rad2deg(kine.ik3001(planner.trajExecute3(lasttime))));
             logger.logPositions(pp.getPositions());
             pause(0.03);
@@ -84,9 +90,9 @@ try
         t0 = milliseconds(lasttime-startTime); %duration in ms since this line set started
         t1 = milliseconds(datetime-startTime); %duration in ms since the whole movement started
         % 100ms  from p(i) => p(i+1) no velocity
-        planner = planner.trajTask(path, i, 300);
+        planner = planner.trajTask(path, i, tIn);
         lasttime = datetime;
-        while milliseconds(datetime - lasttime) < 300
+        while milliseconds(datetime - lasttime) < tIn
             pp.setSetpoints(rad2deg(kine.ik3001(planner.trajExecute3(lasttime))));
             logger.logPositions(pp.getPositions());
             pause(0.03);
@@ -105,9 +111,9 @@ try
         t0 = milliseconds(lasttime-startTime); %duration in ms since this line set started
         t1 = milliseconds(datetime-startTime); %duration in ms since the whole movement started
         % 100ms  from p(i) => p(i+1) no velocity
-        planner = planner.trajTask(path, i, 300);
+        planner = planner.trajTask(path, i, tIn);
         lasttime = datetime;
-        while milliseconds(datetime - lasttime) < 300
+        while milliseconds(datetime - lasttime) < tIn
             pp.setSetpoints(rad2deg(kine.ik3001(planner.trajExecute3(lasttime))));
             logger.logPositions(pp.getPositions());
             pause(0.03);
