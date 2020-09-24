@@ -20,9 +20,9 @@ classdef Kinematics
         
         function theta = ik3001(obj, xyz)
             theta = zeros(1,3);
-            x = xyz(1)
-            y = xyz(2)
-            z = xyz(3)
+            x = xyz(1);
+            y = xyz(2);
+            z = xyz(3);
             
             sqrtX2y2 = sqrt(x^2+y^2);
             z1d1 = z - obj.l1;

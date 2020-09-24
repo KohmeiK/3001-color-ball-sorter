@@ -46,7 +46,7 @@ classdef Traj_Planner
         function res = solveEQ5(obj,t, index)
             res = obj.coeffs5(1,index) + obj.coeffs5(2,index)*t +...
                 obj.coeffs5(3,index)*(t^2) + obj.coeffs5(4,index)*(t^3) +...
-                obj.coeffs5(4,index)*(t^4) + obj.coeffs5(5,index)*(t^5);
+                obj.coeffs5(5,index)*(t^4) + obj.coeffs5(6,index)*(t^5);
         end
         
         
