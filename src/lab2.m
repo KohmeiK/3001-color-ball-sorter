@@ -58,15 +58,19 @@ try
     
     %Here's the new block of code
     for i = 1:viaPoints-1
+        %I would remove the datetime stuff, it's getting real confusing and
+        %we dont need it any more
         t0 = milliseconds(lasttime-startTime); %duration in ms since this line set started
         t1 = milliseconds(datetime-startTime); %duration in ms since the whole movement started
         % 100ms  from p(i) => p(i+1) no velocity
        
-        I = Interpolator("Cubic",5);
+        I = Interpolator("Cubic",5); %do we need a new instace of this for
+        %every line segement?
         
         %Arjun used an inner loop but I'm not sure what its parameter
         %should be
-        while ????
+        while ???? %this needs to limit the time each segment is run for
+            %if would try tic / toc since that is simpler
             delta_t = t0;
             pos_x = I.get(delta_t);
             x = (P3(1) - P1(1)) * pos_x + P1(1);
@@ -78,6 +82,8 @@ try
             %I'm not sure how exactly to use the lines below, I need to
             %calc the ik with pos_x,y,z and set the setpoints to that but
             %I'm not sure which methods do that exactly
+            %calcIK -> [t1 t2 t3] = Kinematics.ik3001([x y z])
+            %settingsetpoints -> [no return] pp.setSetpoint[t1 t2 t3]
             pp.setSetpoints(rad2deg(kine.ik3001(planner.trajExecute3(lasttime))));
             logger.logPositions(pp.getPositions());
             pause(0.03);
