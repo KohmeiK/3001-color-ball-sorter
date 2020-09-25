@@ -39,7 +39,7 @@ try
     P1 = [100 -70 height];
     P2 = [160 10 height];
     P3 = [50 90 height];
-    viaPoints = 30;
+    viaPoints = 5;
 
     pp.setSetpoints(rad2deg(kine.ik3001(P1)));
     %Make sure the robot is at the first point
@@ -56,14 +56,12 @@ try
     %Here's the new block of code
     for i = 1:viaPoints-1
         % 100ms  from p(i) => p(i+1) no velocity
-       
-        I = Interpolator("Cubic",5); %do we need a new instace of this for
+        I = Interpolator("Cubic",2); %do we need a new instace of this for
         %every line segement?
         %I'm not sure, I think we can do it that way
         
         tic
-        while milliseconds(tic) < 300
-            %
+        while %Still not sure what goes here, what I had was wrong
             delta_t = toc;
             
             pos_x = I.get(delta_t);
