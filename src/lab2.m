@@ -56,19 +56,33 @@ try
     
     logger = Logger("log.txt");
     
+    %Here's the new block of code
     for i = 1:viaPoints-1
         t0 = milliseconds(lasttime-startTime); %duration in ms since this line set started
         t1 = milliseconds(datetime-startTime); %duration in ms since the whole movement started
         % 100ms  from p(i) => p(i+1) no velocity
-        planner = planner.trajTask(path, i, 300);
-        lasttime = datetime;
-        %     make sure this segment runs for 100ms only
-        while milliseconds(datetime - lasttime) < 300
+       
+        I = Interpolator("Cubic",5);
+        
+        %Arjun used an inner loop but I'm not sure what its parameter
+        %should be
+        while ????
+            delta_t = t0;
+            pos_x = I.get(delta_t);
+            x = (P3(1) - P1(1)) * pos_x + P1(1);
+            pos_y = I.get(delta_t);
+            y = (P3(2) - P1(2)) * pos_y + P1(2);
+            pos_z = I.get(delta_t);
+            x = (P3(3) - P1(3)) * pos_z + P1(3);
+            
+            %I'm not sure how exactly to use the lines below, I need to
+            %calc the ik with pos_x,y,z and set the setpoints to that but
+            %I'm not sure which methods do that exactly
             pp.setSetpoints(rad2deg(kine.ik3001(planner.trajExecute3(lasttime))));
             logger.logPositions(pp.getPositions());
             pause(0.03);
-        end %we are done with this segment, now do the next segment
-        disp(i)
+            disp(i)
+        end
     end
 
     %from P2 to P3

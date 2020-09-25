@@ -38,7 +38,7 @@ classdef Interpolator
                             vf];
 
                 tempCubic = linsolve(MCubic,AnsCubic);
-                obj.coeffs(:,3) = tempCubic;
+                obj.coeffs = tempCubic;
             
             %Calculate Coefficients for Quintic Trajectory and store in obj.coeffs
             elseif InterpolationType == "Quintic"
@@ -58,26 +58,26 @@ classdef Interpolator
                               alphaf];
                           
                 tempQuintic = linSolve(MQuintic,AnsQuintic);
-                obj.coeffs(:,5) = tempQuintic;
+                obj.coeffs = tempQuintic;
             end
             
         end
         
-        function Scalar = get(deltaT)
+        function pos = get(deltaT)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             A = obj.coeffs;
             
             if obj.type == "Linear"
-               Scalar = (deltaT/obj.T);
+               pos = (deltaT/obj.T);
            
             elseif obj.type == "Cubic"
               
-                Scalar = A(0) + A(1)*deltaT + A(2)*deltaT^2 + A(3)*deltaT*3;
+                pos = A(0) + A(1)*deltaT + A(2)*deltaT^2 + A(3)*deltaT*3;
                 
             elseif obj.type == "Quintic"
                 
-                Scalar = A(0) + A(1)*deltaT + A(2)*deltaT^2 + A(3)*deltaT*3 + ...
+                pos = A(0) + A(1)*deltaT + A(2)*deltaT^2 + A(3)*deltaT*3 + ...
                     A(4)*deltaT*4 + A(5)*deltaT*5;
             end
         end
