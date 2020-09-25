@@ -57,7 +57,7 @@ classdef Interpolator
                               vf;
                               alphaf];
 
-                tempQuintic = linSolve(MQuintic,AnsQuintic);
+                tempQuintic = linsolve(MQuintic,AnsQuintic);
                 obj.coeffs = tempQuintic;
             end
 
@@ -73,12 +73,12 @@ classdef Interpolator
 
             elseif obj.type == "Cubic"
 
-                pos = A(1) + A(2)*deltaT + A(3)*deltaT^2 + A(4)*deltaT*3;
+                pos = A(1) + A(2)*deltaT + A(3)*deltaT^2 + A(4)*deltaT^3;
 
             elseif obj.type == "Quintic"
 
-                pos = A(1) + A(2)*deltaT + A(3)*deltaT^2 + A(4)*deltaT*3 + ...
-                    A(5)*deltaT*4 + A(6)*deltaT*5;
+                pos = A(1) + A(2)*deltaT + A(3)*deltaT^2 + A(4)*deltaT^3 + ...
+                    A(5)*deltaT^4 + A(6)*deltaT^5;
             end
         end
 

@@ -31,7 +31,7 @@ pp = Robot(myHIDSimplePacketComs);
 
 try
     
-    %D1  D2  D3 T1MinMax T2MinMax T3MinMax
+    %                D1  D2  D3 T1MinMax T2MinMax T3MinMax
     kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
     
     height = 35;
@@ -39,95 +39,71 @@ try
     P1 = [100 -70 height];
     P2 = [160 10 height];
     P3 = [50 90 height];
-    viaPoints = 5;
+    numberOfPoints = 5;
 
+    
     pp.setSetpoints(rad2deg(kine.ik3001(P1)));
     %Make sure the robot is at the first point
     pause(2);
     
-    planner = Traj_Planner();
-    
-    %from P1 to P2
     pathObj = Path_Planner();
-    path = pathObj.linear_traj(P1,P2,viaPoints);
-   
-    logger = Logger("log.txt");
+    pathPoints = pathObj.linear_traj(P1,P2,numberOfPoints);
     
     totalDuration = 2.0;
+    I = Interpolator("Quintic",totalDuration/ (numberOfPoints-1));
     
-    %Here's the new block of code
-    for i = 1:viaPoints-1
-        % 100ms  from p(i) => p(i+1) no velocity
-        I = Interpolator("Cubic",totalDuration); %do we need a new instace of this for
-        %every line segement?
-        %I'm not sure, I think we can do it that way
-        
+    logger = Logger("log.txt");
+    %logger's time 0 starts after robot is at P1
+    
+    for i = 1:numberOfPoints-1
         tic
-        delta_t = toc;
-        while delta_t < totalDuration / (viaPoints-1)
-            delta_t = toc;
-            
-            pos_x = I.get(delta_t);
-            x = (P2(1) - P1(1)) * pos_x + P1(2);
-            pos_y = I.get(delta_t);
-            y = (P2(2) - P1(2)) * pos_y + P1(2);
-            pos_z = I.get(delta_t);
-            z = (P2(3) - P1(3)) * pos_z + P1(3);
-            
-            disp([x y z]);
-            %I'm not sure how exactly to use the lines below, I need to
-            %calc the ik with pos_x,y,z and set the setpoints to that but
-            %I'm not sure which methods do that exactly
-            %calcIK -> [t1 t2 t3] = Kinematics.ik3001([x y z])
-            %settingsetpoints -> [no return] pp.setSetpoint[t1 t2 t3]
-            calcIK = kine.ik3001([x y z]);
-            pp.setSetpoints(calcIK);
+        while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
+            scalar = I.get(toc);
+            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:))
+            pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
             logger.logPositions(pp.getPositions());
             pause(0.03); %avoid the communication rate limit
-            delta_t = toc;
         end
     end 
+    
+    pathPoints = pathObj.linear_traj(P2,P3,numberOfPoints);
+    tic
+    while toc < 2
+        logger.logPositions(pp.getPositions());
+    end
+    
+    for i = 1:numberOfPoints-1
+        tic
+        while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
+            scalar = I.get(toc);
+            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:))
+            pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
+            logger.logPositions(pp.getPositions());
+            pause(0.03); %avoid the communication rate limit
+        end
+    end 
+    
+    pathPoints = pathObj.linear_traj(P3,P1,numberOfPoints);
+    
+    tic
+    while toc < 2
+        logger.logPositions(pp.getPositions());
+    end
+    
+    for i = 1:numberOfPoints-1
+        tic
+        while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
+            scalar = I.get(toc);
+            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:))
+            pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
+            logger.logPositions(pp.getPositions());
+            pause(0.03); %avoid the communication rate limit
+        end
+    end 
+    
     logger.close()
-    %     LAB3 SECTION 4.2
-    %     pp = pp.updateRobot();
-    %     pause(3);
-    %
-    %     p1 = rad2deg(kine.ik3001(P1));
-    %     p2 = rad2deg(kine.ik3001(P2));
-    %     p3 = rad2deg(kine.ik3001(P3));
-    %
-    %     numOfPoints = 10.0;
-    %     t0 = 0;
-    %
-    %     t1 = 970;
-    %     planner = Traj_Planner();
-    %     planner = planner.pointTo(p1,p2,t0,t1);
-    %     starttime = datetime;
-    %     for i = 1:numOfPoints
-    %         pp.setSetpoints(planner.trajExecute(starttime));
-    %         pause(t1/(1000.0*(numOfPoints)));
-    %
-    %     end
-    %     pause(2);
-    %
-    %     t1 = 1141;
-    %     planner = Traj_Planner();
-    %     planner = planner.pointTo(p2,p3,t0,t1);
-    %     starttime = datetime;
-    %     for i = 1:numOfPoints
-    %         pp.setSetpoints(planner.trajExecute(starttime));
-    %         pause(t1/(1000.0*(numOfPoints)));
-    %     end
-    %     pause(2);
-    %
-    %     t1 = 1010;
-    %     planner = Traj_Planner();
-    %     planner = planner.pointTo(p3,p1,t0,t1);
-    %     starttime = datetime;
-    %     for i = 1:numOfPoints
-    %         pp.setSetpoints(planner.trajExecute(starttime));
-    %         pause(t1/(1000.0*(numOfPoints)));
-    %     end    
+    
+    
 catch exception
     getReport(exception)
     disp('Exited on error, clean shutdown');
