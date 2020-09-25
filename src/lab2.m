@@ -53,15 +53,18 @@ try
    
     logger = Logger("log.txt");
     
+    totalDuration = 2.0;
+    
     %Here's the new block of code
     for i = 1:viaPoints-1
         % 100ms  from p(i) => p(i+1) no velocity
-        I = Interpolator("Cubic",2); %do we need a new instace of this for
+        I = Interpolator("Cubic",totalDuration); %do we need a new instace of this for
         %every line segement?
         %I'm not sure, I think we can do it that way
         
         tic
-        while %Still not sure what goes here, what I had was wrong
+        delta_t = toc;
+        while delta_t < totalDuration / (viaPoints-1)
             delta_t = toc;
             
             pos_x = I.get(delta_t);
@@ -79,8 +82,8 @@ try
             calcIK = kine.ik3001([pos_x pos_y pos_z]);
             pp.setSetpoints(calcIK);
             logger.logPositions(pp.getPositions());
-            pause(0.03);
-            disp(i)
+            pause(0.03); %avoid the communication rate limit
+            delta_t = toc;
         end
     end 
     logger.close()
