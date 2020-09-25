@@ -25,12 +25,12 @@ classdef Traj_Planner
         end
         
         function obj = quntic_traj(obj,time,pos,vel,acel,index)
-            M = [1 time(1) time(1)^2 time(1)^3 time(1)^4;
-                0    1     2*time(1) 3*time(1)^2 4*time(1)^3;
-                0    0     2 6*time(1) 12*time(1)^2;
-                1 time(2) time(2)^2 time(2)^3 time(2)^4;
-                0    1     2*time(2) 3*time(2)^2 4*time(2)^3;
-                0    0     2 6*time(2) 12*time(2)^2;];
+            M = [1 time(1) time(1)^2 time(1)^3 time(1)^4 time(1)^5;
+                0    1     2*time(1) 3*time(1)^2 4*time(1)^3  5*time(1)^4;
+                0    0     2         6*time(1)   12*time(1)^2 20*time(1)^3;
+                1 time(2) time(2)^2 time(2)^3 time(2)^4 time(2)^5;
+                0    1     2*time(2) 3*time(2)^2 4*time(2)^3 5*time(2)^4;
+                0    0     2 6*time(2) 12*time(2)^2 20*time(2)^3;];
             
             Answer = [pos(1) vel(1) acel(1) pos(2) vel(2) acel(1)]';
             temp = linsolve(M,Answer);
@@ -46,7 +46,7 @@ classdef Traj_Planner
         function res = solveEQ5(obj,t, index)
             res = obj.coeffs5(1,index) + obj.coeffs5(2,index)*t +...
                 obj.coeffs5(3,index)*(t^2) + obj.coeffs5(4,index)*(t^3) +...
-                obj.coeffs5(4,index)*(t^4) + obj.coeffs5(5,index)*(t^5);
+                obj.coeffs5(5,index)*(t^4) + obj.coeffs5(6,index)*(t^5);
         end
         
         
@@ -59,9 +59,9 @@ classdef Traj_Planner
         end
         
         function obj = pointTo5(obj, p1, p2, t0, t1)
-            obj = obj.cubic_traj([t0 t1],[p1(1) p2(1)],[0 0],[0 0],1);
-            obj = obj.cubic_traj([t0 t1],[p1(2) p2(2)],[0 0],[0 0],2);
-            obj = obj.cubic_traj([t0 t1],[p1(3) p2(3)],[0 0],[0 0],3);        
+            obj = obj.quntic_traj([t0 t1],[p1(1) p2(1)],[0 0],[0 0],1);
+            obj = obj.quntic_traj([t0 t1],[p1(2) p2(2)],[0 0],[0 0],2);
+            obj = obj.quntic_traj([t0 t1],[p1(3) p2(3)],[0 0],[0 0],3);        
         end
         
         

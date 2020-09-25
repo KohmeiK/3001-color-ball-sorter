@@ -26,7 +26,7 @@ posData = zeros(size(data,1),3);
 
 %for each row in the matrix run a FK and store in posData
 for i = (1:size(data,1))
-    disp(i)
+%     disp(i)
     pos = kine.FKtoTip([data(i,2) data(i,3) data(i,4)]);
     posData(i,1) = pos(1);
     posData(i,2) = pos(2);
@@ -35,17 +35,17 @@ end
 
 velo = diff(posData);
 accel = diff(velo);
-
-velo(:,1) = smooth(velo(:,1),150);
-velo(:,2) = smooth(velo(:,2),150);
-velo(:,3) = smooth(velo(:,3),150);
-
-accel(:,1) = smooth(accel(:,1),150);
-accel(:,2) = smooth(accel(:,2),150);
-accel(:,3) = smooth(accel(:,3),150);
+% 
+% velo(:,1) = smooth(velo(:,1),150);
+% velo(:,2) = smooth(velo(:,2),150);
+% velo(:,3) = smooth(velo(:,3),150);
+% 
+% accel(:,1) = smooth(accel(:,1),150);
+% accel(:,2) = smooth(accel(:,2),150);
+% accel(:,3) = smooth(accel(:,3),150);
 
 for i = (1:size(data,1))
-    disp(i)
+%     disp(i)
     pos = kine.FKtoTip([data(i,2) data(i,3) data(i,4)]);
     posData(i,1) = pos(1);
     posData(i,2) = pos(2);
@@ -88,9 +88,9 @@ hold off
 
 vertex = zeros(3,3);
 %manually enter vertex points and run FK on them
-vertex(1,:) = [100 -70 25];
-vertex(2,:) = [160 10 25];
-vertex(3,:) = [50 90 25];
+vertex(1,:) = [100 -70 35];
+vertex(2,:) = [160 10 35];
+vertex(3,:) = [50 90 35];
 
 %now plot both FK data and Vertext FK
 figure
@@ -121,5 +121,19 @@ plot(vertex(:,2),vertex(:,3),"r*")
 xlabel("Y Position (mm)")
 ylabel("Z Position (mm)")
 hold off
+
+% plotting in 3D
+figure
+% hold on
+plot3(posData(:,1),posData(:,2),posData(:,3), vertex(:,1), vertex(:,2), vertex(:,3),"r*")
+%plot3()
+xlabel("Y Position (mm)")
+ylabel("X Position (mm)")
+zlabel("Z Position (mm)")
+zlim([0 150]);
+grid on;
+title("3D Path of EE on X,Y,Z Plane")
+hold off
+
 
 %dDone!

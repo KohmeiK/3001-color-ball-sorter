@@ -30,6 +30,9 @@ myHIDSimplePacketComs.connect();
 pp = Robot(myHIDSimplePacketComs);
 
 try
+    %LAB3 SECTION 5.2
+      
+    %D1  D2  D3 T1MinMax T2MinMax T3MinMax
     
     %                D1  D2  D3 T1MinMax T2MinMax T3MinMax
     kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
@@ -41,7 +44,6 @@ try
     P3 = [50 90 height];
     numberOfPoints = 5;
 
-    
     pp.setSetpoints(rad2deg(kine.ik3001(P1)));
     %Make sure the robot is at the first point
     pause(2);
@@ -101,7 +103,7 @@ try
         end
     end 
     
-    logger.close()
+    logger.close();
     
     
 catch exception
