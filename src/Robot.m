@@ -120,7 +120,7 @@ classdef Robot
          %set a 3x1 matrix for the position of the arm angles
         function setSetpoints(robot,setpoint)
             packet = zeros(15, 1, 'single');
-            packet(1) = 1000;%one second time
+            packet(1) = 0;%one second time
             packet(2) = 0;%linear interpolation
             packet(3) = setpoint(1); % -90 -> 90
             packet(4) = setpoint(2);% Second link to 90 -> -45

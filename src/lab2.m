@@ -42,7 +42,7 @@ try
     P1 = [100 -70 height];
     P2 = [160 10 height];
     P3 = [50 90 height];
-    numberOfPoints = 5;
+    numberOfPoints = 10;
 
     pp.setSetpoints(rad2deg(kine.ik3001(P1)));
     %Make sure the robot is at the first point
@@ -51,17 +51,22 @@ try
     pathObj = Path_Planner();
     pathPoints = pathObj.linear_traj(P1,P2,numberOfPoints);
     
-    totalDuration = 2.0;
-    I = Interpolator("Quintic",totalDuration/ (numberOfPoints-1));
+    totalDuration = 4.0; %per motion, not the whole sequence
+    I = Interpolator("Cubic",totalDuration/ (numberOfPoints-1));
     
     logger = Logger("log.txt");
     %logger's time 0 starts after robot is at P1
+    
+    tic
+    while toc < 2
+        logger.logPositions(pp.getPositions());
+    end
     
     for i = 1:numberOfPoints-1
         tic
         while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
             scalar = I.get(toc);
-            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:))
+            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:));
             pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
             logger.logPositions(pp.getPositions());
             pause(0.03); %avoid the communication rate limit
@@ -78,7 +83,7 @@ try
         tic
         while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
             scalar = I.get(toc);
-            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:))
+            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:));
             pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
             logger.logPositions(pp.getPositions());
             pause(0.03); %avoid the communication rate limit
@@ -96,12 +101,17 @@ try
         tic
         while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
             scalar = I.get(toc);
-            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:))
+            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:));
             pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
             logger.logPositions(pp.getPositions());
             pause(0.03); %avoid the communication rate limit
         end
     end 
+    
+    tic
+    while toc < 2
+        logger.logPositions(pp.getPositions());
+    end
     
     logger.close();
     

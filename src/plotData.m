@@ -36,13 +36,13 @@ end
 velo = diff(posData);
 accel = diff(velo);
 % 
-% velo(:,1) = smooth(velo(:,1),150);
-% velo(:,2) = smooth(velo(:,2),150);
-% velo(:,3) = smooth(velo(:,3),150);
-% 
-% accel(:,1) = smooth(accel(:,1),150);
-% accel(:,2) = smooth(accel(:,2),150);
-% accel(:,3) = smooth(accel(:,3),150);
+velo(:,1) = smooth(velo(:,1),150);
+velo(:,2) = smooth(velo(:,2),150);
+velo(:,3) = smooth(velo(:,3),150);
+
+accel(:,1) = smooth(accel(:,1),150);
+accel(:,2) = smooth(accel(:,2),150);
+accel(:,3) = smooth(accel(:,3),150);
 
 for i = (1:size(data,1))
 %     disp(i)
