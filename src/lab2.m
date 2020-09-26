@@ -63,6 +63,7 @@ try
         pause(0.03); %avoid the communication rate limit
     end
     
+    %P1 -> P2
     for i = 1:numberOfPoints-1
         tic
         while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
@@ -81,6 +82,7 @@ try
         pause(0.03); %avoid the communication rate limit
     end
     
+    %P2 -> P3
     for i = 1:numberOfPoints-1
         tic
         while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
@@ -100,6 +102,7 @@ try
         pause(0.03); %avoid the communication rate limit
     end
     
+    %P3 -> P1
     for i = 1:numberOfPoints-1
         tic
         while toc < totalDuration / (numberOfPoints-1) %This gives segment duration

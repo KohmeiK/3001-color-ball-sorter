@@ -3,9 +3,9 @@ classdef Interpolator
     %   Detailed explanation goes here
 
     properties
-        coeffs;
-        type;
-        T = 0;
+        coeffs; %none    3x1     5x1
+        type; % Linear, Cubic, Quintic
+        T = 0; %in secconds
     end
 
     methods
@@ -64,8 +64,7 @@ classdef Interpolator
         end
 
         function pos = get(obj, deltaT)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
+            %This evaultes 'Type' equation at the time given
             A = obj.coeffs;
 
             if obj.type == "Linear"

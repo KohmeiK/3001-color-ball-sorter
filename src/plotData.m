@@ -1,5 +1,7 @@
 %This script processes and formats data into tables
 %This should be run after you have a log file
+%this REQUIRES a library that contains the SMOOTH FUNCTION
+%comment it out or download it if you don't have it
 
 close all
 plotter = Plotter("log.txt"); %create a plotter object from the file name
