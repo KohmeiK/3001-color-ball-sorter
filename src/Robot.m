@@ -187,8 +187,8 @@ classdef Robot
         
         function returnVal = jacob3001(~, q)
             t1 = q(1);
-            t2 = q(2);
-            t3 = q(3);
+            t2 = q(2) - deg2rad(90);
+            t3 = q(3) +  deg2rad(90);
             
             returnVal = [ (100*sin(t1)*sin(t2)*sin(t3) - 100*cos(t2)*sin(t1) - 100*cos(t2)*cos(t3)*sin(t1)) (- 100*cos(t1)*sin(t2) - 100*cos(t1)*cos(t2)*sin(t3) - 100*cos(t1)*cos(t3)*sin(t2)) (- 100*cos(t1)*cos(t2)*sin(t3) - 100*cos(t1)*cos(t3)*sin(t2));
                 (100*cos(t1)*cos(t2) - 100*cos(t1)*sin(t2)*sin(t3) + 100*cos(t1)*cos(t2)*cos(t3)) (- 100*sin(t1)*sin(t2) - 100*cos(t2)*sin(t1)*sin(t3) - 100*cos(t3)*sin(t1)*sin(t2)) (- 100*cos(t2)*sin(t1)*sin(t3) - 100*cos(t3)*sin(t1)*sin(t2));

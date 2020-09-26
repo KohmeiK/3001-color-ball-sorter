@@ -61,7 +61,9 @@ try
 %     
 %     disp(jacob)
         
-    pp.jacob3001([0 0 0])
+    jacob = pp.jacob3001([0 0 deg2rad(-90)]);
+    jp = jacob(1:3,:);
+    det(jp)
                     
     
     
