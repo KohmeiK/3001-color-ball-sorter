@@ -13,6 +13,7 @@ classdef Model
             view(3);
         end
         
+        %Plotting the stick model
         function plotArm(obj,jointAngles)
             %Loop that updates the ball and stick model
             

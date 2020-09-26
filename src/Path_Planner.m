@@ -1,7 +1,4 @@
 classdef Path_Planner
-    %PATH_PLANNER Summary of this class goes here
-    %   Detailed explanation goes here
-    
     properties
     end
     

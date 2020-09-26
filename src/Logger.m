@@ -19,8 +19,8 @@ classdef Logger
             obj.firstLogTime = datetime;
         end
         
+        %log data to file with duration in ms, t1, t2, t3
         function obj = logPositions(obj,positions)
-            %log data to file with duration in ms, t1, t2, t3
             fprintf(obj.file, '%s,%s,%s,%s\n', milliseconds(datetime - obj.firstLogTime), positions(1),positions(2),positions(3));
         end
         function obj = close(obj)

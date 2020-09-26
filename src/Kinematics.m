@@ -3,13 +3,15 @@ classdef Kinematics
     %and for running and FK neeed
     
     properties
+        % l1, l2 and l3 are link lengths of our robot in mm.
         l1 = 0;
         l2 = 0;
         l3 = 0;
-        jointLimits
+        jointLimits %for safety calculations in the arm workspace
     end
     
     methods
+        %constructor
         function obj = Kinematics(joint1Length,joint2Length,joint3Length,jointMinMax)
             obj.l1 = joint1Length;
             obj.l2 = joint2Length;
@@ -18,11 +20,15 @@ classdef Kinematics
             
         end
         
+        %inverse kinematics function: xyz is a 1x3 matrix containing the x, y and z position 
         function theta = ik3001(obj, xyz)
+            %1x3 matrix holding 3 theta values corresponding to the motor 1
+            %2 and 3.
             theta = zeros(1,3);
             x = xyz(1);
             y = xyz(2);
             z = xyz(3);
+            
             
             sqrtX2y2 = sqrt(x^2+y^2);
             z1d1 = z - obj.l1;
@@ -50,14 +56,15 @@ classdef Kinematics
             theta3a = deg2rad(90)-a3a;
             theta3b = deg2rad(90)-a3b;
             
-            Safe1 = obj.isInLimit(1,theta1);
             
+            %Safety checking
+            Safe1 = obj.isInLimit(1,theta1);
             Safe2a = obj.isInLimit(2,theta2a);
             Safe2b = obj.isInLimit(2,theta2b);
-            
             Safe3a = obj.isInLimit(3,theta3a);
             Safe3b = obj.isInLimit(3,theta3b);
             
+            %deciding the value for theta1 theta2 and theta3
             if Safe1 == 0
                 error("Theta 1 was not safe. Value: "+ string(theta1));
             else
@@ -92,10 +99,11 @@ classdef Kinematics
             
         end
         
+        
+        %FK3001 reutnrs a 3x1 matrix for the end effector position w.r.t. the origin based on a 3x1
+        %matrix of joint angles
         function tipPos = FKtoTip(obj,jointAngles)
-            %FK3001 reutnrs a 3x1 matrix for end effector position based on a 3x1
-            %matrix of join angles
-            %   Detailed explanation goes here
+            
             jointAngles = deg2rad(jointAngles);
             T0to2 = obj.DHtoMatrix(jointAngles(1),95,0,-pi/2);
             T2to3 = obj.DHtoMatrix(jointAngles(2)-(pi/2), 0,100,0);
@@ -109,6 +117,7 @@ classdef Kinematics
             tipPos(3) = FinalMatrix(3,4);
         end
         
+        %Turning a row in DH table into transformation matrix.
         function Tmatrix = DHtoMatrix(~,Theta,D,A,Alpha)
             Tmatrix = zeros(4,'double');
             
@@ -132,6 +141,7 @@ classdef Kinematics
             Tmatrix(4,4) = 1;
         end
         
+        %Safety checking function.
         function safe = isInLimit(obj,joint, angleRad)
             safe = 0;
             if  angleRad > obj.jointLimits(joint,1) && angleRad < obj.jointLimits(joint,2)
