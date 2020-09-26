@@ -209,8 +209,9 @@ classdef Robot
             
             tbt = obj.jacob3001(qi);
             
-            delQ = pinv(tbt(1:3,:)) * (pd - fqi);
-            %disp(delQ)
+            delQ = cross(pinv(tbt(1:3,:)),(pd - fqi));
+            
+            disp(delQ)
             qi = qi + delQ;
             invReturn = qi;
              

@@ -66,17 +66,19 @@ try
 %     jp = jacob(1:3,:);
 %     det(jp)
 
-q0 = [100 0 195];
+q0 = [100 -70 35];
 pd = [160 10 35];
 Error = 1;
 % inside a loop
-curModelPos = [100 0 195];
+curModelPos = q0;
 curFk = kine.FKtoTip(curModelPos);
 while abs(pd(1) - curFk(1)) > Error && abs(pd(2) - curFk(2)) > Error && abs(pd(3) - curFk(3)) > Error
     curPos = curModelPos;
     fkcurPos = kine.FKtoTip(curPos);
-    disp(rad2deg(kine.ik3001(pp.ik_3001_numerical(pd, curPos, fkcurPos))))
+    disp(pp.ik_3001_numerical(pd, curPos, fkcurPos))
+    
     robModel.plotArm(rad2deg(kine.ik3001(pp.ik_3001_numerical(pd, curPos, fkcurPos))));
+    
     curModelPos = kine.ik3001(pp.ik_3001_numerical(pd, curPos, fkcurPos));
     curFk = kine.FKtoTip(curModelPos);
     disp("moveTime")
