@@ -60,6 +60,7 @@ try
     tic
     while toc < 2
         logger.logPositions(pp.getPositions());
+        pause(0.03); %avoid the communication rate limit
     end
     
     for i = 1:numberOfPoints-1
@@ -77,6 +78,7 @@ try
     tic
     while toc < 2
         logger.logPositions(pp.getPositions());
+        pause(0.03); %avoid the communication rate limit
     end
     
     for i = 1:numberOfPoints-1
@@ -95,6 +97,7 @@ try
     tic
     while toc < 2
         logger.logPositions(pp.getPositions());
+        pause(0.03); %avoid the communication rate limit
     end
     
     for i = 1:numberOfPoints-1
@@ -111,6 +114,7 @@ try
     tic
     while toc < 2
         logger.logPositions(pp.getPositions());
+        pause(0.03); %avoid the communication rate limit
     end
     
     logger.close();
