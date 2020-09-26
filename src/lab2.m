@@ -27,44 +27,77 @@ myHIDSimplePacketComs.setVid(vid);
 myHIDSimplePacketComs.connect();
 
 % Create a PacketProcessor object to send data to the nucleo firmware
-pp = Robot(myHIDSimplePacketComs);
-kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
 try
-%     syms t1 t2 t3;
-%     syms d1 d2 d3;
-%     syms a1 a2 a3;
-%     syms alp1 alp2 alp3;
-%     
-%     
-%     a = kine.SymbFKtoTip(t1, t2, t3, d1, d2,d3,a1,a2,a3,alp1,alp2,alp3);
-%     b = [t1 t2 t3];
-%     disp(a);
-%     disp(b);
-%     jacob = [ diff(a(1),b(1)) diff(a(1),b(2)) diff(a(1),b(3));
-%         diff(a(2),b(1)) diff(a(2),b(2)) diff(a(2),b(3));
-%         diff(a(3),b(1)) diff(a(3),b(2)) diff(a(3),b(3));
-%         0 0 0;
-%         0 0 0;
-%         1 1 1];
-%     
-%     jacob= subs(jacob,d1,95);
-%     jacob= subs(jacob,d2,0);
-%     jacob= subs(jacob,d3,0);
-%     
-%     jacob= subs(jacob,a1,0);
-%     jacob= subs(jacob,a2,100);
-%     jacob= subs(jacob,a3,100);
-%     
-%     jacob= subs(jacob,alp1,-(pi/2));
-%     jacob= subs(jacob,alp2,0);
-%     jacob= subs(jacob,alp3,0);
-%     
-%     disp(jacob)
-        
-    jacob = pp.jacob3001([0 0 deg2rad(-90)]);
-    jp = jacob(1:3,:);
-    det(jp)
-                    
+    
+    robot = Robot(myHIDSimplePacketComs);
+    
+    kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
+    
+    model = Model();
+    model.plotArm(robot.getPositions());
+    
+    logger = Logger("log.txt");
+    
+    pathObj = Path_Planner();
+    
+    timer = EventTimer();
+    
+    state = State.STARTNEXT;
+    
+    height = 35;
+    P1 = [100 -70 height];
+    P2 = [160 10 height];
+    P3 = [50 90 height];
+    
+    pathObj.queueOfPaths.enqueue([P1 P2 2 10 3])
+    pathObj.queueOfPaths.enqueue([P2 P3 2 10 3])
+    pathObj.queueOfPaths.enqueue([P3 P1 2 10 3])
+    
+    
+    
+    while true
+        model.plotArm(robot.getPositions());
+        switch(state)
+            case State.STOPPED
+                disp("State -> STOPPED");
+                timer = timer.setTimer(2);
+                state = State.WAITING;
+            case State.LONGWAIT
+                %                 disp("State -> WAITING");
+                if(timer.isTimerDone() == 1)
+                    state = State.STARTNEXT;
+                end
+                
+            case State.WAITING
+                %                 disp("State -> WAITING");
+                if(timer.isTimerDone() == 1)
+                    state = State.RUNNING;
+                end
+            case State.RUNNING
+                disp("State -> RUNNING");
+                [pathObj,isDone,nextSetpoint] = pathObj.update();
+                if(isDone == 1)
+                    timer = timer.setTimer(2);
+                    state = State.LONGWAIT;
+                    disp("---END---")
+                else
+                    robot.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
+                    timer = timer.setTimer(0.03);
+                    state = State.WAITING;
+                end
+            case State.END
+                
+            case State.STARTNEXT
+                pathObj = pathObj.startNextPath();
+                state = State.RUNNING;
+                
+        end
+    end
+    
+    
+    
+    
+    
     
     
 catch exception
@@ -72,4 +105,4 @@ catch exception
     disp('Exited on error, clean shutdown');
 end
 % Clear up memory upon termination
-pp.shutdown()
+robot.shutdown()

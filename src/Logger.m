@@ -28,6 +28,13 @@ classdef Logger
             fclose(obj.file);
             obj.file = -1;
         end
+        
+        function obj = pauseAndLog(obj,secconds,robot)
+            tic
+            while toc < secconds
+                obj.logPositions(robot.getPositions());
+            end
+        end
     end
 end
 
