@@ -117,6 +117,20 @@ classdef Kinematics
             tipPos(3) = FinalMatrix(3,4);
         end
         
+        function tipPos = SymbFKtoTip(obj,t1, t2, t3, d1, d2,d3,a1,a2,a3,alp1,alp2,alp3)
+            
+            T0to2 = obj.SymbDHtoMatrix(t1,d1,a1,alp1);
+            T2to3 = obj.SymbDHtoMatrix(t2,d2,a2,alp2);
+            T3to4 = obj.SymbDHtoMatrix(t3,d3,a3,alp3);
+            
+            FinalMatrix = T0to2 * T2to3 * T3to4;
+            syms o;
+            tipPos = [o o o]';
+            tipPos(1) = FinalMatrix(1,4);
+            tipPos(2) = FinalMatrix(2,4);
+            tipPos(3) = FinalMatrix(3,4);
+        end
+        
         %Turning a row in DH table into transformation matrix.
         function Tmatrix = DHtoMatrix(~,Theta,D,A,Alpha)
             Tmatrix = zeros(4,'double');
@@ -138,6 +152,37 @@ classdef Kinematics
             Tmatrix(3,3) = cos(Alpha);
             Tmatrix(3,4) = D;
             
+            Tmatrix(4,4) = 1;
+        end
+        
+        function Tmatrix = SymbDHtoMatrix(~,Theta,D,A,Alpha)
+            syms o
+            Tmatrix = [o o o o;
+                        o o o o;
+                        o o o o;
+                        o o o o;];
+            
+            %Row 1
+            Tmatrix(1,1) = cos(Theta);
+            Tmatrix(1,2) = -sin(Theta)*cos(Alpha);
+            Tmatrix(1,3) = sin(Theta)*sin(Alpha);
+            Tmatrix(1,4) = A*cos(Theta);
+            
+            %Row 2
+            Tmatrix(2,1) = sin(Theta);
+            Tmatrix(2,2) = cos(Theta)*cos(Alpha);
+            Tmatrix(2,3) = -cos(Theta)*sin(Alpha);
+            Tmatrix(2,4) = A*sin(Theta);
+            
+            %Row 3
+            Tmatrix(3,1) = 0;
+            Tmatrix(3,2) = sin(Alpha);
+            Tmatrix(3,3) = cos(Alpha);
+            Tmatrix(3,4) = D;
+            
+            Tmatrix(4,1) = 0;
+            Tmatrix(4,2) = 0;
+            Tmatrix(4,3) = 0;
             Tmatrix(4,4) = 1;
         end
         

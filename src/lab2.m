@@ -28,99 +28,41 @@ myHIDSimplePacketComs.connect();
 
 % Create a PacketProcessor object to send data to the nucleo firmware
 pp = Robot(myHIDSimplePacketComs);
-
+kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
 try
-    %LAB3 SECTION 5.2
-      
-    %D1  D2  D3 T1MinMax T2MinMax T3MinMax
-    
-    %                D1  D2  D3 T1MinMax T2MinMax T3MinMax
-    kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
-    
-    height = 35;
-    
-    P1 = [100 -70 height];
-    P2 = [160 10 height];
-    P3 = [50 90 height];
-    numberOfPoints = 10;
-
-    pp.setSetpoints(rad2deg(kine.ik3001(P1)));
-    %Make sure the robot is at the first point
-    pause(2);
-    
-    pathObj = Path_Planner();
-    pathPoints = pathObj.linear_traj(P1,P2,numberOfPoints);
-    
-    totalDuration = 4.0; %per motion, not the whole sequence
-    I = Interpolator("Cubic",totalDuration/ (numberOfPoints-1));
-    
-    logger = Logger("log.txt");
-    %logger's time 0 starts after robot is at P1
-    
-    tic
-    while toc < 2
-        logger.logPositions(pp.getPositions());
-        pause(0.03); %avoid the communication rate limit
-    end
-    
-    %P1 -> P2
-    for i = 1:numberOfPoints-1
-        tic
-        while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
-            scalar = I.get(toc);
-            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:));
-            pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
-            logger.logPositions(pp.getPositions());
-            pause(0.03); %avoid the communication rate limit
-        end
-    end 
-    
-    pathPoints = pathObj.linear_traj(P2,P3,numberOfPoints);
-    tic
-    while toc < 2
-        logger.logPositions(pp.getPositions());
-        pause(0.03); %avoid the communication rate limit
-    end
-    
-    %P2 -> P3
-    for i = 1:numberOfPoints-1
-        tic
-        while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
-            scalar = I.get(toc);
-            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:));
-            pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
-            logger.logPositions(pp.getPositions());
-            pause(0.03); %avoid the communication rate limit
-        end
-    end 
-    
-    pathPoints = pathObj.linear_traj(P3,P1,numberOfPoints);
-    
-    tic
-    while toc < 2
-        logger.logPositions(pp.getPositions());
-        pause(0.03); %avoid the communication rate limit
-    end
-    
-    %P3 -> P1
-    for i = 1:numberOfPoints-1
-        tic
-        while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
-            scalar = I.get(toc);
-            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:));
-            pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
-            logger.logPositions(pp.getPositions());
-            pause(0.03); %avoid the communication rate limit
-        end
-    end 
-    
-    tic
-    while toc < 2
-        logger.logPositions(pp.getPositions());
-        pause(0.03); %avoid the communication rate limit
-    end
-    
-    logger.close();
+%     syms t1 t2 t3;
+%     syms d1 d2 d3;
+%     syms a1 a2 a3;
+%     syms alp1 alp2 alp3;
+%     
+%     
+%     a = kine.SymbFKtoTip(t1, t2, t3, d1, d2,d3,a1,a2,a3,alp1,alp2,alp3);
+%     b = [t1 t2 t3];
+%     disp(a);
+%     disp(b);
+%     jacob = [ diff(a(1),b(1)) diff(a(1),b(2)) diff(a(1),b(3));
+%         diff(a(2),b(1)) diff(a(2),b(2)) diff(a(2),b(3));
+%         diff(a(3),b(1)) diff(a(3),b(2)) diff(a(3),b(3));
+%         0 0 0;
+%         0 0 0;
+%         1 1 1];
+%     
+%     jacob= subs(jacob,d1,95);
+%     jacob= subs(jacob,d2,0);
+%     jacob= subs(jacob,d3,0);
+%     
+%     jacob= subs(jacob,a1,0);
+%     jacob= subs(jacob,a2,100);
+%     jacob= subs(jacob,a3,100);
+%     
+%     jacob= subs(jacob,alp1,-(pi/2));
+%     jacob= subs(jacob,alp2,0);
+%     jacob= subs(jacob,alp3,0);
+%     
+%     disp(jacob)
+        
+    pp.jacob3001([0 0 0])
+                    
     
     
 catch exception

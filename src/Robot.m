@@ -99,7 +99,7 @@ classdef Robot
             %disp(position);
         end
         
-         %get a 3x1 matrix for the setpoint of the arm angles
+        %get a 3x1 matrix for the setpoint of the arm angles
         function setpoint = getSetpoints(Robot)
             returnPacket = read(Robot, 1910);
             setpoint = zeros(3,1);
@@ -108,7 +108,7 @@ classdef Robot
             setpoint(3) = returnPacket(6);
         end
         
-         %get a 3x1 matrix for the velocities of each servo
+        %get a 3x1 matrix for the velocities of each servo
         function velocity = getVelocities(robot)
             returnPacket = read(robot, 1822);
             velocity = zeros(3, 1, 'single');
@@ -117,7 +117,7 @@ classdef Robot
             velocity(3) = returnPacket(9);
         end
         
-         %set a 3x1 matrix for the position of the arm angles
+        %set a 3x1 matrix for the position of the arm angles
         function setSetpoints(robot,setpoint)
             packet = zeros(15, 1, 'single');
             packet(1) = 0;%one second time
@@ -185,5 +185,18 @@ classdef Robot
             robot.setpointQueue.enqueue(newSetpoint);
         end
         
+        function returnVal = jacob3001(~, q)
+            t1 = q(1);
+            t2 = q(2);
+            t3 = q(3);
+            
+            returnVal = [ (100*sin(t1)*sin(t2)*sin(t3) - 100*cos(t2)*sin(t1) - 100*cos(t2)*cos(t3)*sin(t1)) (- 100*cos(t1)*sin(t2) - 100*cos(t1)*cos(t2)*sin(t3) - 100*cos(t1)*cos(t3)*sin(t2)) (- 100*cos(t1)*cos(t2)*sin(t3) - 100*cos(t1)*cos(t3)*sin(t2));
+                (100*cos(t1)*cos(t2) - 100*cos(t1)*sin(t2)*sin(t3) + 100*cos(t1)*cos(t2)*cos(t3)) (- 100*sin(t1)*sin(t2) - 100*cos(t2)*sin(t1)*sin(t3) - 100*cos(t3)*sin(t1)*sin(t2)) (- 100*cos(t2)*sin(t1)*sin(t3) - 100*cos(t3)*sin(t1)*sin(t2));
+                (0)                           (100*sin(t2)*sin(t3) - 100*cos(t2)*cos(t3) - 100*cos(t2))                   (100*sin(t2)*sin(t3) - 100*cos(t2)*cos(t3));
+                0                                                                                0                                                         0;
+                0                                                                                0                                                           0;
+                1                                                                                 1                                                           1];
+            
+        end
     end
 end
