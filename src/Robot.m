@@ -198,5 +198,10 @@ classdef Robot
                 1                                                                                 1                                                           1];
             
         end
+        
+        function p = fdk3001(obj, q)
+            p = obj.jacob3001(q) * q';
+        end
+            
     end
 end
