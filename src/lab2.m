@@ -28,33 +28,33 @@ myHIDSimplePacketComs.connect();
 
 % Create a PacketProcessor object to send data to the nucleo firmware
 try
-    
+
     robot = Robot(myHIDSimplePacketComs);
-    
+
     kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
-    
+
     model = Model();
     model.plotArm(robot.getPositions());
-    
+
     logger = Logger("log.txt");
-    
+
     pathObj = Path_Planner();
-    
+
     timer = EventTimer();
-    
+
     state = State.STARTNEXT;
-    
+
     height = 35;
     P1 = [100 -70 height];
     P2 = [160 10 height];
     P3 = [50 90 height];
-    
+
     pathObj.queueOfPaths.enqueue([P1 P2 2 10 3])
     pathObj.queueOfPaths.enqueue([P2 P3 2 10 3])
     pathObj.queueOfPaths.enqueue([P3 P1 2 10 3])
-    
-    
-    
+
+
+
     while true
         model.plotArm(robot.getPositions());
         switch(state)
@@ -67,7 +67,7 @@ try
                 if(timer.isTimerDone() == 1)
                     state = State.STARTNEXT;
                 end
-                
+
             case State.WAITING
                 %                 disp("State -> WAITING");
                 if(timer.isTimerDone() == 1)
@@ -86,20 +86,18 @@ try
                     state = State.WAITING;
                 end
             case State.END
-                
+
             case State.STARTNEXT
                 pathObj = pathObj.startNextPath();
                 state = State.RUNNING;
-                
+
         end
     end
-    
-    
-    
-    
-    
-    
-    
+
+  
+
+
+
 catch exception
     getReport(exception)
     disp('Exited on error, clean shutdown');
