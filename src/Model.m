@@ -17,7 +17,7 @@ classdef Model
         function plotArm(obj,jointAngles)
             %Loop that updates the ball and stick model
             
-            kine = Kinematics(); %Load the kinematics class
+            kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]); %Load the kinematics class
             jointAngles = deg2rad(jointAngles);
             
             %Values from DH table

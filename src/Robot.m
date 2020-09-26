@@ -88,14 +88,17 @@ classdef Robot
         end
         
         %get a 3x1 matrix for the position of the arm angles
-        function position = getPositions(Robot)
+        function pos = getPositions(Robot)
             returnPacket = read(Robot, 1910);
+            pos = zeros(3, 1);
             %{
             disp(returnPacket(3));
             disp(returnPacket(5));
             disp(returnPacket(7));
             %}
-            position = [returnPacket(3); returnPacket(5); returnPacket(7)];
+            pos(1) = returnPacket(3); 
+            pos(2) = returnPacket(5);
+            pos(3) = returnPacket(7);
             %disp(position);
         end
         
@@ -198,5 +201,53 @@ classdef Robot
                 1                                                                                 1                                                           1];
             
         end
+        
+        function invReturn = ik_3001_numerical(obj, pd, qi, fqi) %error)
+%             Qx = pd(1) - fqi(1);
+%             Qy = pd(2) - fqi(2);
+%             Qz = pd(3) - fqi(3);
+            
+            tbt = obj.jacob3001(qi);
+            
+            delQ = pinv(tbt(1:3,:)) * (pd - fqi);
+            %disp(delQ)
+            qi = qi + delQ;
+            invReturn = qi;
+             
+%             while abs(Qx) > error
+%                delQ = pinv(obj.jacob3001(qi)) *  Qx;
+%                disp(delQ)
+%                qi(1) = qi(1) + delQ(1);
+%                resM(1) = qi(1);
+%                
+%             end
+%             
+%             
+%             while abs(Qy) > error
+%                delQ = pinv(obj.jacob3001(qi)) *  Qy;
+%                qi(2) = qi(2) + delQ(2);
+%                resM(2) = qi(2);
+%             end
+%             
+%             
+%             while abs(Qz) > error
+%                delQ = pinv(obj.jacob3001(qi)) *  Qz;
+%                qi(3) = qi(3) + delQ(3);
+%                resM(3) = qi(3);
+%             end
+        end
+        
+        
+        function pos = atPosition(~, startPos, endPos, error)
+            if abs(endPos(1) - startPos(1)) < error && abs(endPos(2) - startPos(2)) < error &&...
+                abs(endPos(3) - startPos(3)) < error
+                
+                pos = 1;
+                
+            else
+                pos = 0;
+            end 
+        end
+        
     end
 end

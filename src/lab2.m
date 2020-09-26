@@ -29,6 +29,7 @@ myHIDSimplePacketComs.connect();
 % Create a PacketProcessor object to send data to the nucleo firmware
 pp = Robot(myHIDSimplePacketComs);
 kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
+robModel = Model();
 try
 %     syms t1 t2 t3;
 %     syms d1 d2 d3;
@@ -61,11 +62,27 @@ try
 %     
 %     disp(jacob)
         
-    jacob = pp.jacob3001([0 0 deg2rad(-90)]);
-    jp = jacob(1:3,:);
-    det(jp)
-                    
-    
+%     jacob = pp.jacob3001([0 0 deg2rad(-90)]);
+%     jp = jacob(1:3,:);
+%     det(jp)
+
+q0 = [100 0 195];
+pd = [160 10 35];
+Error = 1;
+% inside a loop
+curModelPos = [100 0 195];
+curFk = kine.FKtoTip(curModelPos);
+while abs(pd(1) - curFk(1)) > Error && abs(pd(2) - curFk(2)) > Error && abs(pd(3) - curFk(3)) > Error
+    curPos = curModelPos;
+    fkcurPos = kine.FKtoTip(curPos);
+    disp(rad2deg(kine.ik3001(pp.ik_3001_numerical(pd, curPos, fkcurPos))))
+    robModel.plotArm(rad2deg(kine.ik3001(pp.ik_3001_numerical(pd, curPos, fkcurPos))));
+    curModelPos = kine.ik3001(pp.ik_3001_numerical(pd, curPos, fkcurPos));
+    curFk = kine.FKtoTip(curModelPos);
+    disp("moveTime")
+end 
+
+
     
 catch exception
     getReport(exception)
