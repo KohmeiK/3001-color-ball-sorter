@@ -54,27 +54,25 @@ try
     P2 = [160 10 height];
     P3 = [50 90 height];
     
-    pathObj.queueOfPaths.enqueue([P1 P2 2 10 3])
-    pathObj.queueOfPaths.enqueue([P2 P3 2 10 3])
-    pathObj.queueOfPaths.enqueue([P3 P1 2 10 3])
+    pathObj.queueOfPaths.enqueue([P1 P2 1 20 3])
+    pathObj.queueOfPaths.enqueue([P2 P3 1 20 3])
+    pathObj.queueOfPaths.enqueue([P3 P1 1 20 3])
     
     RENDER_RATE_MS = 100.0;
     tic
     while true
+        
         if(renderTimer.isTimerDone() == 1)
             switch(renderState)
                 case State.COMPUTE
-                    disp("Compute");
                     currentPos = robot.getPositions();
                     model = model.calcPose(currentPos);
                     renderState = State.PRERENDER;
                         
                 case State.PRERENDER
-                    disp("PreRender");
                     model = model.plotGraph();
                     renderState = State.RENDER;
                 case State.RENDER
-                    disp("Render");
                     renderState = State.COMPUTE;
                     model.render();
             end
@@ -87,13 +85,11 @@ try
                 timer = timer.setTimer(2);
                 state = State.WAITING;
             case State.LONGWAIT
-                %                 disp("State -> WAITING");
                 if(timer.isTimerDone() == 1)
                     state = State.STARTNEXT;
                 end
                 
             case State.WAITING
-                %                 disp("State -> WAITING");
                 if(timer.isTimerDone() == 1)
                     state = State.RUNNING;
                 end
