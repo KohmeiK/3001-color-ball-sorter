@@ -9,6 +9,7 @@ classdef EventTimer
     
     methods
         function obj = EventTimer()
+            obj.startTime = tic;
         end
         
         function obj = setTimer(obj,duration)

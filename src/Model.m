@@ -3,6 +3,8 @@ classdef Model
     
     properties
         mainAxes
+        poses
+        transforms
     end
     
     methods
@@ -10,11 +12,19 @@ classdef Model
             %MODEL Construct an instance of this class
             %Make axes window
             obj.mainAxes = axes('Position',[0.1 0.1 0.8 0.8]);
+            title(obj.mainAxes,'3001 Virtual Arm');
+            xlabel(obj.mainAxes,'X Axis');
+            ylabel(obj.mainAxes,'Y Axis');
+            zlabel(obj.mainAxes,'Z Axis');
+            xlim(obj.mainAxes,[-220 220]);
+            ylim(obj.mainAxes,[-220 220]);
+            zlim(obj.mainAxes,[0 300]);
+
             view(3);
         end
         
         %Plotting the stick model
-        function plotArm(obj,jointAngles)
+        function obj = calcPose(obj,jointAngles)
             %Loop that updates the ball and stick model
             
             kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
@@ -26,15 +36,19 @@ classdef Model
             T3to4 = kine.DHtoMatrix(jointAngles(3)+(pi/2),0,100,0);
             
             %concatinate all 3 transforms
-            transforms = cat(3,T0to2, T2to3, T3to4);
-            poses = zeros(4,4,size(transforms,3));
+            obj.transforms = cat(3,T0to2, T2to3, T3to4);
+            obj.poses = zeros(4,4,size(obj.transforms,3));
+            
+        end
+        
+        function obj = plotGraph(obj)
             
             %for all 4 frames
-            for i = (1:size(transforms,3))
+            for i = (1:size(obj.transforms,3))
                 if(i == 1) %For the first frame the pose is the transform
-                    poses(:,:,i) = transforms(:,:,i);
+                    obj.poses(:,:,i) = obj.transforms(:,:,i);
                 else %for everything else post mutiply with previous pose
-                    poses(:,:,i) = poses(:,:,i-1) * transforms(:,:,i);
+                    obj.poses(:,:,i) = obj.poses(:,:,i-1) * obj.transforms(:,:,i);
                 end
             end
             %now all poses and frames are ready
@@ -49,23 +63,22 @@ classdef Model
             triad('Parent',obj.mainAxes,'Scale',30,'LineWidth',3);
             
             %create triads at each frame
-            for i = (1:size(poses,3))
-                triad('Parent',obj.mainAxes,'Scale',30,'LineWidth',3,'Matrix',poses(:,:,i));
-                x(i+1) = poses(1,4,i);
-                y(i+1) = poses(2,4,i);
-                z(i+1) = poses(3,4,i);
+            warning('off', 'MATLAB:hg:DiceyTransformMatrix');
+            for i = (1:3)
+                triad('Parent',obj.mainAxes,'Scale',30,'LineWidth',3,'Matrix',obj.poses(:,:,i));
+                x(i+1) = obj.poses(1,4,i);
+                y(i+1) = obj.poses(2,4,i);
+                z(i+1) = obj.poses(3,4,i);
             end
+           
             
             %plot the ball and stick and label stuff
             plot3(x,y,z,'-o','LineWidth',4,'MarkerSize',10,'MarkerFaceColor',[0.5,0.5,0.5]);grid on;
-            title('3001 Virtual Arm')
-            xlabel('X Axis');
-            ylabel('Y Axis');
-            zlabel('Z Axis');
-            xlim([-220 220]);
-            ylim([-220 220]);
-            zlim([0 300]);
-            drawnow
+            
+        end
+        
+        function render(~)
+            drawnow;
         end
     end
 end

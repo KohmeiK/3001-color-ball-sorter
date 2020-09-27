@@ -28,35 +28,59 @@ myHIDSimplePacketComs.connect();
 
 % Create a PacketProcessor object to send data to the nucleo firmware
 try
-
+    
     robot = Robot(myHIDSimplePacketComs);
-
+    
     kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
-
+    
     model = Model();
-    model.plotArm(robot.getPositions());
-
+    model = model.calcPose(robot.getPositions());
+    model = model.plotGraph();
+    model.render();
+    
     logger = Logger("log.txt");
-
+    
     pathObj = Path_Planner();
-
+    
     timer = EventTimer();
-
+    renderTimer = EventTimer();
+    renderTimer.setTimer(0);
+    
     state = State.STARTNEXT;
-
+    renderState = State.COMPUTE;
+    
     height = 35;
     P1 = [100 -70 height];
     P2 = [160 10 height];
     P3 = [50 90 height];
-
+    
     pathObj.queueOfPaths.enqueue([P1 P2 2 10 3])
     pathObj.queueOfPaths.enqueue([P2 P3 2 10 3])
     pathObj.queueOfPaths.enqueue([P3 P1 2 10 3])
-
-
-
+    
+    RENDER_RATE_MS = 100.0;
+    tic
     while true
-        model.plotArm(robot.getPositions());
+        if(renderTimer.isTimerDone() == 1)
+            switch(renderState)
+                case State.COMPUTE
+                    disp("Compute");
+                    currentPos = robot.getPositions();
+                    model = model.calcPose(currentPos);
+                    renderState = State.PRERENDER;
+                        
+                case State.PRERENDER
+                    disp("PreRender");
+                    model = model.plotGraph();
+                    renderState = State.RENDER;
+                case State.RENDER
+                    disp("Render");
+                    renderState = State.COMPUTE;
+                    model.render();
+            end
+            renderTimer = renderTimer.setTimer(RENDER_RATE_MS/3000.0);
+        end
+        
         switch(state)
             case State.STOPPED
                 disp("State -> STOPPED");
@@ -67,37 +91,36 @@ try
                 if(timer.isTimerDone() == 1)
                     state = State.STARTNEXT;
                 end
-
+                
             case State.WAITING
                 %                 disp("State -> WAITING");
                 if(timer.isTimerDone() == 1)
                     state = State.RUNNING;
                 end
             case State.RUNNING
-                disp("State -> RUNNING");
+                toc
                 [pathObj,isDone,nextSetpoint] = pathObj.update();
+                tic
                 if(isDone == 1)
                     timer = timer.setTimer(2);
                     state = State.LONGWAIT;
-                    disp("---END---")
+                    disp("---END OF PATH---")
                 else
                     robot.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
-                    timer = timer.setTimer(0.03);
-                    state = State.WAITING;
                 end
             case State.END
-
+                
             case State.STARTNEXT
                 pathObj = pathObj.startNextPath();
                 state = State.RUNNING;
-
+                
         end
     end
-
-  
-
-
-
+    
+    
+    
+    
+    
 catch exception
     getReport(exception)
     disp('Exited on error, clean shutdown');

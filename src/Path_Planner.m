@@ -8,6 +8,7 @@ classdef Path_Planner
         totalDuration
         segmentStartTime
         onSegment
+        segmentDuration
     end
     
     methods
@@ -26,11 +27,11 @@ classdef Path_Planner
             end
             pathData = obj.queueOfPaths.dequeue();
             type = pathData(9);
-            typeString = ":Linear"
+            typeString = ":Linear";
             if type == 3
-                typeString = "Cubic"
+                typeString = "Cubic";
             elseif type == 5
-                typeString = "Quintic"
+                typeString = "Quintic";
             end
             obj = obj.startPath(pathData(1:3),pathData(4:6),pathData(7),pathData(8),typeString);
         end
@@ -42,36 +43,37 @@ classdef Path_Planner
             obj.totalDuration = totalDuration;
             obj.onSegment = 1;
             obj.segmentStartTime = tic;
+            obj.segmentDuration = obj.totalDuration / (obj.numberOfPoints - 1);
         end
         
-        function obj = startSegment(obj)
+        function obj = startNextSegment(obj)
             obj.segmentStartTime = tic;
             obj.onSegment = obj.onSegment + 1;
-            disp("Moving to next segment: ");
-            disp(obj.onSegment);
+%             disp("Moving to next segment: ");
+%             disp(obj.onSegment);
         end
         
         function [obj, isPathDone, setPoint] = update(obj)
-            disp("Running Update");
-            if obj.onSegment >= obj.numberOfPoints - 1
+%             disp("Running Update");
+            if obj.onSegment >= obj.numberOfPoints
                 isPathDone = 1;
-                setPoint = [0 0 0];
+                setPoint = [100 0 195];
             else
                 isPathDone = 0;
-                segmentDuration = obj.totalDuration / (obj.numberOfPoints - 1);
-                disp("Segment Duration:") 
-                disp(segmentDuration)
-                disp("Start time") 
-                disp(toc(obj.segmentStartTime))
-                if(toc(obj.segmentStartTime) > segmentDuration)
-                    obj = obj.startSegment();
-                end
-                disp("Current Segment segment: ");
-                disp(obj.onSegment);
+%                 disp("Segment Duration:") 
+%                 disp(segmentDuration)
+%                 disp("Start time") 
+%                 disp(toc(obj.segmentStartTime))
                 
                 scalar = obj.I.get(toc(obj.segmentStartTime));
                 setPoint = ((obj.pathPoints(obj.onSegment+1,:)-...
                     obj.pathPoints(obj.onSegment,:)).* scalar + obj.pathPoints(obj.onSegment,:));
+                
+                if(toc(obj.segmentStartTime) > obj.segmentDuration)
+                    obj = obj.startNextSegment();
+                end
+%                 disp("Current Segment segment: ");
+%                 disp(obj.onSegment);
             end
         end
     end
