@@ -66,23 +66,29 @@ try
 %     jp = jacob(1:3,:);
 %     det(jp)
 
-q0 = [100 -70 35];
-pd = [160 10 35];
+p0 = [100 -70 35];
+pd = [160;10;35];
 Error = 1;
 % inside a loop
-curModelPos = q0;
-curFk = kine.FKtoTip(curModelPos);
-while abs(pd(1) - curFk(1)) > Error && abs(pd(2) - curFk(2)) > Error && abs(pd(3) - curFk(3)) > Error
-    curPos = curModelPos;
-    fkcurPos = kine.FKtoTip(curPos);
-    disp(pp.ik_3001_numerical(pd, curPos, fkcurPos))
-    
-    robModel.plotArm(rad2deg(kine.ik3001(pp.ik_3001_numerical(pd, curPos, fkcurPos))));
-    
-    curModelPos = kine.ik3001(pp.ik_3001_numerical(pd, curPos, fkcurPos));
-    curFk = kine.FKtoTip(curModelPos);
-    disp("moveTime")
-end 
+%current position (joint angles)
+%curModelPos = q0;
+
+%final joint angles (qi in degrees) 1x3
+qi = rad2deg(kine.ik3001(p0));
+%error checking (mm) 3x1
+fqi = kine.FKtoTip(qi);
+robModel.plotArm(qi);
+disp(pp.ik_3001_numerical(pd, qi, fqi))
+
+while abs(pd(1) - abs(fqi(1))) > Error || abs(pd(2) - abs(fqi(2))) > Error || abs(pd(3) - abs(fqi(3))) > Error
+%     disp(pp.ik_3001_numerical(pd, qi, fqi))
+    robModel.plotArm(pp.ik_3001_numerical(pd, qi, fqi));
+    pause(0.2);
+    %update fqi and qi
+    qi = pp.ik_3001_numerical(pd, qi, fqi);
+    fqi = kine.FKtoTip(qi);
+%     disp(qi);
+end
 
 
     

@@ -7,6 +7,7 @@ classdef Robot
         setpointQueue %A queue of setpoints for the robot to go to
         isActive %True (1) unless there are 0 setpoints and the arm is at target
         currentSetpoint %This is the no latency way of getting the arm's setpoint
+        %qi % This is the final joint angles of the robot
     end
     methods
         %The is a shutdown function to clear the HID hardware connection
@@ -21,6 +22,7 @@ classdef Robot
             robot.setpointQueue = queue;
             robot.prevAtTarget = 0;
             robot.currentSetpoint = [0 0 0];
+            %robot.qi = [0 0 0];
         end
         %Perform a command cycle. This function will take in a command ID
         %and a list of 32 bit floating point numbers and pass them over the
@@ -49,6 +51,7 @@ classdef Robot
                 disp('Command error, reading too fast');
             end
         end
+        
         function com = read(packet, idOfCommand)
             com= zeros(15, 1, 'single');
             try
@@ -68,6 +71,7 @@ classdef Robot
                 disp('Command error, reading too fast');
             end
         end
+        
         function  write(packet, idOfCommand, values)
             try
                 ds = javaArray('java.lang.Double',length(values));
@@ -202,40 +206,11 @@ classdef Robot
             
         end
         
-        function invReturn = ik_3001_numerical(obj, pd, qi, fqi) %error)
-%             Qx = pd(1) - fqi(1);
-%             Qy = pd(2) - fqi(2);
-%             Qz = pd(3) - fqi(3);
-            
-            tbt = obj.jacob3001(qi);
-            
-            delQ = cross(pinv(tbt(1:3,:)),(pd - fqi));
-            
-            disp(delQ)
+        function invReturn = ik_3001_numerical(obj, pd, qi, fqi)
+            J = obj.jacob3001(deg2rad(qi));
+            delQ = pinv(J(1:3,:))*(pd - fqi);
             qi = qi + delQ;
             invReturn = qi;
-             
-%             while abs(Qx) > error
-%                delQ = pinv(obj.jacob3001(qi)) *  Qx;
-%                disp(delQ)
-%                qi(1) = qi(1) + delQ(1);
-%                resM(1) = qi(1);
-%                
-%             end
-%             
-%             
-%             while abs(Qy) > error
-%                delQ = pinv(obj.jacob3001(qi)) *  Qy;
-%                qi(2) = qi(2) + delQ(2);
-%                resM(2) = qi(2);
-%             end
-%             
-%             
-%             while abs(Qz) > error
-%                delQ = pinv(obj.jacob3001(qi)) *  Qz;
-%                qi(3) = qi(3) + delQ(3);
-%                resM(3) = qi(3);
-%             end
         end
         
         
