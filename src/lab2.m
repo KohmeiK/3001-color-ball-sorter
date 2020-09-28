@@ -31,68 +31,35 @@ pp = Robot(myHIDSimplePacketComs);
 kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
 robModel = Model();
 try
-%     syms t1 t2 t3;
-%     syms d1 d2 d3;
-%     syms a1 a2 a3;
-%     syms alp1 alp2 alp3;
-%     
-%     
-%     a = kine.SymbFKtoTip(t1, t2, t3, d1, d2,d3,a1,a2,a3,alp1,alp2,alp3);
-%     b = [t1 t2 t3];
-%     disp(a);
-%     disp(b);
-%     jacob = [ diff(a(1),b(1)) diff(a(1),b(2)) diff(a(1),b(3));
-%         diff(a(2),b(1)) diff(a(2),b(2)) diff(a(2),b(3));
-%         diff(a(3),b(1)) diff(a(3),b(2)) diff(a(3),b(3));
-%         0 0 0;
-%         0 0 0;
-%         1 1 1];
-%     
-%     jacob= subs(jacob,d1,95);
-%     jacob= subs(jacob,d2,0);
-%     jacob= subs(jacob,d3,0);
-%     
-%     jacob= subs(jacob,a1,0);
-%     jacob= subs(jacob,a2,100);
-%     jacob= subs(jacob,a3,100);
-%     
-%     jacob= subs(jacob,alp1,-(pi/2));
-%     jacob= subs(jacob,alp2,0);
-%     jacob= subs(jacob,alp3,0);
-%     
-%     disp(jacob)
-        
-%     jacob = pp.jacob3001([0 0 deg2rad(-90)]);
-%     jp = jacob(1:3,:);
-%     det(jp)
 
-p0 = [100 -70 35];
+p0 = [100 0 195];
 % 3x1 matrix
-pd = [100; 0; 195];
-Error = 1;
-% inside a loop
-%current position (joint angles)
-%curModelPos = q0;
+% pd = [0; 0; 0];
+robModel.selectionPlot();
+input = ginput(1);
+pd = [input(1); 0; input(2)];
 
+Error = 0.01;
 %final joint angles (qi in radians) 3X1
 qi = kine.ik3001(p0)';
+%disp(qi)
 %error checking (mm) 3x1
 fqi = p0;
-robModel.plotArm(rad2deg(qi));
-%disp(pp.ik_3001_numerical(pd, qi, fqi))
-
 while abs(pd(1) - fqi(1)) > Error || abs(pd(2) - fqi(2)) > Error || abs(pd(3) - fqi(3)) > Error
 %   disp(pp.ik_3001_numerical(pd, qi, fqi))
+    
+    %disp(qi)
     robModel.plotArm(rad2deg(pp.ik_3001_numerical(pd, qi, fqi)));
     pause(0.0077);
     %update fqi and qi
     qi = pp.ik_3001_numerical(pd, qi, fqi);
     fqi = kine.FKtoTip(rad2deg(qi));
-    disp(fqi);
+    if pp.atPosition(fqi,pd) == 1
+       disp(rad2deg(qi));
+    end
 end
 
 
-    
 catch exception
     getReport(exception)
     disp('Exited on error, clean shutdown');

@@ -209,22 +209,25 @@ classdef Robot
         function invReturn = ik_3001_numerical(obj, pd, qi, fqi)
             %disp(qi)
             J = obj.jacob3001(qi);
+            
             delQ = pinv(J(1:3,:))*(pd - fqi);
             %disp(delQ)
-            qi = qi + delQ*0.01;
+            qi = qi + delQ*0.02;
+            
             invReturn = qi;
         end
         
         
-        function pos = atPosition(~, startPos, endPos, error)
-            if abs(endPos(1) - startPos(1)) < error && abs(endPos(2) - startPos(2)) < error &&...
-                abs(endPos(3) - startPos(3)) < error
+        function pos = atPosition(~, curPos, endPos)
+            error = 0.01;
+            if abs(endPos(1) - curPos(1)) <= error && abs(endPos(2) - curPos(2)) <= error &&...
+                abs(endPos(3) - curPos(3)) <= error
                 
                 pos = 1;
                 
             else
                 pos = 0;
-            end 
+            end
         end
         
     end

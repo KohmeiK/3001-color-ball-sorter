@@ -96,7 +96,6 @@ classdef Kinematics
             else
                 error("Unknown error.");
             end
-            
         end
         
         

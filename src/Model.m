@@ -57,7 +57,8 @@ classdef Model
             end
             
             %plot the ball and stick and label stuff
-            plot3(x,y,z,'-o','LineWidth',4,'MarkerSize',10,'MarkerFaceColor',[0.5,0.5,0.5]);grid on;
+            plot3(x,y,z,'-o','LineWidth',4,'MarkerSize',10,'MarkerFaceColor',[0.5,0.5,0.5]);
+            grid on;
             title('3001 Virtual Arm')
             xlabel('X Axis');
             ylabel('Y Axis');
@@ -65,7 +66,18 @@ classdef Model
             xlim([-220 220]);
             ylim([-220 220]);
             zlim([0 300]);
+            %view from x-z plane
+            view(0,0);
             drawnow
+        end
+        
+        function selectionPlot(obj)
+            plot(0,0)
+            title('Selecing a target position')
+            xlabel('X Axis');
+            ylabel('Z Axis');
+            xlim([-220 220]);
+            ylim([0 300]);
         end
     end
 end
