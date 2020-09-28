@@ -16,7 +16,7 @@ classdef Kinematics
             obj.l1 = joint1Length;
             obj.l2 = joint2Length;
             obj.l3 = joint3Length;
-            obj.jointLimits = deg2rad(jointMinMax);
+            obj.jointLimits = jointMinMax;
             
         end
         
@@ -34,7 +34,7 @@ classdef Kinematics
             z1d1 = z - obj.l1;
             r = sqrt(sqrtX2y2^2 + z1d1^2);
             
-            a2 = atan2(z1d1,sqrtX2y2);
+            a2 = atan2d(z1d1,sqrtX2y2);
             
             D1 = (obj.l2^2 + r^2 - obj.l3^2) / (2*obj.l2*r);
             D3 = (obj.l2^2 + obj.l3^2 - r^2) / (2*obj.l2*obj.l3);
@@ -42,27 +42,27 @@ classdef Kinematics
             C1 = sqrt(1-D1^2);
             C3 = sqrt(1-D3^2);
             
-            a1a = atan2(C1,D1);
-            a1b = atan2(-C1,D1);
+            a1a = atan2d(C1,D1);
+            a1b = atan2d(-C1,D1);
             
-            a3a = atan2(C3,D3);
-            a3b = atan2(-C3,D3);
+            a3a = atan2d(C3,D3);
+            a3b = atan2d(-C3,D3);
             
-            theta1 = atan2(y,x);
+            theta1 = atan2d(y,x);
             
-            theta2a = deg2rad(90)-a1a-a2;
-            theta2b = deg2rad(90)-a1b-a2;
+            theta2a = 90-a1a-a2;
+            theta2b = (90)-a1b-a2;
             
-            theta3a = deg2rad(90)-a3a;
-            theta3b = deg2rad(90)-a3b;
+            theta3a = (90)-a3a;
+            theta3b = (90)-a3b;
             
             
             %Safety checking
-            Safe1 = obj.isInLimit(1,theta1);
-            Safe2a = obj.isInLimit(2,theta2a);
-            Safe2b = obj.isInLimit(2,theta2b);
-            Safe3a = obj.isInLimit(3,theta3a);
-            Safe3b = obj.isInLimit(3,theta3b);
+            Safe1 = obj.isindLimit(1,theta1);
+            Safe2a = obj.isindLimit(2,theta2a);
+            Safe2b = obj.isindLimit(2,theta2b);
+            Safe3a = obj.isindLimit(3,theta3a);
+            Safe3b = obj.isindLimit(3,theta3b);
             
             %deciding the value for theta1 theta2 and theta3
             if Safe1 == 0
@@ -104,10 +104,10 @@ classdef Kinematics
         %matrix of joint angles
         function tipPos = FKtoTip(obj,jointAngles)
             
-            jointAngles = deg2rad(jointAngles);
-            T0to2 = obj.DHtoMatrix(jointAngles(1),95,0,-pi/2);
-            T2to3 = obj.DHtoMatrix(jointAngles(2)-(pi/2), 0,100,0);
-            T3to4 = obj.DHtoMatrix(jointAngles(3)+(pi/2),0,100,0);
+            jointAngles = (jointAngles);
+            T0to2 = obj.DHtoMatrix(jointAngles(1),95,0,-90);
+            T2to3 = obj.DHtoMatrix(jointAngles(2)-(90), 0,100,0);
+            T3to4 = obj.DHtoMatrix(jointAngles(3)+(90),0,100,0);
             
             FinalMatrix = T0to2 * T2to3 * T3to4;
             
@@ -136,20 +136,20 @@ classdef Kinematics
             Tmatrix = zeros(4,'double');
             
             %Row 1
-            Tmatrix(1,1) = cos(Theta);
-            Tmatrix(1,2) = -sin(Theta)*cos(Alpha);
-            Tmatrix(1,3) = sin(Theta)*sin(Alpha);
-            Tmatrix(1,4) = A*cos(Theta);
+            Tmatrix(1,1) = cosd(Theta);
+            Tmatrix(1,2) = -sind(Theta)*cosd(Alpha);
+            Tmatrix(1,3) = sind(Theta)*sind(Alpha);
+            Tmatrix(1,4) = A*cosd(Theta);
             
             %Row 2
-            Tmatrix(2,1) = sin(Theta);
-            Tmatrix(2,2) = cos(Theta)*cos(Alpha);
-            Tmatrix(2,3) = -cos(Theta)*sin(Alpha);
-            Tmatrix(2,4) = A*sin(Theta);
+            Tmatrix(2,1) = sind(Theta);
+            Tmatrix(2,2) = cosd(Theta)*cosd(Alpha);
+            Tmatrix(2,3) = -cosd(Theta)*sind(Alpha);
+            Tmatrix(2,4) = A*sind(Theta);
             
             %Row 3
-            Tmatrix(3,2) = sin(Alpha);
-            Tmatrix(3,3) = cos(Alpha);
+            Tmatrix(3,2) = sind(Alpha);
+            Tmatrix(3,3) = cosd(Alpha);
             Tmatrix(3,4) = D;
             
             Tmatrix(4,4) = 1;
@@ -163,21 +163,21 @@ classdef Kinematics
                         o o o o;];
             
             %Row 1
-            Tmatrix(1,1) = cos(Theta);
-            Tmatrix(1,2) = -sin(Theta)*cos(Alpha);
-            Tmatrix(1,3) = sin(Theta)*sin(Alpha);
-            Tmatrix(1,4) = A*cos(Theta);
+            Tmatrix(1,1) = cosd(Theta);
+            Tmatrix(1,2) = -sind(Theta)*cosd(Alpha);
+            Tmatrix(1,3) = sind(Theta)*sind(Alpha);
+            Tmatrix(1,4) = A*cosd(Theta);
             
             %Row 2
-            Tmatrix(2,1) = sin(Theta);
-            Tmatrix(2,2) = cos(Theta)*cos(Alpha);
-            Tmatrix(2,3) = -cos(Theta)*sin(Alpha);
-            Tmatrix(2,4) = A*sin(Theta);
+            Tmatrix(2,1) = sind(Theta);
+            Tmatrix(2,2) = cosd(Theta)*cosd(Alpha);
+            Tmatrix(2,3) = -cosd(Theta)*sind(Alpha);
+            Tmatrix(2,4) = A*sind(Theta);
             
             %Row 3
             Tmatrix(3,1) = 0;
-            Tmatrix(3,2) = sin(Alpha);
-            Tmatrix(3,3) = cos(Alpha);
+            Tmatrix(3,2) = sind(Alpha);
+            Tmatrix(3,3) = cosd(Alpha);
             Tmatrix(3,4) = D;
             
             Tmatrix(4,1) = 0;
@@ -187,7 +187,7 @@ classdef Kinematics
         end
         
         %Safety checking function.
-        function safe = isInLimit(obj,joint, angleRad)
+        function safe = isindLimit(obj,joint, angleRad)
             safe = 0;
             if  angleRad > obj.jointLimits(joint,1) && angleRad < obj.jointLimits(joint,2)
                 safe = 1;

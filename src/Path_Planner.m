@@ -61,11 +61,18 @@ classdef Path_Planner
             else
                 isPathDone = 0;
 %                 disp("Segment Duration:") 
-%                 disp(segmentDuration)
+%                 disp(obj.segmentDuration)
 %                 disp("Start time") 
 %                 disp(toc(obj.segmentStartTime))
+                timeSinceStart = toc(obj.segmentStartTime);
                 
-                scalar = obj.I.get(toc(obj.segmentStartTime));
+                if timeSinceStart > obj.segmentDuration
+                    timeSinceStart = obj.segmentDuration;
+                end
+                
+                scalar = obj.I.get(timeSinceStart);
+%                 disp("Scalar: ");
+%                 disp(scalar);
                 setPoint = ((obj.pathPoints(obj.onSegment+1,:)-...
                     obj.pathPoints(obj.onSegment,:)).* scalar + obj.pathPoints(obj.onSegment,:));
                 

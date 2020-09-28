@@ -29,12 +29,17 @@ myHIDSimplePacketComs.connect();
 % Create a PacketProcessor object to send data to the nucleo firmware
 try
     
+    
+    
     robot = Robot(myHIDSimplePacketComs);
     
     kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
     
     model = Model();
-    model = model.calcPose(robot.getPositions());
+    currentPos = robot.getPositions();
+    currentAngVelo = robot.getVelocities();
+    currentVelo = robot.fdk3001(currentPos,currentAngVelo);
+    model = model.calcPose(currentPos,currentVelo);
     model = model.plotGraph();
     model.render();
     
@@ -58,17 +63,17 @@ try
     pathObj.queueOfPaths.enqueue([P2 P3 1 20 3])
     pathObj.queueOfPaths.enqueue([P3 P1 1 20 3])
     
-    RENDER_RATE_MS = 100.0;
+    RENDER_RATE_MS = 40.0;
     tic
     while true
-        
         if(renderTimer.isTimerDone() == 1)
             switch(renderState)
                 case State.COMPUTE
                     currentPos = robot.getPositions();
-                    model = model.calcPose(currentPos);
+                    currentAngVelo = robot.getVelocities();
+                    currentVelo = robot.fdk3001(currentPos, currentAngVelo);
+                    model = model.calcPose(currentPos,currentVelo);
                     renderState = State.PRERENDER;
-                        
                 case State.PRERENDER
                     model = model.plotGraph();
                     renderState = State.RENDER;
@@ -102,14 +107,13 @@ try
                     state = State.LONGWAIT;
                     disp("---END OF PATH---")
                 else
-                    robot.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
+                    robot.setSetpoints(kine.ik3001(nextSetpoint));
                 end
             case State.END
                 
             case State.STARTNEXT
                 pathObj = pathObj.startNextPath();
-                state = State.RUNNING;
-                
+                state = State.RUNNING;                
         end
     end
     

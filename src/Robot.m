@@ -27,7 +27,7 @@ classdef Robot
         %HID interface to the device, it will take the response and parse
         %them back into a list of 32 bit floating point numbers as well
         function com = command(packet, idOfCommand, values)
-            com= zeros(15, 1, 'single');
+            com= zeros(15, 1, 'sindgle');
             try
                 ds = javaArray('java.lang.Double',length(values));
                 for i=1:length(values)
@@ -150,7 +150,7 @@ classdef Robot
         function robot = updateRobot(robot)
             atTarget = robot.isAtTarget();
             if (robot.prevAtTarget == 0 && atTarget == 1)
-                %Last move just ended (rising edge)
+                %Last move just ended (risindg edge)
                 if (robot.setpointQueue.Depth > 0) %The queue has next setpoint
                     disp("Moving to next setpoint");
                     robot.currentSetpoint = robot.setpointQueue.dequeue();
@@ -187,20 +187,20 @@ classdef Robot
         
         function returnVal = jacob3001(~, q)
             t1 = q(1);
-            t2 = q(2) - deg2rad(90);
-            t3 = q(3) +  deg2rad(90);
+            t2 = q(2) - 90;
+            t3 = q(3) + 90;
             
-            returnVal = [ (100*sin(t1)*sin(t2)*sin(t3) - 100*cos(t2)*sin(t1) - 100*cos(t2)*cos(t3)*sin(t1)) (- 100*cos(t1)*sin(t2) - 100*cos(t1)*cos(t2)*sin(t3) - 100*cos(t1)*cos(t3)*sin(t2)) (- 100*cos(t1)*cos(t2)*sin(t3) - 100*cos(t1)*cos(t3)*sin(t2));
-                (100*cos(t1)*cos(t2) - 100*cos(t1)*sin(t2)*sin(t3) + 100*cos(t1)*cos(t2)*cos(t3)) (- 100*sin(t1)*sin(t2) - 100*cos(t2)*sin(t1)*sin(t3) - 100*cos(t3)*sin(t1)*sin(t2)) (- 100*cos(t2)*sin(t1)*sin(t3) - 100*cos(t3)*sin(t1)*sin(t2));
-                (0)                           (100*sin(t2)*sin(t3) - 100*cos(t2)*cos(t3) - 100*cos(t2))                   (100*sin(t2)*sin(t3) - 100*cos(t2)*cos(t3));
+            returnVal = [ (100*sind(t1)*sind(t2)*sind(t3) - 100*cosd(t2)*sind(t1) - 100*cosd(t2)*cosd(t3)*sind(t1)) (- 100*cosd(t1)*sind(t2) - 100*cosd(t1)*cosd(t2)*sind(t3) - 100*cosd(t1)*cosd(t3)*sind(t2)) (- 100*cosd(t1)*cosd(t2)*sind(t3) - 100*cosd(t1)*cosd(t3)*sind(t2));
+                (100*cosd(t1)*cosd(t2) - 100*cosd(t1)*sind(t2)*sind(t3) + 100*cosd(t1)*cosd(t2)*cosd(t3)) (- 100*sind(t1)*sind(t2) - 100*cosd(t2)*sind(t1)*sind(t3) - 100*cosd(t3)*sind(t1)*sind(t2)) (- 100*cosd(t2)*sind(t1)*sind(t3) - 100*cosd(t3)*sind(t1)*sind(t2));
+                (0)                           (100*sind(t2)*sind(t3) - 100*cosd(t2)*cosd(t3) - 100*cosd(t2))                   (100*sind(t2)*sind(t3) - 100*cosd(t2)*cosd(t3));
                 0                                                                                0                                                         0;
                 0                                                                                0                                                           0;
                 1                                                                                 1                                                           1];
             
         end
         
-        function p = fdk3001(obj, q)
-            p = obj.jacob3001(q) * q';
+        function p = fdk3001(obj, q, Qdot)
+            p = obj.jacob3001(q) * Qdot;
         end
             
     end
