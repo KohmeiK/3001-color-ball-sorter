@@ -67,27 +67,28 @@ try
 %     det(jp)
 
 p0 = [100 -70 35];
-pd = [160;10;35];
+% 3x1 matrix
+pd = [100; 0; 195];
 Error = 1;
 % inside a loop
 %current position (joint angles)
 %curModelPos = q0;
 
-%final joint angles (qi in degrees) 1x3
-qi = rad2deg(kine.ik3001(p0));
+%final joint angles (qi in radians) 3X1
+qi = kine.ik3001(p0)';
 %error checking (mm) 3x1
-fqi = kine.FKtoTip(qi);
-robModel.plotArm(qi);
-disp(pp.ik_3001_numerical(pd, qi, fqi))
+fqi = p0;
+robModel.plotArm(rad2deg(qi));
+%disp(pp.ik_3001_numerical(pd, qi, fqi))
 
-while abs(pd(1) - abs(fqi(1))) > Error || abs(pd(2) - abs(fqi(2))) > Error || abs(pd(3) - abs(fqi(3))) > Error
-%     disp(pp.ik_3001_numerical(pd, qi, fqi))
-    robModel.plotArm(pp.ik_3001_numerical(pd, qi, fqi));
-    pause(0.2);
+while abs(pd(1) - fqi(1)) > Error || abs(pd(2) - fqi(2)) > Error || abs(pd(3) - fqi(3)) > Error
+%   disp(pp.ik_3001_numerical(pd, qi, fqi))
+    robModel.plotArm(rad2deg(pp.ik_3001_numerical(pd, qi, fqi)));
+    pause(0.0077);
     %update fqi and qi
     qi = pp.ik_3001_numerical(pd, qi, fqi);
-    fqi = kine.FKtoTip(qi);
-%     disp(qi);
+    fqi = kine.FKtoTip(rad2deg(qi));
+    disp(fqi);
 end
 
 

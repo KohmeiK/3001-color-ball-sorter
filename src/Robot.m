@@ -207,9 +207,11 @@ classdef Robot
         end
         
         function invReturn = ik_3001_numerical(obj, pd, qi, fqi)
-            J = obj.jacob3001(deg2rad(qi));
+            %disp(qi)
+            J = obj.jacob3001(qi);
             delQ = pinv(J(1:3,:))*(pd - fqi);
-            qi = qi + delQ;
+            %disp(delQ)
+            qi = qi + delQ*0.01;
             invReturn = qi;
         end
         
