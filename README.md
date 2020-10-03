@@ -1,218 +1,272 @@
-# RBE3001 Matlab Template
-This is template code for talking to the Default firmware
-# 0.0 Install Matlab
+# RBE 3001 Group 11 #
 
-Befor begining install Matlab. 
+[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/google/go-github/v32/github)
+[![Test Status](https://github.com/google/go-github/workflows/tests/badge.svg)](https://github.com/google/go-github/actions?query=workflow%3Atests)
+[![Test Coverage](https://codecov.io/gh/google/go-github/branch/master/graph/badge.svg)](https://codecov.io/gh/google/go-github)
+[![Discuss at go-github@googlegroups.com](https://img.shields.io/badge/discuss-go--github%40googlegroups.com-blue.svg)](https://groups.google.com/group/go-github)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/796/badge)](https://bestpractices.coreinfrastructure.org/projects/796)
 
-## 0.1 Matlab Install
-* [Matlab Installed using your WPI login](https://www.mathworks.com/academia/tah-portal/worcester-polytechnic-institute-40552010.html)
-  * Sign in with your WPI account
-  * Download the Linux version R2020a 
-  * matlab_R2020a_glnxa64.zip
- ```
- cd Downloads/ #the directory where the matlab_R2020a_glnxa64.zip is
- ls matlab_R2020a_glnxa64.zip # Make sure you see the zip file
- unzip matlab_R2020a_glnxa64.zip -d matlab
- cd matlab
- sudo ./install
- ```
- Sign in with you WPI account again to accuire licences.
- 
-Under products add 
+go-github is a Go client library for accessing the [GitHub API v3][].
 
-* Image Acquisition Toolbox
-* Image Processing Toolbox
+Currently, **go-github requires Go version 1.9 or greater**.  go-github tracks
+[Go's version support policy][support-policy].  We do our best not to break
+older versions of Go if we don't have to, but due to tooling constraints, we
+don't always test older versions.
 
-Under Options check the check box
+[support-policy]: https://golang.org/doc/devel/release.html#policy
 
-* Make simlinks to MATLAB scripts
-* Install MATLAB
+If you're interested in using the [GraphQL API v4][], the recommended library is
+[shurcooL/githubv4][].
 
-## 0.2 Matlab configuration
+## Usage ##
 
-Open matlab by typing in the terminal
-
-```
-matlab
-```
-Under Environment -> Preferences -> MATLAB -> Keyboard Shortcuts
-
-switch Active  settings from Emacs Default Set to Windows Default Set
-
-## 0.3 Troubleshoting
-
-If you see:
-
-```
-License checkout failed.
-License Manager Error -9
-Your username does not match the username in the license file.
-To run on this computer, you must run the Activation client to reactivate your license.
-
-Troubleshoot this issue by visiting:
-https://www.mathworks.com/support/lme/R2020a/9
-
-Diagnostic Information:
-Feature: MATLAB
-License path: /home/mahdi/.matlab/R2020a_licenses:/usr/local/MATLAB/R2020a/licenses/license.dat:/usr/local/MATLAB/
-R2020a/licenses/license_mahdi-HP-EliteBook-8470w_40552010_R2020a.lic
-Licensing error: -9,57.
+```go
+import "github.com/google/go-github/v32/github"	// with go modules enabled (GO111MODULE=on or outside GOPATH)
+import "github.com/google/go-github/github" // with go modules disabled
 ```
 
-then run
+Construct a new GitHub client, then use the various services on the client to
+access different parts of the GitHub API. For example:
 
-```
-cd /usr/local/MATLAB/R2020a/bin
-./activate_matlab.sh
-```
+```go
+client := github.NewClient(nil)
 
-# 1. Configure git
-
-
-#### 1.1 Checking for existing SSH keys
-￼
-1) Open Terminal.
-
-2) Enter ls -al ~/.ssh to see if existing SSH keys are present:
-```
-ls -al ~/.ssh
-# Lists the files in your .ssh directory, if they exist
-```
-3) Check the directory listing to see if you already have a public SSH key. By default, the filenames of the public keys are one of the following:
-```
-id_rsa.pub
-id_ecdsa.pub
-id_ed25519.pub
-```
-If the files exist go to 1.3
-
-#### 1.2 Generate SSH key is missing
-
-If there are no files in ~/.ssh then do this step to create them
-
-1) Open Terminal.
-
-2) Paste the text below, substituting in your GitHub email address.
-```
-ssh-keygen -t rsa -b 4096 -C "your_email@wpi.edu"
-```
-This creates a new ssh key, using the provided email as a label.
-```
-> Generating public/private rsa key pair.
-```
-3) When you're prompted to "Enter a file in which to save the key," press Enter. This accepts the default file location.
-```
-> Enter a file in which to save the key (/home/you/.ssh/id_rsa): [Press enter]
-```
-At the prompt, hit enter to make SSh passwordless
-
-#### 1.3 Copy SSH public key
-
-1) Copy the SSH key to your clipboard.
-
-If your SSH key file has a different name than the example code, modify the filename to match your current setup. When copying your key, don't add any newlines or whitespace.
-```
-sudo apt-get install xclip
-# Downloads and installs xclip. If you don't have `apt-get`, you might need to use another installer (like `yum`)
-
-xclip -sel clip < ~/.ssh/id_rsa.pub
-# Copies the contents of the id_rsa.pub file to your clipboard
-```
-2) In the upper-right corner of any page, click your profile photo, then click Settings.
-
-
-<img src="https://docs.github.com/assets/images/help/settings/userbar-account-settings.png">
-
-3) In the user settings sidebar, click SSH and GPG keys.
-
-<img src="https://docs.github.com/assets/images/help/settings/settings-sidebar-ssh-keys.png">
-
-
-4) Click New SSH key or Add SSH key.
-
-<img src="https://docs.github.com/assets/images/help/settings/ssh-add-ssh-key.png">
-
-
-5) In the "Title" field, add a descriptive label for the new key. For example, if you're using a personal Ubuntu, you might call this key "WPI Ubuntu".
-
-6) Paste your key into the "Key" field.
-
-<img src="https://docs.github.com/assets/images/help/settings/ssh-key-paste.png">
-
-7) Click Add SSH key.
-
-<img src="https://docs.github.com/assets/images/help/settings/ssh-add-key.png">
-
-# 1.4 Configure git
-```bash
-git config --global user.name "John Doe"
-git config --global user.email johndoe@wpi.edu
-```
-# 2. Set up your Git Repository
-## 2.1 Clone your private lab repository
-Clone your private lab repository. **Note: The command below won't work! Use your own url, found on Github!**
-```bash
-git clone git@github.com:RBE300X-Lab/RBE3001_MatlabXX.git
-```
-If your repository is empty, you may get a warning.
-
-## 2.2 Set up your private lab repository **[DO ONLY ONCE PER TEAM]**
-Note: Perform this **only if** you do not already have the starter Matlab code in your repository
-1. `cd` into your repository you just created
-```bash
-cd [name of the repository you just cloned]
-```
-2. Set up a secondary remote server pointing to your repository
-```bash
-git remote add default-code https://github.com/Hephaestus-Arm/RBE3001_Matlab.git
-```
-You can confirm that the remote has been added by running the following command: 
-```bash
-git remote
-```
-3. Pull the code from your remote server. You should then see the code in your local repository
-``` bash
-git pull default-code master
-```
-4. Push your code to your main remote repository `origin`
-```bash
-git push origin
+// list all organizations for user "willnorris"
+orgs, _, err := client.Organizations.List(context.Background(), "willnorris", nil)
 ```
 
-## 2.3 Pulling changes from your secondary remote repository **[Only if required]**
-If you need to pull new changes from the default repostory, follow these instructions:
-1. Make sure you have set up the correct secondary remote repository. Run the following code to check:
-``` bash
-git remote -v
-```
-You should see `origin` (your main server repo) and another pointing to the following url:
-```url
-https://github.com/Hephaestus-Arm/RBE3001_Matlab.git
-```
-**If you do not see a second remote, or your second remote points to another url, follow the instructions under [Section 3.2 Part 2](##3.2-Set-up-your-private-lab-repository-**[DO-ONLY-ONCE-PER-TEAM]**)**
+Some API methods have optional parameters that can be passed. For example:
 
-2. Run the following command to pull the new code from the secondary remote repository:
-``` bash
-git pull default-code master
-```
-Note: If your secondary remote is not named `default-code`, change it to the actual name
+```go
+client := github.NewClient(nil)
 
-# 3. Launch Matlab 
-
-Start in the directory with your checked out code.
-
-```bash
-cd src
-matlab
+// list public repositories for org "github"
+opt := &github.RepositoryListByOrgOptions{Type: "public"}
+repos, _, err := client.Repositories.ListByOrg(context.Background(), "github", opt)
 ```
 
-# 4. Run Lab1.m
+The services of a client divide the API into logical chunks and correspond to
+the structure of the GitHub API documentation at
+https://docs.github.com/en/rest/reference/.
 
-Plug your robot into the wall and connect to your computer with USB.
-(Protip: make sure putty is closed to avoid latency issues)
+NOTE: Using the [context](https://godoc.org/context) package, one can easily
+pass cancelation signals and deadlines to various services of the client for
+handling a request. In case there is no context available, then `context.Background()`
+can be used as a starting point.
 
-In the Matlab GUI navigate to the "lab1.m" file and then click then run button.
+For more sample code snippets, head over to the
+[example](https://github.com/google/go-github/tree/master/example) directory.
 
-Your arm should move through the three setpoints in the viaPoints vector and print some data to the matlab console.
+### Authentication ###
 
-If your arm moves through the setpoints and prints to the console successfully your arm is all set.
+The go-github library does not directly handle authentication. Instead, when
+creating a new client, pass an `http.Client` that can handle authentication for
+you. The easiest and recommended way to do this is using the [oauth2][]
+library, but you can always use any other library that provides an
+`http.Client`. If you have an OAuth2 access token (for example, a [personal
+API token][]), you can use it with the oauth2 library using:
+
+```go
+import "golang.org/x/oauth2"
+
+func main() {
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: "... your access token ..."},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+
+	client := github.NewClient(tc)
+
+	// list all repositories for the authenticated user
+	repos, _, err := client.Repositories.List(ctx, "", nil)
+}
+```
+
+Note that when using an authenticated Client, all calls made by the client will
+include the specified OAuth token. Therefore, authenticated clients should
+almost never be shared between different users.
+
+See the [oauth2 docs][] for complete instructions on using that library.
+
+For API methods that require HTTP Basic Authentication, use the
+[`BasicAuthTransport`](https://godoc.org/github.com/google/go-github/github#BasicAuthTransport).
+
+GitHub Apps authentication can be provided by the [ghinstallation](https://github.com/bradleyfalzon/ghinstallation)
+package.
+
+```go
+import "github.com/bradleyfalzon/ghinstallation"
+
+func main() {
+	// Wrap the shared transport for use with the integration ID 1 authenticating with installation ID 99.
+	itr, err := ghinstallation.NewKeyFromFile(http.DefaultTransport, 1, 99, "2016-10-19.private-key.pem")
+	if err != nil {
+		// Handle error.
+	}
+
+	// Use installation transport with client.
+	client := github.NewClient(&http.Client{Transport: itr})
+
+	// Use client...
+}
+```
+
+### Rate Limiting ###
+
+GitHub imposes a rate limit on all API clients. Unauthenticated clients are
+limited to 60 requests per hour, while authenticated clients can make up to
+5,000 requests per hour. The Search API has a custom rate limit. Unauthenticated
+clients are limited to 10 requests per minute, while authenticated clients
+can make up to 30 requests per minute. To receive the higher rate limit when
+making calls that are not issued on behalf of a user,
+use `UnauthenticatedRateLimitedTransport`.
+
+The returned `Response.Rate` value contains the rate limit information
+from the most recent API call. If a recent enough response isn't
+available, you can use `RateLimits` to fetch the most up-to-date rate
+limit data for the client.
+
+To detect an API rate limit error, you can check if its type is `*github.RateLimitError`:
+
+```go
+repos, _, err := client.Repositories.List(ctx, "", nil)
+if _, ok := err.(*github.RateLimitError); ok {
+	log.Println("hit rate limit")
+}
+```
+
+Learn more about GitHub rate limiting at
+https://docs.github.com/en/rest/reference/rate-limit.
+
+### Accepted Status ###
+
+Some endpoints may return a 202 Accepted status code, meaning that the
+information required is not yet ready and was scheduled to be gathered on
+the GitHub side. Methods known to behave like this are documented specifying
+this behavior.
+
+To detect this condition of error, you can check if its type is
+`*github.AcceptedError`:
+
+```go
+stats, _, err := client.Repositories.ListContributorsStats(ctx, org, repo)
+if _, ok := err.(*github.AcceptedError); ok {
+	log.Println("scheduled on GitHub side")
+}
+```
+
+### Conditional Requests ###
+
+The GitHub API has good support for conditional requests which will help
+prevent you from burning through your rate limit, as well as help speed up your
+application. `go-github` does not handle conditional requests directly, but is
+instead designed to work with a caching `http.Transport`. We recommend using
+https://github.com/gregjones/httpcache for that.
+
+Learn more about GitHub conditional requests at
+https://docs.github.com/en/rest/overview/resources-in-the-rest-api#conditional-requests.
+
+### Creating and Updating Resources ###
+
+All structs for GitHub resources use pointer values for all non-repeated fields.
+This allows distinguishing between unset fields and those set to a zero-value.
+Helper functions have been provided to easily create these pointers for string,
+bool, and int values. For example:
+
+```go
+// create a new private repository named "foo"
+repo := &github.Repository{
+	Name:    github.String("foo"),
+	Private: github.Bool(true),
+}
+client.Repositories.Create(ctx, "", repo)
+```
+
+Users who have worked with protocol buffers should find this pattern familiar.
+
+### Pagination ###
+
+All requests for resource collections (repos, pull requests, issues, etc.)
+support pagination. Pagination options are described in the
+`github.ListOptions` struct and passed to the list methods directly or as an
+embedded type of a more specific list options struct (for example
+`github.PullRequestListOptions`). Pages information is available via the
+`github.Response` struct.
+
+```go
+client := github.NewClient(nil)
+
+opt := &github.RepositoryListByOrgOptions{
+	ListOptions: github.ListOptions{PerPage: 10},
+}
+// get all pages of results
+var allRepos []*github.Repository
+for {
+	repos, resp, err := client.Repositories.ListByOrg(ctx, "github", opt)
+	if err != nil {
+		return err
+	}
+	allRepos = append(allRepos, repos...)
+	if resp.NextPage == 0 {
+		break
+	}
+	opt.Page = resp.NextPage
+}
+```
+
+For complete usage of go-github, see the full [package docs][].
+
+[GitHub API v3]: https://docs.github.com/en/rest
+[oauth2]: https://github.com/golang/oauth2
+[oauth2 docs]: https://godoc.org/golang.org/x/oauth2
+[personal API token]: https://github.com/blog/1509-personal-api-tokens
+[package docs]: https://pkg.go.dev/github.com/google/go-github/v32/github
+[GraphQL API v4]: https://developer.github.com/v4/
+[shurcooL/githubv4]: https://github.com/shurcooL/githubv4
+
+### Integration Tests ###
+
+You can run integration tests from the `test` directory. See the integration tests [README](test/README.md).
+
+## Roadmap ##
+
+This library is being initially developed for an internal application at
+Google, so API methods will likely be implemented in the order that they are
+needed by that application. You can track the status of implementation in
+[this Google spreadsheet][roadmap].
+
+[roadmap]: https://docs.google.com/spreadsheet/ccc?key=0ApoVX4GOiXr-dGNKN1pObFh6ek1DR2FKUjBNZ1FmaEE&usp=sharing
+
+## Contributing ##
+I would like to cover the entire GitHub API and contributions are of course always welcome. The
+calling pattern is pretty well established, so adding new methods is relatively
+straightforward. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for details.
+
+## Versioning ##
+
+In general, go-github follows [semver](https://semver.org/) as closely as we
+can for tagging releases of the package. For self-contained libraries, the
+application of semantic versioning is relatively straightforward and generally
+understood. But because go-github is a client library for the GitHub API, which
+itself changes behavior, and because we are typically pretty aggressive about
+implementing preview features of the GitHub API, we've adopted the following
+versioning policy:
+
+* We increment the **major version** with any incompatible change to
+	non-preview functionality, including changes to the exported Go API surface
+	or behavior of the API.
+* We increment the **minor version** with any backwards-compatible changes to
+	functionality, as well as any changes to preview functionality in the GitHub
+	API. GitHub makes no guarantee about the stability of preview functionality,
+	so neither do we consider it a stable part of the go-github API.
+* We increment the **patch version** with any backwards-compatible bug fixes.
+
+Preview functionality may take the form of entire methods or simply additional
+data returned from an otherwise non-preview method. Refer to the GitHub API
+documentation for details on preview functionality.
+
+## License ##
+
+This library is distributed under the BSD-style license found in the [LICENSE](./LICENSE)
+file.
