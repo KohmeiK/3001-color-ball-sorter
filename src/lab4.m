@@ -30,12 +30,15 @@ myHIDSimplePacketComs.connect();
 try
     
     
-    
+    %create all the objects we need
     robot = Robot(myHIDSimplePacketComs);
-    
     kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
-    
     model = Model();
+    logger = Logger("log.txt");
+    pathObj = Path_Planner();
+    timer = EventTimer();
+    
+    %run one cycle of the model to avoid lag when first opening a model
     currentPos = robot.getPositions();
     currentAngVelo = robot.getVelocities();
     currentVelo = robot.fdk3001(currentPos,currentAngVelo);
@@ -43,62 +46,67 @@ try
     model = model.plotGraph();
     model.render();
     
-    logger = Logger("log.txt");
-    
-    pathObj = Path_Planner();
-    
-    timer = EventTimer();
+    %rendering should start immedately
     renderTimer = EventTimer();
     renderTimer.setTimer(0);
     
+    %set initial states on both state machines
     state = State.STARTNEXT;
     renderState = State.COMPUTE;
     
+    %triangle of points from lab 3
     height = 35;
     P1 = [100 -70 height];
     P2 = [160 10 height];
     P3 = [50 90 height];
     
+    %add the points to the queue
     pathObj.queueOfPaths.enqueue([P1 P2 1 20 3])
     pathObj.queueOfPaths.enqueue([P2 P3 1 20 3])
     pathObj.queueOfPaths.enqueue([P3 P1 1 20 3])
     
+    %This is the graphics update rate
     RENDER_RATE_MS = 40.0;
+    
+    %to avoid calling toc wihtou tic
     tic
     while true
+        
+        %GRAPHICS STATE MACHINE
         if(renderTimer.isTimerDone() == 1)
             switch(renderState)
-                case State.COMPUTE
+                case State.COMPUTE %Step 1
                     currentPos = robot.getPositions();
                     currentAngVelo = robot.getVelocities();
                     currentVelo = robot.fdk3001(currentPos, currentAngVelo);
                     model = model.calcPose(currentPos,currentVelo);
                     renderState = State.PRERENDER;
-                case State.PRERENDER
+                case State.PRERENDER %Step 2
                     model = model.plotGraph();
                     renderState = State.RENDER;
-                case State.RENDER
+                case State.RENDER %Step 3
                     renderState = State.COMPUTE;
                     model.render();
             end
             renderTimer = renderTimer.setTimer(RENDER_RATE_MS/3000.0);
         end
         
+        %MAIN STATE MACHINE
         switch(state)
-            case State.STOPPED
+            case State.STOPPED %Call at End of path
                 disp("State -> STOPPED");
                 timer = timer.setTimer(2);
                 state = State.WAITING;
-            case State.LONGWAIT
+            case State.LONGWAIT %For watiting between paths
                 if(timer.isTimerDone() == 1)
                     state = State.STARTNEXT;
                 end
                 
-            case State.WAITING
+            case State.WAITING %Not used
                 if(timer.isTimerDone() == 1)
                     state = State.RUNNING;
                 end
-            case State.RUNNING
+            case State.RUNNING %While in a path
                 toc
                 [pathObj,isDone,nextSetpoint] = pathObj.update();
                 tic
@@ -109,9 +117,11 @@ try
                 else
                     robot.setSetpoints(kine.ik3001(nextSetpoint));
                 end
-            case State.END
                 
-            case State.STARTNEXT
+            case State.END %To shut down robot
+                
+                
+            case State.STARTNEXT %Start the next path
                 pathObj = pathObj.startNextPath();
                 state = State.RUNNING;                
         end

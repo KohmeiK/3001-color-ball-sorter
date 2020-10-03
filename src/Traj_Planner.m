@@ -1,6 +1,6 @@
 classdef Traj_Planner
-    %TRAJ_PLANNER Summary of this class goes here
-    %   Detailed explanation goes here
+    %DEPRICATED use Path planner and interpolator instead
+    %this will be removed on the next major release!
     
     properties
         coeffs3 = zeros(4,3)

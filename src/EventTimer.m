@@ -1,10 +1,9 @@
 classdef EventTimer
-    %TIMER Summary of this class goes here
-    %   Detailed explanation goes here
+    %TIMER Event timer for state machine waits
     
     properties
-        duration = 0;
-        startTime;
+        duration = 0; %The target time for the stopwatch
+        startTime; %When the start was pressed on the stopwatch
     end
     
     methods
