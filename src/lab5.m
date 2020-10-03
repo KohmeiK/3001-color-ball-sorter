@@ -8,7 +8,7 @@ clear java;
 format short
 
 %% Flags
-DEBUG = false;
+DEBUG = true;
 STICKMODEL = false;
 DEBUG_CAM = false;
 
