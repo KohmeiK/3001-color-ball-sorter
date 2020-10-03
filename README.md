@@ -155,6 +155,9 @@ if _, ok := err.(*github.AcceptedError); ok {
 	log.Println("scheduled on GitHub side")
 }
 ```
+If your repository is empty, you may get a warning.
+
+Find your teams project here: https://github.com/RBE300X-Lab
 
 ### Conditional Requests ###
 
