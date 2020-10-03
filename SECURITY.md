@@ -1,9 +1,7 @@
 # Security Policy
 
 ## Supported Versions
-
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Is something is wrong don't bother telling us. We will just make the problem worse.
 
 | Version | Supported          |
 | ------- | ------------------ |
