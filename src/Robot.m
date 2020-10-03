@@ -27,7 +27,7 @@ classdef Robot
         %HID interface to the device, it will take the response and parse
         %them back into a list of 32 bit floating point numbers as well
         function com = command(packet, idOfCommand, values)
-            com= zeros(15, 1, 'single');
+            com= zeros(15, 1, 'sindgle');
             try
                 ds = javaArray('java.lang.Double',length(values));
                 for i=1:length(values)
@@ -99,7 +99,7 @@ classdef Robot
             %disp(position);
         end
         
-         %get a 3x1 matrix for the setpoint of the arm angles
+        %get a 3x1 matrix for the setpoint of the arm angles
         function setpoint = getSetpoints(Robot)
             returnPacket = read(Robot, 1910);
             setpoint = zeros(3,1);
@@ -108,7 +108,7 @@ classdef Robot
             setpoint(3) = returnPacket(6);
         end
         
-         %get a 3x1 matrix for the velocities of each servo
+        %get a 3x1 matrix for the velocities of each servo
         function velocity = getVelocities(robot)
             returnPacket = read(robot, 1822);
             velocity = zeros(3, 1, 'single');
@@ -117,7 +117,7 @@ classdef Robot
             velocity(3) = returnPacket(9);
         end
         
-         %set a 3x1 matrix for the position of the arm angles
+        %set a 3x1 matrix for the position of the arm angles
         function setSetpoints(robot,setpoint)
             packet = zeros(15, 1, 'single');
             packet(1) = 0;%one second time
@@ -150,7 +150,7 @@ classdef Robot
         function robot = updateRobot(robot)
             atTarget = robot.isAtTarget();
             if (robot.prevAtTarget == 0 && atTarget == 1)
-                %Last move just ended (rising edge)
+                %Last move just ended (risindg edge)
                 if (robot.setpointQueue.Depth > 0) %The queue has next setpoint
                     disp("Moving to next setpoint");
                     robot.currentSetpoint = robot.setpointQueue.dequeue();
@@ -185,5 +185,23 @@ classdef Robot
             robot.setpointQueue.enqueue(newSetpoint);
         end
         
+        function returnVal = jacob3001(~, q)
+            t1 = q(1);
+            t2 = q(2) - 90;
+            t3 = q(3) + 90;
+            
+            returnVal = [ (100*sind(t1)*sind(t2)*sind(t3) - 100*cosd(t2)*sind(t1) - 100*cosd(t2)*cosd(t3)*sind(t1)) (- 100*cosd(t1)*sind(t2) - 100*cosd(t1)*cosd(t2)*sind(t3) - 100*cosd(t1)*cosd(t3)*sind(t2)) (- 100*cosd(t1)*cosd(t2)*sind(t3) - 100*cosd(t1)*cosd(t3)*sind(t2));
+                (100*cosd(t1)*cosd(t2) - 100*cosd(t1)*sind(t2)*sind(t3) + 100*cosd(t1)*cosd(t2)*cosd(t3)) (- 100*sind(t1)*sind(t2) - 100*cosd(t2)*sind(t1)*sind(t3) - 100*cosd(t3)*sind(t1)*sind(t2)) (- 100*cosd(t2)*sind(t1)*sind(t3) - 100*cosd(t3)*sind(t1)*sind(t2));
+                (0)                           (100*sind(t2)*sind(t3) - 100*cosd(t2)*cosd(t3) - 100*cosd(t2))                   (100*sind(t2)*sind(t3) - 100*cosd(t2)*cosd(t3));
+                0                                                                                0                                                         0;
+                0                                                                                0                                                           0;
+                1                                                                                 1                                                           1];
+            
+        end
+        
+        function p = fdk3001(obj, q, Qdot)
+            p = obj.jacob3001(q) * Qdot;
+        end
+            
     end
 end

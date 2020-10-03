@@ -27,100 +27,98 @@ myHIDSimplePacketComs.setVid(vid);
 myHIDSimplePacketComs.connect();
 
 % Create a PacketProcessor object to send data to the nucleo firmware
-pp = Robot(myHIDSimplePacketComs);
-
 try
-    %LAB3 SECTION 5.2
-      
-    %D1  D2  D3 T1MinMax T2MinMax T3MinMax
     
-    %                D1  D2  D3 T1MinMax T2MinMax T3MinMax
+    
+    
+    robot = Robot(myHIDSimplePacketComs);
+    
     kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
     
-    height = 35;
+    model = Model();
+    currentPos = robot.getPositions();
+    currentAngVelo = robot.getVelocities();
+    currentVelo = robot.fdk3001(currentPos,currentAngVelo);
+    model = model.calcPose(currentPos,currentVelo);
+    model = model.plotGraph();
+    model.render();
     
+    logger = Logger("log.txt");
+    
+    pathObj = Path_Planner();
+    
+    timer = EventTimer();
+    renderTimer = EventTimer();
+    renderTimer.setTimer(0);
+    
+    state = State.STARTNEXT;
+    renderState = State.COMPUTE;
+    
+    height = 35;
     P1 = [100 -70 height];
     P2 = [160 10 height];
     P3 = [50 90 height];
-    numberOfPoints = 10;
-
-    pp.setSetpoints(rad2deg(kine.ik3001(P1)));
-    %Make sure the robot is at the first point
-    pause(2);
     
-    pathObj = Path_Planner();
-    pathPoints = pathObj.linear_traj(P1,P2,numberOfPoints);
+    pathObj.queueOfPaths.enqueue([P1 P2 1 20 3])
+    pathObj.queueOfPaths.enqueue([P2 P3 1 20 3])
+    pathObj.queueOfPaths.enqueue([P3 P1 1 20 3])
     
-    totalDuration = 4.0; %per motion, not the whole sequence
-    I = Interpolator("Cubic",totalDuration/ (numberOfPoints-1));
-    
-    logger = Logger("log.txt");
-    %logger's time 0 starts after robot is at P1
-    
+    RENDER_RATE_MS = 40.0;
     tic
-    while toc < 2
-        logger.logPositions(pp.getPositions());
-        pause(0.03); %avoid the communication rate limit
-    end
-    
-    %P1 -> P2
-    for i = 1:numberOfPoints-1
-        tic
-        while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
-            scalar = I.get(toc);
-            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:));
-            pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
-            logger.logPositions(pp.getPositions());
-            pause(0.03); %avoid the communication rate limit
+    while true
+        if(renderTimer.isTimerDone() == 1)
+            switch(renderState)
+                case State.COMPUTE
+                    currentPos = robot.getPositions();
+                    currentAngVelo = robot.getVelocities();
+                    currentVelo = robot.fdk3001(currentPos, currentAngVelo);
+                    model = model.calcPose(currentPos,currentVelo);
+                    renderState = State.PRERENDER;
+                case State.PRERENDER
+                    model = model.plotGraph();
+                    renderState = State.RENDER;
+                case State.RENDER
+                    renderState = State.COMPUTE;
+                    model.render();
+            end
+            renderTimer = renderTimer.setTimer(RENDER_RATE_MS/3000.0);
         end
-    end 
-    
-    pathPoints = pathObj.linear_traj(P2,P3,numberOfPoints);
-    tic
-    while toc < 2
-        logger.logPositions(pp.getPositions());
-        pause(0.03); %avoid the communication rate limit
-    end
-    
-    %P2 -> P3
-    for i = 1:numberOfPoints-1
-        tic
-        while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
-            scalar = I.get(toc);
-            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:));
-            pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
-            logger.logPositions(pp.getPositions());
-            pause(0.03); %avoid the communication rate limit
+        
+        switch(state)
+            case State.STOPPED
+                disp("State -> STOPPED");
+                timer = timer.setTimer(2);
+                state = State.WAITING;
+            case State.LONGWAIT
+                if(timer.isTimerDone() == 1)
+                    state = State.STARTNEXT;
+                end
+                
+            case State.WAITING
+                if(timer.isTimerDone() == 1)
+                    state = State.RUNNING;
+                end
+            case State.RUNNING
+                toc
+                [pathObj,isDone,nextSetpoint] = pathObj.update();
+                tic
+                if(isDone == 1)
+                    timer = timer.setTimer(2);
+                    state = State.LONGWAIT;
+                    disp("---END OF PATH---")
+                else
+                    robot.setSetpoints(kine.ik3001(nextSetpoint));
+                end
+            case State.END
+                
+            case State.STARTNEXT
+                pathObj = pathObj.startNextPath();
+                state = State.RUNNING;                
         end
-    end 
-    
-    pathPoints = pathObj.linear_traj(P3,P1,numberOfPoints);
-    
-    tic
-    while toc < 2
-        logger.logPositions(pp.getPositions());
-        pause(0.03); %avoid the communication rate limit
     end
     
-    %P3 -> P1
-    for i = 1:numberOfPoints-1
-        tic
-        while toc < totalDuration / (numberOfPoints-1) %This gives segment duration
-            scalar = I.get(toc);
-            nextSetpoint = ((pathPoints(i+1,:)-pathPoints(i,:)).* scalar + pathPoints(i,:));
-            pp.setSetpoints(rad2deg(kine.ik3001(nextSetpoint)));
-            logger.logPositions(pp.getPositions());
-            pause(0.03); %avoid the communication rate limit
-        end
-    end 
     
-    tic
-    while toc < 2
-        logger.logPositions(pp.getPositions());
-        pause(0.03); %avoid the communication rate limit
-    end
     
-    logger.close();
     
     
 catch exception
@@ -128,4 +126,4 @@ catch exception
     disp('Exited on error, clean shutdown');
 end
 % Clear up memory upon termination
-pp.shutdown()
+robot.shutdown()

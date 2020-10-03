@@ -15,7 +15,7 @@ classdef Plotter
             obj.file = fid;
         end
         
-        function a = getMatrix(obj)
+        function a = getMatrix(~)
             a = readmatrix('log.txt');
         end
         function obj = close(obj)

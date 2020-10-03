@@ -1,0 +1,5 @@
+classdef State
+   enumeration
+      STOPPED, WAITING, RUNNING, END, STARTNEXT, LONGWAIT, COMPUTE, PRERENDER, RENDER
+   end
+end
