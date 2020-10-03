@@ -1,7 +1,6 @@
 # Security Policy
 
-## Supported Versions
-Is something is wrong don't bother telling us. We will just make the problem worse.
+## Is something is wrong don't bother telling us. We will just make the problem worse.
 
 | Version | Supported          |
 | ------- | ------------------ |
