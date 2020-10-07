@@ -50,8 +50,10 @@ try
     if cam.params == 0
         error("No camera parameters found!");
     end
+    
+    %outputs a transformation Matrix
     cam.cam_pose = cam.getCameraPose();
-    randompoint = pointToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), 100, 100);
+    randompoint = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [100 100]);
     
     
 catch exception
