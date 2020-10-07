@@ -6,8 +6,12 @@ classdef Camera
     properties
         % Flags
         DEBUG = true;
-        POSE_PLOT = false;  
+        POSE_PLOT = false;
         DEBUG_BALLDETECTION = false;
+        check2base = [0  1  0 -100;
+                           1  0  0   50;
+                           0  0 -1    0;
+                           0  0  0    1];
         
         % Image Processing Variables
         
@@ -51,8 +55,8 @@ classdef Camera
             DEBUG = self.DEBUG;
             params = 0;
             try
-                disp("Clear surface of any items, then press any key to continue");
-                pause;
+%                 disp("Clear surface of any items, then press any key to continue");
+%                 pause;
                 camcalib; % Change this if you are using a different calibration script
                 params = cameraParams;
                 disp("Camera calibration complete!");

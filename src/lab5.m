@@ -54,6 +54,29 @@ try
     %outputs a transformation Matrix
     cam.cam_pose = cam.getCameraPose();
     randompoint = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [100 100]);
+    basePose = cam.cam_pose * cam.check2base;
+    
+    newImg = snapshot(cam.cam);
+    imshow(newImg);
+    randompoint2 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [129 261]);
+    randompoint3 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [67 373]);
+    randompoint4 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [555 378]);
+    randompoint5 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [516 252]);
+    
+    
+    
+    
+    testPoint2 = ([randompoint2(1) randompoint2(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+    testPoint3 = ([randompoint3(1) randompoint3(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+    testPoint4 = ([randompoint4(1) randompoint4(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+    testPoint5 = ([randompoint5(1) randompoint5(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+    
+    disp(testPoint2);
+    disp(testPoint3);
+    disp(testPoint4);
+    disp(testPoint5);
+    
+    
     
     
 catch exception
