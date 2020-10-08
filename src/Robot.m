@@ -87,6 +87,25 @@ classdef Robot
             end
         end
         
+        function  writeByte(packet, idOfCommand, values)
+            try
+                ds = javaArray('java.lang.Byte',length(values));
+                for i=1:length(values)
+                    ds(i)= java.lang.Byte(values(i));
+                end
+                % Default packet size for HID
+                intid = java.lang.Integer(idOfCommand);
+                class(intid);
+                class(idOfCommand);
+                class(ds);
+                packet.myHIDSimplePacketComs.writeBytes(intid,  ds,packet.pol);
+                
+            catch exception
+                getReport(exception)
+                disp('Command error, reading too fast');
+            end
+        end
+        
         %get a 3x1 matrix for the position of the arm angles
         function position = getPositions(Robot)
             returnPacket = read(Robot, 1910);
@@ -115,7 +134,16 @@ classdef Robot
             velocity(1) = returnPacket(3);
             velocity(2) = returnPacket(6);
             velocity(3) = returnPacket(9);
-        end
+            packet = zeros(15, 1, 'single');
+            packet(1) = 1000;%0 second time
+            packet(2) = 0;%linear interpolation
+            packet(3) = setpoint(1); % -90 -> 90
+            packet(4) = setpoint(2);% Second link to 90 -> -45
+            packet(5) = setpoint(3);% Third link to -90 -> 45
+            
+            % Send packet to the server and get the response
+            %pp.write sends a 15 float packet to the micro controller
+            robot.write(1962, packet);        end
         
         %set a 3x1 matrix for the position of the arm angles
         function setSetpoints(robot,setpoint)
@@ -144,6 +172,16 @@ classdef Robot
             %pp.write sends a 15 float packet to the micro controller
             robot.write(1848, packet);
         end
+        
+        function setGripper(robot,setpoint)
+            packet = zeros(1, 1, 'single');
+            packet(1) = setpoint;%0 degree
+            
+            % Send packet to the server and get the response
+            %pp.write sends a 15 float packet to the micro controller
+            robot.writeByte(1962, packet);
+        end
+        
         
         %return true if target position is "close enough" to the setpoint
         function atTarget = isAtTarget(robot)

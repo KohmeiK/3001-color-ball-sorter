@@ -63,36 +63,39 @@ try
     disp("Cal Done");
     pause;
     
-    %Image Aquisition
-    figure;
-    newImg = snapshot(cam.cam);
-%     imshow(newImg);
-    
-    %Image Undistortion
-%     figure;
-%     [undistortedIM, newOrigin] = undistortImage(newImg, cam.params.Intrinsics, 'OutputView', 'full');
-%     imshow(undistortedIM);
-    
-    % Convert the image to the HSV color space.
-    [BW,Mask] = yellowMask(newImg);
-    
-%     imshow(Mask);
-    imshow(BW);
-    
-    %Dialate the black and white image
-    dilated = imdilate(BW,strel('square',8));
-%     imshow(dilated);
-    
-    %Erode the dialated image from previous step
-    eroded = imerode(dilated, strel('square', 10));
-    imshow(eroded);
-    L = bwlabel(eroded);
-    stats = regionprops('struct', L, 'Centroid');
-    
-    randompoint2 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [stats.Centroid(1) stats.Centroid(2)]);
-    testPoint2 = ([randompoint2(1) randompoint2(2) 10]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
-    disp(testPoint2);
-    
+    while true
+        %Image Aquisition
+%         figure;
+        newImg = snapshot(cam.cam);
+    %     imshow(newImg);
+
+        %Image Undistortion
+%         figure;
+        [undistortedIM, newOrigin] = undistortImage(newImg, cam.params.Intrinsics, 'OutputView', 'full');
+%         imshow(undistortedIM);
+
+        % Convert the image to the HSV color space.
+        [BW,Mask] = yellowMask(undistortedIM);
+
+    %     imshow(Mask);
+    %     imshow(BW);
+
+        %Dialate the black and white image
+        dilated = imdilate(BW,strel('square',10));
+    %     imshow(dilated);
+
+        %Erode the dialated image from previous step
+        eroded = imerode(dilated, strel('square', 15));
+    %     imshow(eroded);
+        L = bwlabel(eroded);
+        stats = regionprops('struct', L, 'Centroid');
+
+        randompoint2 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [stats.Centroid(1) stats.Centroid(2)]);
+        testPoint2 = ([randompoint2(1) randompoint2(2) 10]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+        disp(testPoint2);
+        pause(1)
+    end
+        
     testPoint2(3) = 50;
     
     robot.setSetpointsSlow(kine.ik3001(testPoint2));
