@@ -34,6 +34,7 @@ myHIDSimplePacketComs.setVid(vid);
 myHIDSimplePacketComs.connect();
 
 robot = Robot(myHIDSimplePacketComs);
+kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
 
 cam = Camera();
 cam.DEBUG = DEBUG_CAM;
@@ -44,37 +45,77 @@ green_place = [150, 50, 11];
 pink_place = [75, -125, 11];
 yellow_place = [75, 125, 11];
 
+
 %% Main Loop
 try
+    
     % Set up camera
     if cam.params == 0
         error("No camera parameters found!");
     end
+    
     
     %outputs a transformation Matrix
     cam.cam_pose = cam.getCameraPose();
     randompoint = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [100 100]);
     basePose = cam.cam_pose * cam.check2base;
     
+    disp("Cal Done");
+    pause;
+    
+    %Image Aquisition
+    figure;
     newImg = snapshot(cam.cam);
-    imshow(newImg);
-    randompoint2 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [129 261]);
-    randompoint3 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [67 373]);
-    randompoint4 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [555 378]);
-    randompoint5 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [516 252]);
+%     imshow(newImg);
     
+    %Image Undistortion
+%     figure;
+%     [undistortedIM, newOrigin] = undistortImage(newImg, cam.params.Intrinsics, 'OutputView', 'full');
+%     imshow(undistortedIM);
     
+    % Convert the image to the HSV color space.
+    [BW,Mask] = yellowMask(newImg);
     
+%     imshow(Mask);
+    imshow(BW);
     
-    testPoint2 = ([randompoint2(1) randompoint2(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
-    testPoint3 = ([randompoint3(1) randompoint3(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
-    testPoint4 = ([randompoint4(1) randompoint4(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
-    testPoint5 = ([randompoint5(1) randompoint5(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+    %Dialate the black and white image
+    dilated = imdilate(BW,strel('square',8));
+%     imshow(dilated);
     
+    %Erode the dialated image from previous step
+    eroded = imerode(dilated, strel('square', 10));
+    imshow(eroded);
+    L = bwlabel(eroded);
+    stats = regionprops('struct', L, 'Centroid');
+    
+    randompoint2 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [stats.Centroid(1) stats.Centroid(2)]);
+    testPoint2 = ([randompoint2(1) randompoint2(2) 10]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
     disp(testPoint2);
-    disp(testPoint3);
-    disp(testPoint4);
-    disp(testPoint5);
+    
+    testPoint2(3) = 50;
+    
+    robot.setSetpointsSlow(kine.ik3001(testPoint2));
+    
+    
+    
+%     randompoint2 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [129 261]);
+%     randompoint3 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [67 373]);
+%     randompoint4 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [555 378]);
+%     randompoint5 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [516 252]);
+%     
+%     
+%     
+%     
+%     testPoint2 = ([randompoint2(1) randompoint2(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+%     testPoint3 = ([randompoint3(1) randompoint3(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+%     testPoint4 = ([randompoint4(1) randompoint4(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+%     testPoint5 = ([randompoint5(1) randompoint5(2) 0]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+%     
+%     disp(testPoint2);
+%     disp(testPoint3);
+%     disp(testPoint4);
+%     disp(testPoint5);
     
     
     

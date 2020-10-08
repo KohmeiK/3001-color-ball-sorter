@@ -21,6 +21,7 @@ classdef Camera
         params;
         cam;
         cam_pose;
+%         camName;
     end
     
     methods

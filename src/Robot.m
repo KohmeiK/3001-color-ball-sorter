@@ -120,7 +120,21 @@ classdef Robot
         %set a 3x1 matrix for the position of the arm angles
         function setSetpoints(robot,setpoint)
             packet = zeros(15, 1, 'single');
-            packet(1) = 0;%one second time
+            packet(1) = 0;%0 second time
+            packet(2) = 0;%linear interpolation
+            packet(3) = setpoint(1); % -90 -> 90
+            packet(4) = setpoint(2);% Second link to 90 -> -45
+            packet(5) = setpoint(3);% Third link to -90 -> 45
+            
+            % Send packet to the server and get the response
+            %pp.write sends a 15 float packet to the micro controller
+            robot.write(1848, packet);
+        end
+        
+                %set a 3x1 matrix for the position of the arm angles
+        function setSetpointsSlow(robot,setpoint)
+            packet = zeros(15, 1, 'single');
+            packet(1) = 1000;%0 second time
             packet(2) = 0;%linear interpolation
             packet(3) = setpoint(1); % -90 -> 90
             packet(4) = setpoint(2);% Second link to 90 -> -45
