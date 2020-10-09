@@ -89,19 +89,20 @@ try
     %     imshow(eroded);
         L = bwlabel(eroded);
         stats = regionprops('struct', L, 'Centroid');
-
-        randompoint2 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [stats.Centroid(1) stats.Centroid(2)]);
-        testPoint2 = ([randompoint2(1) randompoint2(2) 10]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
-        disp(testPoint2);
-        pause(1)
-    end
         
-    testPoint2(3) = 50;
-    
-    robot.setSetpointsSlow(kine.ik3001(testPoint2));
-    
-    
-    
+        if ~isempty(stats)
+            CurrentOrbPos = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [stats.Centroid(1) stats.Centroid(2)]);
+            testPoint2 = ([CurrentOrbPos(1) CurrentOrbPos(2) 10]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+            disp(testPoint2);
+            
+            testPoint2(3) = 30;
+            
+            robot.setSetpointsSlow(kine.ik3001(testPoint2));
+        end
+        
+        pause(1);
+    end
+            
 %     randompoint2 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [129 261]);
 %     randompoint3 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [67 373]);
 %     randompoint4 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [555 378]);
