@@ -1,0 +1,27 @@
+classdef Approach
+    
+    properties
+    end
+    
+    methods
+        function obj = Approach()
+            %HOME Construct an instance of this class
+            
+        end
+        
+        function update(~)
+            state = HomeState.INIT;
+            switch(state)
+                case HomeState.INIT
+                    
+                case homeState.WAIT_ARM
+                    while(Robot.isAtTarget == 1)
+                        robot.setSetpointsSlow(kinematics.fk3001([0 0 0]));
+                        pause(1);
+                    end
+                case homeState.DONE
+                    %Clear activeColor
+            end
+            
+        end
+        
