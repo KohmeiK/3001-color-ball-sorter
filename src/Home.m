@@ -3,18 +3,17 @@ classdef Home
     %   Detailed explanation goes here
     
     properties
+        state
     end
     
     methods
         function obj = Home()
             %HOME Construct an instance of this class
-            
+            obj.state = subStates.INIT;
         end
         
-        function startHome(~)
-            state = subStates.INIT;
-            robot = Robot(myHIDSimplePacketComs);
-            switch(state)
+        function obj = update(obj)
+            switch(obj.state)
                 case subStates.INIT
                     robot.currentSetpoint = [0 0 0];
                     state = subStates.ARM_WAIT;

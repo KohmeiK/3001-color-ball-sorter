@@ -162,7 +162,7 @@ classdef Robot
                 %set a 3x1 matrix for the position of the arm angles
         function setSetpointsSlow(robot,setpoint)
             packet = zeros(15, 1, 'single');
-            packet(1) = 1000;%0 second time
+            packet(1) = 3000;%0 second time
             packet(2) = 0;%linear interpolation
             packet(3) = setpoint(1); % -90 -> 90
             packet(4) = setpoint(2);% Second link to 90 -> -45
@@ -196,47 +196,7 @@ classdef Robot
                 atTarget = 0;
             end
         end
-        
-        %This is the state machine like main update loop for controlling
-        %the order of setpoints
-        function robot = updateRobot(robot)
-            atTarget = robot.isAtTarget();
-            if (robot.prevAtTarget == 0 && atTarget == 1)
-                %Last move just ended (risindg edge)
-                if (robot.setpointQueue.Depth > 0) %The queue has next setpoint
-                    disp("Moving to next setpoint");
-                    robot.currentSetpoint = robot.setpointQueue.dequeue();
-                    disp(robot.currentSetpoint)
-                    %send the setpoint to the arm
-                    robot.setSetpoints(robot.currentSetpoint);
-                    %now we are not at the target pos
-                    atTarget = 0;
-                else
-                    disp("No more setpoints left!");
-                    %send a signal to main to end program
-                    robot.isActive = 0;
-                end
-            end
-            %update prev values for next loop
-            robot.prevAtTarget = atTarget;
-        end
-        
-        %Not used but lists all the points the robot would have gone to
-        function robot = deleteAllSetpoints(robot)
-            disp("List of next Setpoint(s):")
-            while robot.setpointQueue.Depth > 0
-                disp(robot.setpointQueue.dequeue);
-            end
-            disp("All have been DELETED!")
-            robot.isActive = 0;
-        end
-        
-        %Add to the queue of setpoints
-        function robot = enqueueSetpoint(robot,newSetpoint)
-            robot.isActive = 1;
-            robot.setpointQueue.enqueue(newSetpoint);
-        end
-        
+                
         function returnVal = jacob3001(~, q)
             t1 = q(1);
             t2 = q(2) - 90;

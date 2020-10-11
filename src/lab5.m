@@ -12,28 +12,7 @@ DEBUG = true;
 STICKMODEL = false;
 DEBUG_CAM = false;
 
-%% Setup
-vid = hex2dec('16c0');
-pid = hex2dec('0486');
 
-if DEBUG
-    disp(vid);
-    disp(pid);
-end
-
-javaaddpath ../lib/SimplePacketComsJavaFat-0.6.4.jar;
-import edu.wpi.SimplePacketComs.*;
-import edu.wpi.SimplePacketComs.device.*;
-import edu.wpi.SimplePacketComs.phy.*;
-import java.util.*;
-import org.hid4java.*;
-version -java;
-myHIDSimplePacketComs=HIDfactory.get();
-myHIDSimplePacketComs.setPid(pid);
-myHIDSimplePacketComs.setVid(vid);
-myHIDSimplePacketComs.connect();
-
-robot = Robot(myHIDSimplePacketComs);
 kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
 
 cam = Camera();
@@ -109,6 +88,7 @@ while true
             nextState = mainStates.HOME;
             mainState = mainStates.DEBUG;
         case homeState.DEBUG
+            
     end
 end
 
