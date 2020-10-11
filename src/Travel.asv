@@ -4,7 +4,6 @@ classdef Travel
     
     properties
         dest;
-        robot;
         
     end
     

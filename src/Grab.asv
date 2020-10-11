@@ -12,7 +12,7 @@ classdef Grab
         end
         
         
-        function update(~)
+        function update(~,ROBOT)
             %moveDown is the xyz coordinate where the arm should move down
             robot = Robot(myHIDSimplePacketComs);
             state = subStates.INIT;
@@ -27,7 +27,7 @@ classdef Grab
                     nextState = subStates.ARM_WAIT; %Set the next state after waiting for the gripper
                     robot.setGripper(open); %Set Gripper To Open
                     tic %Start Timer
-                    state = subStates.GRIPPER_WAIT; %
+                    state = subStates.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
                     
                 case subStates.ARM_WAIT
                     if robot.isAtTarget() == 0

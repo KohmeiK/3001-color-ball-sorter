@@ -47,6 +47,8 @@ try
 state = State.HOME; 
 nextState = State.HOME;
 
+
+
 %Creating objects
 homeObj = Home();
 approachObj = Approach();
