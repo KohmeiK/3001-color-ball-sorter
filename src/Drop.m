@@ -1,43 +1,42 @@
 classdef Drop
-    %DROP Summary of this class goes here
+    % Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
+        robot;
+        nextState;
+        open = 0;
+        close = 90;
+        SERVO_WAIT = 250;
+        state;
     end
-
+    
     methods
-        function obj = Drop()
+        function obj = Grab(robot)
+            obj.robot = robot;
         end
-        function startHome(~)
-            robot = Robot(myHIDSimplePacketComs);
-            state = subStates.INIT;
-            open = 0;
-            close = 90;
-            gripOpen = 0;
-            switch(state)
+        
+        
+        function update(obj)
+            
+            switch(obj.state)
                 case subStates.INIT
-                    state = subStates.GRIPPER_WAIT;
-                    gripOpen = 1;
+                    obj.robot.setGripper(obj.open); %Set Gripper To Open
+                    tic %Start Timer
+                    obj.state = subStates.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
+                    
                 case subStates.GRIPPER_WAIT
-                    if gripOpen == 1
-                        %need to wrtie atGRipperTarget(setPoint)
-                        while robot.atGripperTarget(open) == 0
-                            robot.setGripper(open);
-                            pause(0.5);
-                        end
-                        gripOpen = 0;
-                        state = subStates.GRIPPER_WAIT;
-                    else
-                        while robot.atGripperTarget(close) == 0
-                            robot.setGripper(close);
-                            pause(0.5);
-                        end
-                        state = subStates.DONE;
+                    if(toc > obj.SERVO_WAIT)
+                        obj.state = subStates.Done;
                     end
+                    
                 case subStates.DONE
-                    %Clear activeColor
+                    
+                otherwise
+                    disp("ERROR in Drop State, Incorrect State Given");
+                    
             end
         end
+        
     end
 end
-

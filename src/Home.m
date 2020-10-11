@@ -31,7 +31,7 @@ classdef Home
                     %Clear activeColor
                     
                 otherwise
-                    disp("ERROR in Travel State, Incorrect State Given");
+                    disp("ERROR in Home State, Incorrect State Given");
             end
         end
     end
