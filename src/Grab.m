@@ -5,6 +5,11 @@ classdef Grab
     properties
         downPos;
         robot;
+        nextState;
+        open = 0;
+        close = 90;
+        SERVO_WAIT = 250;
+        state;
     end
     
     methods
@@ -14,32 +19,26 @@ classdef Grab
         end
         
         
-        function update(~)
+        function update(obj)
             %moveDown is the xyz coordinate where the arm should move down
-            state = subStates.INIT;
-            nextState;
-            open = 0;
-            close = 90;    
-            SERVO_WAIT = 250;
-            
-            switch(state)
+            switch(obj.state)
                 case subStates.INIT
-                    nextState = subStates.ARM_WAIT; %Set the next state after waiting for the gripper
+                    obj.nextState = subStates.ARM_WAIT; %Set the next state after waiting for the gripper
                     obj.robot.pathPlanTo(obj.downPos); %Path Plan to Down Pos
-                    obj.robot.setGripper(open); %Set Gripper To Open
+                    obj.robot.setGripper(obj.open); %Set Gripper To Open
                     tic %Start Timer
-                    state = subStates.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
+                    obj.state = subStates.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
                     
                 case subStates.ARM_WAIT
                     if obj.robot.isRobotDone() == 1
-                        nextState = subStates.Done;
+                        obj.nextState = subStates.Done;
                         tic
-                        state = subStates.GRIPPER_WAIT;
+                        obj.state = subStates.GRIPPER_WAIT;
                     end
                     
                 case subStates.GRIPPER_WAIT
-                    if(toc > SERVO_WAIT)
-                        state = nextState;
+                    if(toc > obj.SERVO_WAIT)
+                        obj.state = obj.nextState;
                     end
                     
                 case subStates.DONE
