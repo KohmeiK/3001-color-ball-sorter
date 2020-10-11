@@ -27,7 +27,7 @@ classdef Grab
                     nextState = subStates.ARM_WAIT; %Set the next state after waiting for the gripper
                     robot.setGripper(open); %Set Gripper To Open
                     tic %Start Timer
-                    state = subStates.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
+                    state = subStates.GRIPPER_WAIT; %
                     
                 case subStates.ARM_WAIT
                     if robot.isAtTarget() == 0
