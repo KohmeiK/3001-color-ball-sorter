@@ -5,8 +5,9 @@ classdef Travel
     properties
         dest;
         robot;
+        state;
         nextState;
-        HomePos = [0 0 0];
+        HomePos = [0 0 0]; %This could be put in Robot and called from there, would be cleaner but doesn't matter
         
     end
     
@@ -16,21 +17,27 @@ classdef Travel
             obj.robot = robot;
         end
         
-        function update(~)
-                       
-            switch(state)
-                case subStates.INIT
-                    obj.robot.pathPlanTo(HomePos);
-                    state = subStates.ARM_WAIT;
-                    
-                case subStates.ARM_WAIT
-                    if robot.isAtTarget() == 1
-                       state = subStates.DONE;
-            end
-                    
+        function update(obj)
             
+            switch(obj.state)
+                case subStates.INIT
+                    obj.robot.pathPlanTo(obj.HomePos);
+                    obj.state = ARM_WAIT_HOME; %Should this be added to Substates? I have it essentially as a priv state rn
+                    
+                case ARM_WAIT_HOME
+                    if obj.robot.isAtTarget() == 1
+                        obj.robot.pathPlanTo(obj.dest);
+                        obj.state = subState.ARM_WAIT;
+                    end
+                case subStates.ARM_WAIT
+                    if obj.robot.isAtTarget() == 1
+                        obj.state = subState.DONE;
+                    end
+                            
                 case subStates.DONE
-                    %Clear activeColor
+                    
+                otherwise
+                    disp("ERROR in Travel State, Incorrect State Given");
             end
         end
     end

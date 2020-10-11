@@ -2,35 +2,38 @@ classdef Home
     %HOME Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties
-        state
+   properties
+        dest;
+        robot;
+        state; 
+        HomePos = [0 0 0]; %This could be put in Robot and called from there, would be cleaner but doesn't matter
     end
     
     methods
-        function obj = Home()
-            %HOME Construct an instance of this class
-            obj.state = subStates.INIT;
+        function obj = Home(destination, robot)
+            obj.dest = destination;
+            obj.robot = robot;
         end
         
-        function obj = update(obj)
+        function update(obj)
+            
             switch(obj.state)
                 case subStates.INIT
-                   
-                    state = subStates.ARM_WAIT;
+                    obj.robot.pathPlanTo(obj.HomePos);
+                    obj.state = subState.ARM_WAIT;
+                    
                 case subStates.ARM_WAIT
-                    while Robot.isAtTarget() == 0
-                        
+                    if obj.robot.isAtTarget() == 1
+                        obj.state = subState.DONE;
                     end
-                    state = subStates.DONE;
+                            
                 case subStates.DONE
                     %Clear activeColor
+                    
+                otherwise
+                    disp("ERROR in Travel State, Incorrect State Given");
             end
-            
         end
-        
     end
-    
 end
-
-
 

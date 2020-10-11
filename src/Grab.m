@@ -43,6 +43,9 @@ classdef Grab
                     
                 case subStates.DONE
                     
+                otherwise
+                    disp("ERROR in Grab State, Incorrect State Given");
+                    
             end
         end
         
