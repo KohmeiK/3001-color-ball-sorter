@@ -44,8 +44,8 @@ try
 
 
 %Initializing states
-mainState = mainStates.HOME; 
-nextState = mainStates.HOME;
+state = State.HOME; 
+nextState = State.HOME;
 
 %Creating objects
 homeObj = Home();
@@ -55,6 +55,8 @@ travelObj = Travel();
 dropObj = Drop();
 debugObj = Debug();
 
+timer = EventTimer();
+
 %Creating Global Variables
 % cordx = 
 % cordy =
@@ -63,31 +65,60 @@ armDownPos = [cordx, cordy, cordz]; %xyz coordinates for moving the arm down in 
 destination = [0 0 0];
 
 while true
-    switch(mainState)
-        case homeState.HOME
-            homeObj.startHome();
-            nextState = mainStates.APPROACH;
-            mainState = mainStates.DEBUG;
-        case homeState.APPROACH
-            approachObj.startObj();
-            nextState = mainStates.GRAB;
-            mainState = mainStates.DEBUG;
-        case homeState.GRAB
-            grabObj.downPos = armDownPos;
-            grabObj.startGrab();
-            nextState = mainStates.TRAVEL;
-            mainState = mainStates.DEBUG;
-        case homeState.TRAVEL
-%             destination = [] %set destination
-            travelObj.dest = destination;
-            travelObj.startTravel();
-            nextState = mainStates.DROP;
-            mainState = mainStates.DEBUG;
-        case homeState.DROP
-            dropObj.startDrop();
-            nextState = mainStates.HOME;
-            mainState = mainStates.DEBUG;
-        case homeState.DEBUG
+    switch(state)
+        case State.INIT
+            homeObj.state = subState.INIT;
+            %More init stuff here
+            
+        case State.HOME
+            homeObj = homeObj.update();
+            if(homeObj.state == subState.DONE)
+                nextState = State.APPROACH;
+                state = State.DEBUG_WAIT;
+                timer.setTimer(2000);
+                apporachObj.state = subState.INIT;
+            end
+            
+        case State.APPROACH
+            approachObj = approachObj.update();
+            if(approachObj.state == subState.DONE)
+                nextState = State.GRAB;
+                state = State.DEBUG_WAIT;
+                timer.setTimer(2000);
+                grabObj.state = subState.INIT;
+            end
+            
+        case State.GRAB
+            grabObj = grabObj.update();
+            if(grabObj.state == subState.DONE)
+                nextState = State.TRAVEL;
+                state = State.DEBUG_WAIT;
+                timer.setTimer(2000);
+                travelObj.state = subState.INIT;
+            end
+            
+        case State.TRAVEL
+            travelObj = travelObj.update();
+            if(travelObj.state == subState.DONE)
+                nextState = State.DROP;
+                state = State.DEBUG_WAIT;
+                timer.setTimer(2000);
+                dropObj.state = subState.INIT;
+            end
+            
+        case State.DROP
+            dropObj = dropObj.update();
+            if(dropObj.state == subState.DONE)
+                nextState = State.APPROACH;
+                state = State.DEBUG_WAIT;
+                timer.setTimer(2000);
+                homeObj.state = subState.INIT;
+            end
+            
+        case State.DEBUG_WAIT
+            if(timer.isDone() == 1)
+                state = nextState;
+            end
             
     end
 end
