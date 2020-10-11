@@ -49,59 +49,69 @@ yellow_place = [75, 125, 11];
 %% Main Loop
 try
     
-    % Set up camera
-    if cam.params == 0
-        error("No camera parameters found!");
+%     % Set up camera
+%     if cam.params == 0
+%         error("No camera parameters found!");
+%     end
+%     
+%     
+%     %outputs a transformation Matrix
+%     cam.cam_pose = cam.getCameraPose();
+%     randompoint = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [100 100]);
+%     basePose = cam.cam_pose * cam.check2base;
+%     
+%     disp("Cal Done");
+%     pause;
+
+
+%Initializing states
+mainState = mainStates.HOME; 
+nextState = mainStates.HOME;
+
+%Creating objects
+homeObj = Home();
+approachObj = Approach();
+grabObj = Grab();
+travelObj = Travel();
+dropObj = Drop();
+debugObj = Debug();
+
+%Creating Global Variables
+% cordx = 
+% cordy =
+% cordz =
+armDownPos = [cordx, cordy, cordz]; %xyz coordinates for moving the arm down in the grab state
+destination = [0 0 0];
+
+while true
+    switch(mainState)
+        case homeState.HOME
+            homeObj.startHome();
+            nextState = mainStates.APPROACH;
+            mainState = mainStates.DEBUG;
+        case homeState.APPROACH
+            approachObj.startObj();
+            nextState = mainStates.GRAB;
+            mainState = mainStates.DEBUG;
+        case homeState.GRAB
+            grabObj.downPos = armDownPos;
+            grabObj.startGrab();
+            nextState = mainStates.TRAVEL;
+            mainState = mainStates.DEBUG;
+        case homeState.TRAVEL
+%             destination = [] %set destination
+            travelObj.dest = destination;
+            travelObj.startTravel();
+            nextState = mainStates.DROP;
+            mainState = mainStates.DEBUG;
+        case homeState.DROP
+            dropObj.startDrop();
+            nextState = mainStates.HOME;
+            mainState = mainStates.DEBUG;
+        case homeState.DEBUG
     end
-    
-    
-    %outputs a transformation Matrix
-    cam.cam_pose = cam.getCameraPose();
-    randompoint = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [100 100]);
-    basePose = cam.cam_pose * cam.check2base;
-    
-    disp("Cal Done");
-    pause;
-    
-    while true
-        %Image Aquisition
-%         figure;
-        newImg = snapshot(cam.cam);
-    %     imshow(newImg);
+end
 
-        %Image Undistortion
-%         figure;
-        [undistortedIM, newOrigin] = undistortImage(newImg, cam.params.Intrinsics, 'OutputView', 'full');
-%         imshow(undistortedIM);
-
-        % Convert the image to the HSV color space.
-        [BW,Mask] = yellowMask(undistortedIM);
-
-    %     imshow(Mask);
-    %     imshow(BW);
-
-        %Dialate the black and white image
-        dilated = imdilate(BW,strel('square',10));
-    %     imshow(dilated);
-
-        %Erode the dialated image from previous step
-        eroded = imerode(dilated, strel('square', 15));
-    %     imshow(eroded);
-        L = bwlabel(eroded);
-        stats = regionprops('struct', L, 'Centroid');
-        
-        if ~isempty(stats)
-            CurrentOrbPos = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [stats.Centroid(1) stats.Centroid(2)]);
-            testPoint2 = ([CurrentOrbPos(1) CurrentOrbPos(2) 10]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
-            disp(testPoint2);
-            
-            testPoint2(3) = 30;
-            
-            robot.setSetpointsSlow(kine.ik3001(testPoint2));
-        end
-        
-        pause(1);
-    end
     
 catch exception
     fprintf('\n ERROR!!! \n \n');

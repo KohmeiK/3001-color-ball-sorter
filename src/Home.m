@@ -11,23 +11,24 @@ classdef Home
             
         end
         
-        function update(~)
-            state = HomeState.INIT;
+        function startHome(~)
+            state = subStates.INIT;
+            robot = Robot(myHIDSimplePacketComs);
             switch(state)
-                case HomeState.INIT
-                    Robot.currentSetpoint = [0 0 0];
-                    state = HomeState.ARM_WAIT;
-                case homeState.WAIT_ARM
-                    while(Robot.isAtTarget == 1)
-                        robot.setSetpointsSlow(kinematics.fk3001([0 0 0]));
-                        pause(1);
+                case subStates.INIT
+                    robot.currentSetpoint = [0 0 0];
+                    state = subStates.ARM_WAIT;
+                case subStates.ARM_WAIT
+                    while Robot.isAtTarget() == 0
+                        Robot.setSetpointsSlow(kinematics.fk3001([0 0 0]));
+                        pause(0.3);
                     end
-                case homeState.DONE
+                    state = subStates.DONE;
+                case subStates.DONE
                     %Clear activeColor
             end
             
         end
-        
         
     end
     
