@@ -180,20 +180,6 @@ classdef Robot
             robot.writeByte(1962, setpoint);
         end
         
-        
-        %return true if target position is "close enough" to the setpoint
-        function atTarget = isAtTarget(robot)
-            %get the live position of the arm
-            positions = robot.getPositions();
-            %use local setpoint to avoid 3ms delay (that causes bouncing)
-            setpoints = robot.currentSetpoint';
-            %I would do a boolean if I could
-            if(mean(abs(positions-setpoints)) < 2)
-                atTarget = 1;
-            else
-                atTarget = 0;
-            end
-        end
                 
         function returnVal = jacob3001(~, q)
             t1 = q(1);

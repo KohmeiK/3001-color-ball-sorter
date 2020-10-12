@@ -8,11 +8,11 @@ classdef RobotStateMachine
         robot
         pathPlanner
         isRobotDone
+        kine
     end
     
     methods
         function obj = RobotStateMachine()
-            
             %% Setup
             vid = hex2dec('16c0');
             pid = hex2dec('0486');
@@ -29,6 +29,7 @@ classdef RobotStateMachine
             myHIDSimplePacketComs.setVid(vid);
             myHIDSimplePacketComs.connect();
             
+            obj.kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
             obj.robot = Robot(myHIDSimplePacketComs);
             obj.pathPlanner = Path_Planner();
             obj.state = robotState.INIT;
@@ -38,16 +39,20 @@ classdef RobotStateMachine
         function obj = update(obj)
             switch(obj.state)
                 case robotState.INIT
-                    obj.robot.setSetpointsSlow([0 0 0]);
+                    disp("RobotSM = INIT")
+                    obj.robot.setSetpointsSlow([-90 0 0]);
                     obj.timer = obj.timer.setTimer(3);
                     obj.state = robotState.COMMS_WAIT;
                 case robotState.COMMS_WAIT
+                    disp("RobotSM = COMMS WAIT")
                     if obj.timer.isTimerDone == 1
                         obj.state = robotState.UPDATE;
                     end
                 case robotState.UPDATE
-                    [obj.robot, obj.isRobotDone, setPoint] = obj.robot.update(obj);
+                    disp("RobotSM = UPDATE")
+                    [obj.pathPlanner, obj.isRobotDone, setPoint] = obj.pathPlanner.update();
                     obj.robot.setSetpoints(setPoint);
+                    obj.state = robotState.COMMS_WAIT;
                 case robotState.IDLE
                     %do nothing
                     
@@ -65,7 +70,10 @@ classdef RobotStateMachine
             scaledVals = obj.trajScaler(goal);                   
             time = scaledVals(1);
             numPoints = scaledVals(2);
-            obj.pathPlanner = obj.pathPlanner.startPath(obj.robot.getPositions(),goal,time,numPoints,5);
+            a = obj.kine.FKtoTip(obj.robot.getPositions())';
+            obj.pathPlanner.queueOfPaths.enqueue([a goal time numPoints 5])
+            obj.pathPlanner = obj.pathPlanner.startNextPath();
+%             obj.pathPlanner = obj.pathPlanner.startPath(obj.robot.getPositions(),goal,time,numPoints,5);
         end
         
         function scaledVals = trajScaler(obj,finalPos)

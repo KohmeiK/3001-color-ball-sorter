@@ -13,8 +13,6 @@ STICKMODEL = false;
 DEBUG_CAM = false;
 
 
-kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
-
 %% Place Poses per color
 purple_place = [150, -50, 11];
 green_place = [150, 50, 11];
@@ -51,7 +49,7 @@ robot = RobotStateMachine();
 
 
 cv = CV(orbList);
-homeObj = Home(robot,orbList);
+homeObj = Home(orbList);
 approachObj = Approach(robot,orbList);
 grabObj = Grab(robot,orbList);
 travelObj = Travel(robot,orbList);
@@ -63,20 +61,23 @@ timer = EventTimer();
 
 while true
     
-    robot.update();
+    robot = robot.update();
     
     switch(state)
         case State.INIT
-            disp("INIT")
+            disp("Main = INIT")
+            disp("Main-> Home")
             homeObj.state = subState.INIT;
-            state = State.HOME;
+            state = State.DEBUG_WAIT;
+            timer.setTimer(3000);
+            nextState = State.HOME;
             %More init stuff here
 
         case State.HOME
-            homeObj = homeObj.update();
-            disp("HOME")
+            [homeObj,robot] = homeObj.update(robot);
+            
             if(homeObj.state == subState.DONE)
-                disp("Home finished");
+                disp("Main -> APPROACH");
                 nextState = State.APPROACH;
                 state = State.DEBUG_WAIT;
                 timer.setTimer(2000);
@@ -120,7 +121,8 @@ while true
             end
 
         case State.DEBUG_WAIT
-            if(timer.isDone() == 1)
+            disp("Debug Wait");
+            if(timer.isTimerDone() == 1)
                 state = nextState;
             end
 

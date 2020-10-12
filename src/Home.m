@@ -3,33 +3,30 @@ classdef Home
     %   Detailed explanation goes here
     
    properties
-        robot;
         state; 
         orbList;
         HomePos = [100 0 195]; 
     end
     
     methods
-        function obj = Home(robot,orblist)
-            obj.robot = robot;
+        function obj = Home(orblist)
             obj.orbList = orblist;
         end
         
-        function obj = update(obj)
-            disp("HOME UPDATING")
+        function [obj, robot] = update(obj,robot)
             switch(obj.state)
                 case subState.INIT
-                    obj.robot.pathPlanTo(obj.HomePos);
+                    robot = robot.pathPlanTo(obj.HomePos);
                     obj.state = subState.ARM_WAIT;
-                    
+                    disp("home-> Arm_WAIT");
                 case subState.ARM_WAIT
-                    if obj.robot.isAtTarget() == 1
+                    if robot.isRobotDone == 1
                         obj.state = subState.DONE;
+                        disp("home-> DONE");
                     end
                             
                 case subState.DONE
                     obj.orbList.activeColor = Color.ALL;
-                    y
                 otherwise
                     disp("ERROR in Home State, Incorrect State Given");
             end
