@@ -12,6 +12,8 @@ DEBUG = false;
 STICKMODEL = false;
 DEBUG_CAM = false;
 
+CVLoopTime = 500; % In ms
+
 
 kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
 
@@ -58,12 +60,19 @@ travelObj = Travel(robot,orbList);
 dropObj = Drop(robot);
 
 timer = EventTimer();
+CVTimer = EventTimer();
 
 
 
 while true
     
     robot.update();
+    
+    if(CVTimer > CVLoopTime)
+        cv.update();
+        CVTimer.start();
+    end
+    
     
     switch(state)
         case State.INIT
