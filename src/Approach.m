@@ -2,7 +2,9 @@ classdef Approach
     
      properties
         robot;
-        state; 
+        state;
+        dest;
+        Z_Offset = 50; %In mm
      end
     
     methods
@@ -15,7 +17,9 @@ classdef Approach
             switch(obj.state)
                 case subStates.INIT
                     if OrbList.length > 0
-                        obj.robot.pathPlanTo(OrbList.activeOrb.finalPos); %Need to add z height for being above ball
+                        obj.dest = OrbList.activeOrb.finalPos;
+                        obj.dest(3) = obj.dest(3) + obj.Z_Offset;
+                        obj.robot.pathPlanTo(); 
                         obj.state = subState.ARM_WAIT;
                     end    
                     
