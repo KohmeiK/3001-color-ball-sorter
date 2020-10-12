@@ -1,27 +1,39 @@
 classdef Approach
     
-    properties
-    end
+     properties
+        robot;
+        state; 
+     end
     
     methods
-        function obj = Approach()
-            %HOME Construct an instance of this class
-            
+        function obj = Home(robot)
+            obj.robot = robot;
         end
         
-        function update(~)
-            state = HomeState.INIT;
-            switch(state)
-                case HomeState.INIT
+        function update(obj)
+            
+            switch(obj.state)
+                case subStates.INIT
+                    if OrbList.length > 0
+                        obj.robot.pathPlanTo(OrbList.activeOrb.finalPos);
+                        obj.state = subState.ARM_WAIT;
+                    end    
                     
-                case homeState.WAIT_ARM
-                    while(Robot.isAtTarget == 1)
-                        robot.setSetpointsSlow(kinematics.fk3001([0 0 0]));
-                        pause(1);
-                    end
-                case homeState.DONE
+                case subStates.ARM_WAIT
+                    if OrbList.activeOrb.hasMoved == 1 || 
+                        obj.state = subStates.INIT;
+                    else    
+                        if obj.robot.isAtTarget() == 1
+                            obj.state = subState.DONE;
+                        end
+                    end    
+       
+                case subStates.DONE
                     %Clear activeColor
+                    
+                otherwise
+                    disp("ERROR in Home State, Incorrect State Given");
             end
-            
         end
-        
+    end
+end

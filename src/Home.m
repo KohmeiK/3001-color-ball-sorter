@@ -6,7 +6,7 @@ classdef Home
         dest;
         robot;
         state; 
-        HomePos = [0 0 0]; %This could be put in Robot and called from there, would be cleaner but doesn't matter
+        HomePos = [100 0 195]; 
     end
     
     methods
