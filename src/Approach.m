@@ -4,12 +4,14 @@ classdef Approach
         robot;
         state;
         dest;
+        orbList;
         Z_Offset = 50; %In mm
      end
     
     methods
-        function obj = Home(robot)
+        function obj = Home(robot,orblist)
             obj.robot = robot;
+            obj.orbList = orblist;
         end
         
         function update(obj)
@@ -17,7 +19,7 @@ classdef Approach
             switch(obj.state)
                 case subStates.INIT
                     if OrbList.length > 0
-                        obj.dest = OrbList.activeOrb.finalPos;
+                        obj.dest = obj.orbList.getActiveOrb().finalPos;
                         obj.dest(3) = obj.dest(3) + obj.Z_Offset;
                         obj.robot.pathPlanTo(); 
                         obj.state = subState.ARM_WAIT;

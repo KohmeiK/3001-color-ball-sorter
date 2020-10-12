@@ -7,14 +7,16 @@ classdef Travel
         robot;
         state;
         nextState;
+        orbList;
         HomePos = [0 0 0]; 
         
     end
     
     methods
-        function obj = Travel(robot)
-            obj.dest = OrbList.activeOrb.finalPos;
+        function obj = Travel(robot,orblist)
             obj.robot = robot;
+            obj.orbList = orblist;
+            obj.dest = obj.orbList.getActiveOrb().finalPos;
         end
         
         function update(obj)
