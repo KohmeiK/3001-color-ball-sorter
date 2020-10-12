@@ -14,7 +14,7 @@ classdef Grab
     
     methods
         function obj = Grab(robot)
-            obj.finalPos = OrbList.activeOrb.finalPos;
+            obj.finalPos = OrbList.getActiveOrb().finalPos;
             obj.robot = robot;
             obj.timer = EventTimer();
         end

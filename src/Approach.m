@@ -9,7 +9,7 @@ classdef Approach
      end
     
     methods
-        function obj = Home(robot,orblist)
+        function obj = Approach(robot,orblist)
             obj.robot = robot;
             obj.orbList = orblist;
         end
