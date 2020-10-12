@@ -65,7 +65,7 @@ classdef OrbList
             end
         end
         
-        function obj = deleteOrbFtomList(obj,Orb)
+        function obj = deleteOrbFromList(obj,Orb)
             color = Orb.color;
             switch color
                 case Colors.PINK
