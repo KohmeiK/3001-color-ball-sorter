@@ -5,7 +5,7 @@ classdef Camera
     
     properties
         % Flags
-        DEBUG = true;
+        DEBUG = false;
         POSE_PLOT = false;
         DEBUG_BALLDETECTION = false;
         check2base = [0  1  0 -100;

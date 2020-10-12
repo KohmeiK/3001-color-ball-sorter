@@ -13,10 +13,10 @@ classdef CV
         function obj = CV(masterOrbList)
             obj.orbList = masterOrbList;
             obj.Camera = Camera();
-            obj.Camera.DEBUG = DEBUG_CAM;
+            obj.Camera.DEBUG = false;
             obj.extrinsticCalibration();
             
-            obj.orbList.activeColor = Color.All;
+            obj.orbList.activeColor = Color.ALL;
             obj.state = CVState.INIT;
         end
         

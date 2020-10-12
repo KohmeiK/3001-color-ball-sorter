@@ -8,15 +8,12 @@ clear java;
 format short
 
 %% Flags
-DEBUG = true;
+DEBUG = false;
 STICKMODEL = false;
 DEBUG_CAM = false;
 
 
 kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
-
-cam = Camera();
-cam.DEBUG = DEBUG_CAM;
 
 %% Place Poses per color
 purple_place = [150, -50, 11];
@@ -53,7 +50,7 @@ nextState = State.HOME;
 orbList = OrbList();
 robot = RobotStateMachine();
 
-cv = CVstate(orbList);
+cv = CV(orbList);
 homeObj = Home(robot,orbList);
 approachObj = Approach(robot,orbList);
 grabObj = Grab(robot);
