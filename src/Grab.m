@@ -4,7 +4,6 @@ classdef Grab
 
     properties
         finalPos;
-        robot;
         orbList;
         open = 0;
         close = 90;
@@ -14,19 +13,18 @@ classdef Grab
     end
 
     methods
-        function obj = Grab(robot, orblist)
-            obj.robot = robot;
+        function obj = Grab(orblist)
             obj.orbList = orblist;
             obj.timer = EventTimer();
         end
 
 
-        function obj = update(obj)
+        function [obj, robot] = update(obj, robot)
 
             switch(obj.state)
                 case subState.INIT
                     obj.finalPos = obj.orbList.getActiveOrb().finalPos;
-                    obj.robot.setGripper(obj.open); %Set Gripper To Open
+                    robot.setGripper(obj.open); %Set Gripper To Open
                     obj.timer.setTimer(obj.SERVO_WAIT); %Start event timer
                     obj.state = subState.GRIPPER_WAIT_OPEN; %Go to GRIPPER WAIT to wait for timer to finish
 
@@ -38,7 +36,7 @@ classdef Grab
 
                 case subState.GRIPPER_WAIT_OPEN
                     if obj.timer.isTimerDone == 1
-                        obj.robot.pathPlanTo(obj.finalPos); %Path Plan to Down Pos
+                        robot.pathPlanTo(obj.finalPos); %Path Plan to Down Pos
                         obj.state = subState.ARM_WAIT;
                     end
 

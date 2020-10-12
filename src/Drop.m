@@ -3,8 +3,6 @@ classdef Drop
     %   Detailed explanation goes here
     
     properties
-        robot;
-        nextState;
         open = 0;
         close = 90;
         SERVO_WAIT = 250;
@@ -13,17 +11,16 @@ classdef Drop
     end
     
     methods
-        function obj = Drop(robot)
-            obj.robot = robot;
+        function obj = Drop()
             obj.timer = EventTimer();
         end
         
         
-        function obj = update(obj)
+        function [obj,robot] = update(obj,robot)
             
             switch(obj.state)
                 case subState.INIT
-                    obj.robot.setGripper(obj.open); %Set Gripper To Open
+                    robot.setGripper(obj.open); %Set Gripper To Open
                     obj.timer.setTimer(obj.SERVO_WAIT);%Set Timer
                     obj.state = subState.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
                     
