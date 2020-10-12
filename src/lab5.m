@@ -51,11 +51,11 @@ robot = RobotStateMachine();
 
 cv = CV(orbList);
 model = Model();
-homeObj = Home(robot,orbList);
-approachObj = Approach(robot,orbList);
-grabObj = Grab(robot,orbList);
-travelObj = Travel(robot,orbList);
-dropObj = Drop(robot);
+homeObj = Home(orbList);
+approachObj = Approach(orbList);
+grabObj = Grab(orbList);
+travelObj = Travel(orbList);
+dropObj = Drop();
 
 timer = EventTimer();
 CVTimer = EventTimer();
@@ -98,7 +98,7 @@ while true
             end
 
         case State.APPROACH
-            approachObj = approachObj.update();
+            [approachObj,robot] = approachObj.update(robot);
             if(approachObj.state == subState.DONE)
                 nextState = State.GRAB;
                 state = State.DEBUG_WAIT;
@@ -107,7 +107,7 @@ while true
             end
 
         case State.GRAB
-            grabObj = grabObj.update();
+            [grabObj,robot] = grabObj.update(robot);
             if(grabObj.state == subState.DONE)
                 nextState = State.TRAVEL;
                 state = State.DEBUG_WAIT;
@@ -116,7 +116,7 @@ while true
             end
 
         case State.TRAVEL
-            travelObj = travelObj.update();
+            [travelObj,robot] = travelObj.update(robot);
             if(travelObj.state == subState.DONE)
                 nextState = State.DROP;
                 state = State.DEBUG_WAIT;
@@ -125,7 +125,7 @@ while true
             end
 
         case State.DROP
-            dropObj = dropObj.update();
+            [dropObj,robot] = dropObj.update(robot);
             if(dropObj.state == subState.DONE)
                 nextState = State.APPROACH;
                 state = State.DEBUG_WAIT;
