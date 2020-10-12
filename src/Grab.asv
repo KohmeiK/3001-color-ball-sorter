@@ -3,9 +3,8 @@ classdef Grab
     %   Detailed explanation goes here
     
     properties
-        downPos;
+        finalPos;
         robot;
-        nextState;
         open = 0;
         close = 90;
         SERVO_WAIT = 250;
@@ -14,36 +13,37 @@ classdef Grab
     end
     
     methods
-        function obj = Grab(moveDown, robot)
-            obj.downPos = moveDown; 
+        function obj = Grab(robot)
+            obj.finalPos = OrbList.activeOrb.finalPos;
             obj.robot = robot;
-            timer = EventTimer();
+            obj.timer = EventTimer();
         end
         
         
         function update(obj)
-            %moveDown is the xyz coordinate where the arm should move down
+            
             switch(obj.state)
                 case subStates.INIT
-                    obj.nextState = subStates.ARM_WAIT; %Set the next state after waiting for the gripper
-                    obj.robot.pathPlanTo(obj.downPos); %Path Plan to Down Pos
                     obj.robot.setGripper(obj.open); %Set Gripper To Open
-                    timer.setTimer(SERVO_WAIT);
-                    obj.state = subStates.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
+                    obj.timer.setTimer(obj.SERVO_WAIT); %Start event timer
+                    obj.state = subStates.GRIPPER_WAIT_OPEN; %Go to GRIPPER WAIT to wait for timer to finish
                     
                 case subStates.ARM_WAIT
                     if obj.robot.isRobotDone() == 1
-                        obj.nextState = subStates.Done;
-                        tic
+                        obj.robot.pathPlanTo(obj.finalPos); %Path Plan to Down Pos
                         obj.state = subStates.GRIPPER_WAIT;
                     end
                     
-                case subStates.GRIPPER_WAIT
-                    if ti
-                        obj.nextState
-                        obj.state = obj.nextState;
+                case subStates.GRIPPER_WAIT_OPEN
+                    if obj.timer.isTimerDone == 1
+                        obj.state = subState
                     end
                     
+                case subStates.GRIPPER_WAIT_CLOSE
+                    if obj.timer.isTimerDone == 1
+                        obj.state = obj.nextState;
+                        obj.nextState = subStates.DONE;
+                    end    
                 case subStates.DONE
                     
                 otherwise
