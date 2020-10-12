@@ -14,7 +14,7 @@ classdef Approach
             obj.orbList = orblist;
         end
 
-        function update(obj)
+        function obj = update(obj)
 
             switch(obj.state)
                 case subStates.INIT

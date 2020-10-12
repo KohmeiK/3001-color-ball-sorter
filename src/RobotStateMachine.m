@@ -38,7 +38,7 @@ classdef RobotStateMachine
         function obj = update(obj)
             switch(obj.state)
                 case robotState.INIT
-                    obj.robot.setSetpointsSlow = ([0 0 0]);
+                    obj.robot.setSetpointsSlow([0 0 0]);
                     obj.timer = obj.timer.setTimer(3);
                     obj.state = robotState.COMMS_WAIT;
                 case robotState.COMMS_WAIT
@@ -72,7 +72,7 @@ classdef RobotStateMachine
             currXYZ = obj.robot.getPositions();
             targetXYZ = finalPos;
             distance = sqrt(sum((targetXYZ - currXYZ) .^ 2));
-            scaledVals = [(((distance/250) * 8) + 2) (((distance/250) * 15) + 5)];
+            scaledVals = [round((((distance/250) * 10) + 5)) (((distance/250) * 15) + 5)];
            
         end
     end

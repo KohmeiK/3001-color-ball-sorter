@@ -17,36 +17,36 @@ classdef Grab
         function obj = Grab(robot, orblist)
             obj.robot = robot;
             obj.orbList = orblist;
-            obj.finalPos = obj.orbList.getActiveOrb().finalPos;
             obj.timer = EventTimer();
         end
 
 
-        function update(obj)
+        function obj = update(obj)
 
             switch(obj.state)
-                case subStates.INIT
+                case subState.INIT
+                    obj.finalPos = obj.orbList.getActiveOrb().finalPos;
                     obj.robot.setGripper(obj.open); %Set Gripper To Open
                     obj.timer.setTimer(obj.SERVO_WAIT); %Start event timer
-                    obj.state = subStates.GRIPPER_WAIT_OPEN; %Go to GRIPPER WAIT to wait for timer to finish
+                    obj.state = subState.GRIPPER_WAIT_OPEN; %Go to GRIPPER WAIT to wait for timer to finish
 
-                case subStates.ARM_WAIT
+                case subState.ARM_WAIT
                     if obj.robot.isRobotDone() == 1
                         obj.timer.setTimer(obj.SERVO_WAIT); %Start event timer
-                        obj.state = subStates.GRIPPER_WAIT_CLOSE;
+                        obj.state = subState.GRIPPER_WAIT_CLOSE;
                     end
 
-                case subStates.GRIPPER_WAIT_OPEN
+                case subState.GRIPPER_WAIT_OPEN
                     if obj.timer.isTimerDone == 1
                         obj.robot.pathPlanTo(obj.finalPos); %Path Plan to Down Pos
-                        obj.state = subStates.ARM_WAIT;
+                        obj.state = subState.ARM_WAIT;
                     end
 
-                case subStates.GRIPPER_WAIT_CLOSE
+                case subState.GRIPPER_WAIT_CLOSE
                     if obj.timer.isTimerDone == 1
-                        obj.state = subStates.DONE;
+                        obj.state = subState.DONE;
                     end
-                case subStates.DONE
+                case subState.DONE
 
                 otherwise
                     disp("ERROR in Grab State, Incorrect State Given");

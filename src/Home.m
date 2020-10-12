@@ -15,21 +15,21 @@ classdef Home
             obj.orbList = orblist;
         end
         
-        function update(obj)
-            
+        function obj = update(obj)
+            disp("HOME UPDATING")
             switch(obj.state)
-                case subStates.INIT
+                case subState.INIT
                     obj.robot.pathPlanTo(obj.HomePos);
                     obj.state = subState.ARM_WAIT;
                     
-                case subStates.ARM_WAIT
+                case subState.ARM_WAIT
                     if obj.robot.isAtTarget() == 1
                         obj.state = subState.DONE;
                     end
                             
-                case subStates.DONE
+                case subState.DONE
                     obj.orbList.activeColor = Color.ALL;
-                    
+                    y
                 otherwise
                     disp("ERROR in Home State, Incorrect State Given");
             end

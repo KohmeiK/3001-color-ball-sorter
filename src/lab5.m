@@ -41,14 +41,14 @@ try
 
 
 %Initializing states
-state = State.HOME;
-nextState = State.HOME;
-
+state = State.INIT;
+nextState = State.INIT;
 
 
 %Creating objects
 orbList = OrbList();
 robot = RobotStateMachine();
+
 
 cv = CV(orbList);
 homeObj = Home(robot,orbList);
@@ -56,26 +56,27 @@ approachObj = Approach(robot,orbList);
 grabObj = Grab(robot,orbList);
 travelObj = Travel(robot,orbList);
 dropObj = Drop(robot);
-debugObj = Debug();
 
 timer = EventTimer();
 
-%Creating Global Variables
-% cordx =
-% cordy =
-% cordz =
-armDownPos = [cordx, cordy, cordz]; %xyz coordinates for moving the arm down in the grab state
-destination = [0 0 0];
+
 
 while true
+    
+    robot.update();
+    
     switch(state)
         case State.INIT
+            disp("INIT")
             homeObj.state = subState.INIT;
+            state = State.HOME;
             %More init stuff here
 
         case State.HOME
             homeObj = homeObj.update();
+            disp("HOME")
             if(homeObj.state == subState.DONE)
+                disp("Home finished");
                 nextState = State.APPROACH;
                 state = State.DEBUG_WAIT;
                 timer.setTimer(2000);

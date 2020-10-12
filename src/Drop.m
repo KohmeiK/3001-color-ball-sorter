@@ -13,26 +13,26 @@ classdef Drop
     end
     
     methods
-        function obj = Grab(robot)
+        function obj = Drop(robot)
             obj.robot = robot;
             obj.timer = EventTimer();
         end
         
         
-        function update(obj)
+        function obj = update(obj)
             
             switch(obj.state)
-                case subStates.INIT
+                case subState.INIT
                     obj.robot.setGripper(obj.open); %Set Gripper To Open
                     obj.timer.setTimer(obj.SERVO_WAIT);%Set Timer
-                    obj.state = subStates.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
+                    obj.state = subState.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
                     
-                case subStates.GRIPPER_WAIT
+                case subState.GRIPPER_WAIT
                     if obj.timer.isTimerDone == 1
-                        obj.state = subStates.Done;
+                        obj.state = subState.Done;
                     end
                     
-                case subStates.DONE
+                case subState.DONE
                     
                 otherwise
                     disp("ERROR in Drop State, Incorrect State Given");

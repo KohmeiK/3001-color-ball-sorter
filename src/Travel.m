@@ -16,7 +16,6 @@ classdef Travel
         function obj = Travel(robot,orblist)
             obj.robot = robot;
             obj.orbList = orblist;
-            obj.dest = obj.orbList.getActiveOrb().finalPos;
         end
         
         function update(obj)
@@ -28,6 +27,7 @@ classdef Travel
                     
                 case ARM_WAIT_HOME
                     if obj.robot.isAtTarget() == 1
+                        obj.dest = obj.orbList.getActiveOrb().finalPos;
                         obj.robot.pathPlanTo(obj.dest);
                         obj.state = subState.ARM_WAIT;
                     end
