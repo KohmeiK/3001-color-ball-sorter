@@ -13,7 +13,7 @@ STICKMODEL = false;
 DEBUG_CAM = false;
 
 CVLoopTime = 500; % In ms
-
+ModelLoopTime = 500; % In ms
 
 kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
 
@@ -51,8 +51,8 @@ nextState = State.INIT;
 orbList = OrbList();
 robot = RobotStateMachine();
 
-
 cv = CV(orbList);
+model = Model();
 homeObj = Home(robot,orbList);
 approachObj = Approach(robot,orbList);
 grabObj = Grab(robot,orbList);
@@ -61,7 +61,7 @@ dropObj = Drop(robot);
 
 timer = EventTimer();
 CVTimer = EventTimer();
-
+ModelTimer = EventTimer();
 
 
 while true
@@ -73,7 +73,11 @@ while true
         CVTimer.start();
     end
     
-    
+    if(ModelTimer > ModelLoopTime)
+        model.update();
+        ModelTimer.start();
+    end
+        
     switch(state)
         case State.INIT
             disp("INIT")
