@@ -9,25 +9,26 @@ classdef Drop
         close = 90;
         SERVO_WAIT = 250;
         state;
+        timer;
     end
     
     methods
         function obj = Grab(robot)
             obj.robot = robot;
+            obj.timer = EventTimer();
         end
         
         
         function update(obj)
             
-            %FIX TIC TOC
             switch(obj.state)
                 case subStates.INIT
                     obj.robot.setGripper(obj.open); %Set Gripper To Open
-                    tic %Start Timer
+                    obj.timer.setTimer(obj.SERVO_WAIT);%Set Timer
                     obj.state = subStates.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
                     
                 case subStates.GRIPPER_WAIT
-                    if(toc > obj.SERVO_WAIT)
+                    if obj.timer.isTimerDone == 1
                         obj.state = subStates.Done;
                     end
                     
