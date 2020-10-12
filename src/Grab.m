@@ -5,6 +5,7 @@ classdef Grab
     properties
         finalPos;
         robot;
+        orbList;
         open = 0;
         close = 90;
         SERVO_WAIT = 250;
@@ -13,9 +14,10 @@ classdef Grab
     end
     
     methods
-        function obj = Grab(robot)
-            obj.finalPos = OrbList.activeOrb.finalPos;
+        function obj = Grab(robot, orblist)
             obj.robot = robot;
+            obj.orbList = orblist;
+            obj.finalPos = obj.orbList.getActiveOrb().finalPos;
             obj.timer = EventTimer();
         end
         
