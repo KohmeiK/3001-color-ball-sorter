@@ -19,6 +19,7 @@ classdef Drop
         
         function update(obj)
             
+            %FIX TIC TOC
             switch(obj.state)
                 case subStates.INIT
                     obj.robot.setGripper(obj.open); %Set Gripper To Open

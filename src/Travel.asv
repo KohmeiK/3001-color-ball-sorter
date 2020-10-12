@@ -7,7 +7,7 @@ classdef Travel
         robot;
         state;
         nextState;
-        HomePos = [0 0 0];
+        HomePos = [0 0 0]; %This could be put in Robot and called from there, would be cleaner but doesn't matter
         
     end
     
@@ -18,20 +18,26 @@ classdef Travel
         end
         
         function update(obj)
-                       
+            
             switch(obj.state)
                 case subStates.INIT
-                    obj.robot.pathPlanTo(obj.HomePos);
-                    obj.state = subStates.ARM_WAIT;
+                    obj.robot.pathPlanTo(obj.HomePos); 
+                    obj.state = ARM_WAIT_HOME; 
                     
+                case ARM_WAIT_HOME
+                    if obj.robot.isAtTarget() == 1
+                        obj.robot.pathPlanTo(obj.dest);
+                        obj.state = subState.ARM_WAIT;
+                    end
                 case subStates.ARM_WAIT
                     if obj.robot.isAtTarget() == 1
-                       obj.state = obj.nextState;
+                        obj.state = subState.DONE;
                     end
-                case 
-                    
+                            
                 case subStates.DONE
-                    %Clear activeColor
+                    
+                otherwise
+                    disp("ERROR in Travel State, Incorrect State Given");
             end
         end
     end

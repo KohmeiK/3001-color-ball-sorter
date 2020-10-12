@@ -10,12 +10,14 @@ classdef Grab
         close = 90;
         SERVO_WAIT = 250;
         state;
+        timer;
     end
     
     methods
         function obj = Grab(moveDown, robot)
-            obj.downPos = moveDown;
+            obj.downPos = moveDown; 
             obj.robot = robot;
+            timer = EventTimer();
         end
         
         
@@ -26,7 +28,7 @@ classdef Grab
                     obj.nextState = subStates.ARM_WAIT; %Set the next state after waiting for the gripper
                     obj.robot.pathPlanTo(obj.downPos); %Path Plan to Down Pos
                     obj.robot.setGripper(obj.open); %Set Gripper To Open
-                    tic %Start Timer
+                    timer.setTimer(SERVO_WAIT);
                     obj.state = subStates.GRIPPER_WAIT; %Go to GRIPPER WAIT to wait for timer to finish
                     
                 case subStates.ARM_WAIT
@@ -36,11 +38,17 @@ classdef Grab
                         obj.state = subStates.GRIPPER_WAIT;
                     end
                     
-                case subStates.GRIPPER_WAIT
-                    if(toc > obj.SERVO_WAIT)
+                case subStates.GRIPPER_WAIT_OPEN
+                    if timer.isTimerDone == 1
                         obj.state = obj.nextState;
+                        obj.nextState = subStates.DONE;
                     end
                     
+                case subStates.GRIPPER_WAIT_CLOSE
+                    if timer.isTimerDone == 1
+                        obj.state = obj.nextState;
+                        obj.nextState = subStates.DONE;
+                    end    
                 case subStates.DONE
                     
                 otherwise

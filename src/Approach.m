@@ -15,7 +15,7 @@ classdef Approach
             switch(obj.state)
                 case subStates.INIT
                     if OrbList.length > 0
-                        obj.robot.pathPlanTo(OrbList.activeOrb.finalPos);
+                        obj.robot.pathPlanTo(OrbList.activeOrb.finalPos); %Need to add z height for being above ball
                         obj.state = subState.ARM_WAIT;
                     end    
                     

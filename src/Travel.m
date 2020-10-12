@@ -21,14 +21,15 @@ classdef Travel
             
             switch(obj.state)
                 case subStates.INIT
-                    obj.robot.pathPlanTo(obj.HomePos);
-                    obj.state = ARM_WAIT_HOME; %Should this be added to Substates? I have it essentially as a priv state rn
+                    obj.robot.pathPlanTo(obj.HomePos); 
+                    obj.state = ARM_WAIT_HOME; 
                     
                 case ARM_WAIT_HOME
                     if obj.robot.isAtTarget() == 1
                         obj.robot.pathPlanTo(obj.dest);
                         obj.state = subState.ARM_WAIT;
                     end
+                %TODO: Add A State to wait 0.5s and then path plan after getting to home    
                 case subStates.ARM_WAIT
                     if obj.robot.isAtTarget() == 1
                         obj.state = subState.DONE;

@@ -19,7 +19,7 @@ classdef Home
             
             switch(obj.state)
                 case subStates.INIT
-                    obj.robot.pathPlanTo(obj.HomePos);
+                    obj.robot.pathPlanTo(obj.HomePos,);
                     obj.state = subState.ARM_WAIT;
                     
                 case subStates.ARM_WAIT
