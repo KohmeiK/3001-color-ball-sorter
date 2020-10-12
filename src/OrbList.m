@@ -3,26 +3,25 @@ classdef OrbList
     %   Detailed explanation goes here
       
     properties
- 
+        Orbs;
     end
     
     
     methods
         function obj = OrbList()
-            import java.util.ArrayList
         end
         
         function addOrbToList(obj,Orb)
             color = Orb.color;
             switch color
-                case PINK
-                    obj.add(1 , Orb);
-                case YELLOW
-                    obj.add(2 , Orb);
-                case PURPLE
-                    obj.add(3 , Orb);
-                case GREEN
-                    obj.add(4 , Orb);
+                case Colors.PINK
+                    obj.Orbs(1) = Orb;
+                case Colors.YELLOW
+                    obj.Orbs(1) = Orb;
+                case Colors.PURPLE
+                    obj.Orbs(3) = Orb;
+                case Colors.GREEN
+                    obj.Orbs(4) = Orb;
                 otherwise
                     disp("ERROR, Incorrect Orb Color. Not placed in List")
             end    
@@ -31,16 +30,16 @@ classdef OrbList
         function deleteOrbFtomList(obj,Orb)
             color = Orb.color;
             switch color
-                case PINK
-                    obj.add(1 , Orb);
-                case YELLOW
-                    obj.add(2 , Orb);
-                case PURPLE
-                    obj.add(3 , Orb);
-                case GREEN
-                    obj.add(4 , Orb);
+                case Colors.PINK
+                    obj.Orbs(1) = 0;
+                case Colors.YELLOW
+                    obj.Orbs(2) = 0;
+                case Colors.PURPLE
+                    obj.Orbs(3) = 0;
+                case Colors.GREEN
+                    obj.Orbs(4) = 0;
                 otherwise
-                    disp("ERROR, Incorrect Orb Color. Not placed in List")
+                    disp("ERROR, Incorrect Orb Color. Not removed from List")
             end
         end
         
@@ -48,7 +47,7 @@ classdef OrbList
             length = 0;
             
             for i = 1:4
-                if isEmpty(obj.get(i))
+                if obj.Orbs(i) ~= 0
                     length = length + 1;
                 end
             end
