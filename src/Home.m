@@ -3,15 +3,13 @@ classdef Home
     %   Detailed explanation goes here
     
    properties
-        dest;
         robot;
         state; 
         HomePos = [100 0 195]; 
     end
     
     methods
-        function obj = Home(destination, robot)
-            obj.dest = destination;
+        function obj = Home(robot)
             obj.robot = robot;
         end
         
@@ -19,7 +17,7 @@ classdef Home
             
             switch(obj.state)
                 case subStates.INIT
-                    obj.robot.pathPlanTo(obj.HomePos,);
+                    obj.robot.pathPlanTo(obj.HomePos);
                     obj.state = subState.ARM_WAIT;
                     
                 case subStates.ARM_WAIT
