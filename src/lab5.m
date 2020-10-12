@@ -50,11 +50,15 @@ nextState = State.HOME;
 
 
 %Creating objects
-homeObj = Home();
-approachObj = Approach();
-grabObj = Grab();
-travelObj = Travel();
-dropObj = Drop();
+orbList = OrbList();
+robot = RobotStateMachine();
+
+cv = CVstate(orbList);
+homeObj = Home(robot,orbList);
+approachObj = Approach(robot,orbList);
+grabObj = Grab(robot);
+travelObj = Travel(robot,orbList);
+dropObj = Drop(robot);
 debugObj = Debug();
 
 timer = EventTimer();

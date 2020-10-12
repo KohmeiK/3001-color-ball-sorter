@@ -17,11 +17,6 @@ classdef RobotStateMachine
             vid = hex2dec('16c0');
             pid = hex2dec('0486');
             
-            if DEBUG
-                disp(vid);
-                disp(pid);
-            end
-            
             javaaddpath ../lib/SimplePacketComsJavaFat-0.6.4.jar;
             import edu.wpi.SimplePacketComs.*;
             import edu.wpi.SimplePacketComs.device.*;
