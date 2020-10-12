@@ -60,18 +60,26 @@ classdef RobotStateMachine
             
         end
         
-        function obj = pathPlanTo(obj,goal,time,numPoints,type)
+        function obj = pathPlanTo(obj,goal)
                               %   Self
                               % Target point [3x1]
                               % Time total duration in ms
                               % number of linspace points
-                              % 3 = cubic, 5 = linear
-            obj.pathPlanner = obj.pathPlanner.startPath(obj.robot.getPositions(),goal,time,numPoints,type);
+                              % 3 = cubic, 5 = linear, Hard Coded to 5
+            
+            scaledVals = obj.trajScaler(goal);                   
+            time = scaledVals(1);
+            numPoints = scaledVals(2);
+            obj.pathPlanner = obj.pathPlanner.startPath(obj.robot.getPositions(),goal,time,numPoints,5);
         end
         
-        function distance = timeScalar(obj,finalPos)
-            obj.robot.getPositions
-        
+        function scaledVals = trajScaler(obj,finalPos)
+            currXYZ = obj.robot.getPositions();
+            targetXYZ = finalPos;
+            distance = sqrt(sum((targetXYZ - currXYZ) .^ 2));
+            scaledVals = [(((distance/250) * 8) + 2) (((distance/250) * 15) + 5)];
+           
+        end
     end
     
 end
