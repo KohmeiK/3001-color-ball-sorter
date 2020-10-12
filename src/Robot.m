@@ -174,12 +174,10 @@ classdef Robot
         end
         
         function setGripper(robot,setpoint)
-            packet = zeros(1, 1, 'single');
-            packet(1) = setpoint;%0 degree
             
             % Send packet to the server and get the response
             %pp.write sends a 15 float packet to the micro controller
-            robot.writeByte(1962, packet);
+            robot.writeByte(1962, setpoint);
         end
         
         

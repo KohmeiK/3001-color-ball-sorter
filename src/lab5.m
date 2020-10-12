@@ -34,7 +34,7 @@ myHIDSimplePacketComs.setVid(vid);
 myHIDSimplePacketComs.connect();
 
 robot = Robot(myHIDSimplePacketComs);
-kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
+kine = Kinematics(95,100,100,[-90,90;-46,95;-86,63]);
 
 cam = Camera();
 cam.DEBUG = DEBUG_CAM;
@@ -60,7 +60,7 @@ try
     randompoint = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [100 100]);
     basePose = cam.cam_pose * cam.check2base;
     
-    disp("Cal Done");
+    disp("Calibration Done");
     pause;
     
     while true
@@ -82,25 +82,44 @@ try
 
         %Dialate the black and white image
         dilated = imdilate(BW,strel('square',10));
-    %     imshow(dilated);
+%         imshow(dilated);
 
         %Erode the dialated image from previous step
         eroded = imerode(dilated, strel('square', 15));
-    %     imshow(eroded);
+%         imshow(eroded);
         L = bwlabel(eroded);
-        stats = regionprops('struct', L, 'Centroid');
+        stats = regionprops('table', L, 'Centroid','Area');
+        [~, index] = max(stats.Area);
+        biggestCenteroid = stats.Centroid(index,:);
+                
+        
+        
         
         if ~isempty(stats)
             CurrentOrbPos = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [stats.Centroid(1) stats.Centroid(2)]);
             testPoint2 = ([CurrentOrbPos(1) CurrentOrbPos(2) 10]  + (cam.check2base(1:3, 4))') * cam.check2base(1:3,1:3);
+            testPoint2(1) = testPoint2(1) + (-0.0366*testPoint2(1) + 9.33);
+            testPoint2(2) = testPoint2(2) - (0.0521*testPoint2(2) + 2.01);
             disp(testPoint2);
             
-            testPoint2(3) = 30;
+            %z value
+            testPoint2(3) = 50;
             
             robot.setSetpointsSlow(kine.ik3001(testPoint2));
+            pause;
+            testPoint2(3) = 7;
+            robot.setSetpointsSlow(kine.ik3001(testPoint2));
+            pause(1);
+            robot.setGripper(100);
+            pause;
+            robot.setSetpointsSlow(kine.ik3001([100 0 195]));
+            pause(1);
+            robot.setGripper(180);
+            pause;
+            
         end
-        
-        pause(1);
+        disp("ready for next, pres a key");
+        pause;
     end
             
 %     randompoint2 = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [129 261]);
