@@ -50,7 +50,7 @@ classdef OrbList
             end
         end
         
-        function obj = deleteActiveColorOrb(obj)
+        function obj = deleteActiveOrb(obj)
             switch obj.activeColor
                 case Colors.PINK
                     obj.pinkOrb = 0;
