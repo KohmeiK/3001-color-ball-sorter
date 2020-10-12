@@ -1,5 +1,5 @@
 classdef Travel
-    %TRAVELSTATE Summary of this class goes here
+    %TRAVEL Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
@@ -7,13 +7,13 @@ classdef Travel
         robot;
         state;
         nextState;
-        HomePos = [0 0 0]; %This could be put in Robot and called from there, would be cleaner but doesn't matter
+        HomePos = [0 0 0]; 
         
     end
     
     methods
-        function obj = Travel(destination, robot)
-            obj.dest = destination;
+        function obj = Travel(robot)
+            obj.dest = OrbList.activeOrb.finalPos;
             obj.robot = robot;
         end
         
