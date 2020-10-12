@@ -12,6 +12,8 @@ DEBUG = false;
 STICKMODEL = false;
 DEBUG_CAM = false;
 
+CVLoopTime = 500; % In ms
+
 
 kine = Kinematics(95,100,100,[-90,90;-46,90;-86,63]);
 
@@ -41,41 +43,46 @@ try
 
 
 %Initializing states
-state = State.HOME;
-nextState = State.HOME;
-
+state = State.INIT;
+nextState = State.INIT;
 
 
 %Creating objects
 orbList = OrbList();
 robot = RobotStateMachine();
 
+
 cv = CV(orbList);
 homeObj = Home(robot,orbList);
 approachObj = Approach(robot,orbList);
-grabObj = Grab(robot,);
+grabObj = Grab(robot,orbList);
 travelObj = Travel(robot,orbList);
 dropObj = Drop(robot);
-debugObj = Debug();
 
 timer = EventTimer();
+CVTimer = EventTimer();
 
-%Creating Global Variables
-% cordx =
-% cordy =
-% cordz =
-armDownPos = [cordx, cordy, cordz]; %xyz coordinates for moving the arm down in the grab state
-destination = [0 0 0];
+
 
 while true
+    
+    robot.update();
+    
+    if(CVTimer > CVLoopTime)
+        CV
+    
     switch(state)
         case State.INIT
+            disp("INIT")
             homeObj.state = subState.INIT;
+            state = State.HOME;
             %More init stuff here
 
         case State.HOME
             homeObj = homeObj.update();
+            disp("HOME")
             if(homeObj.state == subState.DONE)
+                disp("Home finished");
                 nextState = State.APPROACH;
                 state = State.DEBUG_WAIT;
                 timer.setTimer(2000);

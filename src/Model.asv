@@ -7,11 +7,12 @@ classdef Model
         transforms
         velo
         state;
+        robot;
     end
     
     methods
         
-        function obj = Model()
+        function obj = Model(robot)
             %MODEL Construct an instance of this class
             %Make axes window
             obj.mainAxes = axes('Position',[0.1 0.1 0.8 0.8]);
@@ -22,20 +23,22 @@ classdef Model
             xlim(obj.mainAxes,[-220 220]);
             ylim(obj.mainAxes,[-220 220]);
             zlim(obj.mainAxes,[0 300]);
+
             
             view(3)
             view(0,90)
-
+            
+            obj.robot = robot;
             obj.state = ModelState.INIT;
         end
         
-        function [obj,robot] = update(obj,robot)
+        function obj = update(obj,robot)
             
             switch(obj.state)
-                case ModelState.STEP1
-                    currentPos = robot.getPositions();
-                    currentAngVelo = robot.getVelocities();
-                    currentVelo = robot.fdk3001(currentPos, currentAngVelo);
+                case ModelState.STEP1 
+                    currentPos = obj.robot.getPositions();
+                    currentAngVelo = obj.robot.getVelocities();
+                    currentVelo = obj.robot.fdk3001(currentPos, currentAngVelo);
                     obj.calcPose(currentPos,currentVelo);
                     obj.state = ModelState.PRERENDER;
                     
