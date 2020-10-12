@@ -4,7 +4,6 @@ classdef Travel
     
     properties
         dest;
-        robot;
         state;
         nextState;
         orbList;
@@ -13,27 +12,26 @@ classdef Travel
     end
     
     methods
-        function obj = Travel(robot,orblist)
-            obj.robot = robot;
+        function obj = Travel(orblist)
             obj.orbList = orblist;
         end
         
-        function update(obj)
+        function [obj,robot] = update(obj, robot)
             
             switch(obj.state)
                 case subStates.INIT
-                    obj.robot.pathPlanTo(obj.HomePos); 
+                    robot.pathPlanTo(obj.HomePos); 
                     obj.state = ARM_WAIT_HOME; 
                     
                 case ARM_WAIT_HOME
-                    if obj.robot.isAtTarget() == 1
+                    if robot.isAtTarget() == 1
                         obj.dest = obj.orbList.getActiveOrb().finalPos;
-                        obj.robot.pathPlanTo(obj.dest);
+                        robot.pathPlanTo(obj.dest);
                         obj.state = subState.ARM_WAIT;
                     end
                 %TODO: Add A State to wait 0.5s and then path plan after getting to home    
                 case subStates.ARM_WAIT
-                    if obj.robot.isAtTarget() == 1
+                    if robot.isAtTarget() == 1
                         obj.state = subState.DONE;
                     end
                             

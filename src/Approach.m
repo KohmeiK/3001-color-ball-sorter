@@ -1,7 +1,6 @@
 classdef Approach
 
      properties
-        robot;
         state;
         dest;
         orbList;
@@ -9,7 +8,7 @@ classdef Approach
      end
 
     methods
-        function obj = Approach(robot, orblist)
+        function obj = Approach(orblist)
             obj.robot = robot;
             obj.orbList = orblist;
         end
