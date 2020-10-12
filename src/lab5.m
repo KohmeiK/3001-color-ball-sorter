@@ -27,24 +27,24 @@ yellow_place = [75, 125, 11];
 
 %% Main Loop
 try
-    
+
 %     % Set up camera
 %     if cam.params == 0
 %         error("No camera parameters found!");
 %     end
-%     
-%     
+%
+%
 %     %outputs a transformation Matrix
 %     cam.cam_pose = cam.getCameraPose();
 %     randompoint = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [100 100]);
 %     basePose = cam.cam_pose * cam.check2base;
-%     
+%
 %     disp("Cal Done");
 %     pause;
 
 
 %Initializing states
-state = State.HOME; 
+state = State.HOME;
 nextState = State.HOME;
 
 
@@ -60,7 +60,7 @@ debugObj = Debug();
 timer = EventTimer();
 
 %Creating Global Variables
-% cordx = 
+% cordx =
 % cordy =
 % cordz =
 armDownPos = [cordx, cordy, cordz]; %xyz coordinates for moving the arm down in the grab state
@@ -71,7 +71,7 @@ while true
         case State.INIT
             homeObj.state = subState.INIT;
             %More init stuff here
-            
+
         case State.HOME
             homeObj = homeObj.update();
             if(homeObj.state == subState.DONE)
@@ -80,7 +80,7 @@ while true
                 timer.setTimer(2000);
                 apporachObj.state = subState.INIT;
             end
-            
+
         case State.APPROACH
             approachObj = approachObj.update();
             if(approachObj.state == subState.DONE)
@@ -89,7 +89,7 @@ while true
                 timer.setTimer(2000);
                 grabObj.state = subState.INIT;
             end
-            
+
         case State.GRAB
             grabObj = grabObj.update();
             if(grabObj.state == subState.DONE)
@@ -98,7 +98,7 @@ while true
                 timer.setTimer(2000);
                 travelObj.state = subState.INIT;
             end
-            
+
         case State.TRAVEL
             travelObj = travelObj.update();
             if(travelObj.state == subState.DONE)
@@ -107,7 +107,7 @@ while true
                 timer.setTimer(2000);
                 dropObj.state = subState.INIT;
             end
-            
+
         case State.DROP
             dropObj = dropObj.update();
             if(dropObj.state == subState.DONE)
@@ -116,16 +116,16 @@ while true
                 timer.setTimer(2000);
                 homeObj.state = subState.INIT;
             end
-            
+
         case State.DEBUG_WAIT
             if(timer.isDone() == 1)
                 state = nextState;
             end
-            
+
     end
 end
 
-    
+
 catch exception
     fprintf('\n ERROR!!! \n \n');
     disp(getReport(exception));
