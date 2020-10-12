@@ -3,54 +3,90 @@ classdef OrbList
     %   Detailed explanation goes here
       
     properties
-        Orbs;
+        pinkOrb
+        yellowOrb
+        purpleOrb
+        greenOrb
+        activeColor
     end
     
     
     methods
         function obj = OrbList()
+            obj.pinkOrb = 0;
+            obj.yellowOrb = 0;
+            obj.purpleOrb = 0;
+            obj.greenOrb = 0;
         end
         
-        function addOrbToList(obj,Orb)
+        function obj = addOrbToList(obj,Orb)
             color = Orb.color;
             switch color
                 case Colors.PINK
-                    obj.Orbs(1) = Orb;
+                    obj.pinkOrb = Orb;
                 case Colors.YELLOW
-                    obj.Orbs(1) = Orb;
+                    obj.yellowOrb = Orb;
                 case Colors.PURPLE
-                    obj.Orbs(3) = Orb;
+                    obj.purpleOrb = Orb;
                 case Colors.GREEN
-                    obj.Orbs(4) = Orb;
+                    obj.greenOrb = Orb;
                 otherwise
                     disp("ERROR, Incorrect Orb Color. Not placed in List")
             end    
         end
         
-        function deleteOrbFtomList(obj,Orb)
+        function orb = getActiveOrb(obj)
+            switch obj.activeColor
+                case Colors.PINK
+                    orb = obj.pinkOrb;
+                case Colors.YELLOW
+                    orb = obj.yellowOrb;
+                case Colors.PURPLE
+                    orb = obj.purpleOrb;
+                case Colors.GREEN
+                    orb = obj.greenOrb;
+                otherwise
+                    disp("ERROR, No color speicifed, don't knwo what to return")
+            end
+        end
+        
+        function obj = deleteActiveColorOrb(obj)
+            switch obj.activeColor
+                case Colors.PINK
+                    obj.pinkOrb = 0;
+                case Colors.YELLOW
+                    obj.yellowOrb = 0;
+                case Colors.PURPLE
+                    obj.purpleOrb = 0;
+                case Colors.GREEN
+                    obj.greenOrb = 0;
+                otherwise
+                    disp("ERROR, Incorrect Orb Color. Not removed from List")
+            end
+        end
+        
+        function obj = deleteOrbFtomList(obj,Orb)
             color = Orb.color;
             switch color
                 case Colors.PINK
-                    obj.Orbs(1) = 0;
+                    obj.pinkOrb = 0;
                 case Colors.YELLOW
-                    obj.Orbs(2) = 0;
+                    obj.yellowOrb = 0;
                 case Colors.PURPLE
-                    obj.Orbs(3) = 0;
+                    obj.purpleOrb = 0;
                 case Colors.GREEN
-                    obj.Orbs(4) = 0;
+                    obj.greenOrb = 0;
                 otherwise
                     disp("ERROR, Incorrect Orb Color. Not removed from List")
             end
         end
         
         function length = getlistLength(obj)
-            length = 0;
-            
-            for i = 1:4
-                if obj.Orbs(i) ~= 0
-                    length = length + 1;
-                end
-            end
+            length = 4;
+            if (obj.pinkOrb == 0), length = length-1; end
+            if (obj.yellowOrb == 0), length = length-1; end
+            if (obj.purpleOrb == 0), length = length-1; end
+            if (obj.greenOrb == 0), length = length-1; end
         end
         
     end
