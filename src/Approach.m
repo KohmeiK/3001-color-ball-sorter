@@ -12,12 +12,13 @@ classdef Approach
         function obj = Approach(robot, orblist)
             obj.robot = robot;
             obj.orbList = orblist;
+            obj.state = subState.INIT;
         end
 
         function obj = update(obj)
 
             switch(obj.state)
-                case subStates.INIT
+                case subState.INIT
                     if OrbList.length > 0
                         obj.dest = obj.orbList.getActiveOrb().finalPos;
                         obj.dest(3) = obj.dest(3) + obj.Z_Offset;
@@ -25,7 +26,7 @@ classdef Approach
                         obj.state = subState.ARM_WAIT;
                     end
 
-                case subStates.ARM_WAIT
+                case subState.ARM_WAIT
                     if OrbList.activeOrb.hasMoved == 1 || OrbList.length == 0
                         obj.state = subStates.INIT;
                     else
@@ -34,7 +35,7 @@ classdef Approach
                         end
                     end
 
-                case subStates.DONE
+                case subState.DONE
 
                 otherwise
                     disp("ERROR in Home State, Incorrect State Given");

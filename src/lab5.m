@@ -50,8 +50,8 @@ orbList = OrbList();
 robot = RobotStateMachine();
 
 cv = CV(orbList);
-model = Model();
-homeObj = Home(robot,orbList);
+% model = Model();
+homeObj = Home(orbList);
 approachObj = Approach(robot,orbList);
 grabObj = Grab(robot,orbList);
 travelObj = Travel(robot,orbList);
@@ -70,19 +70,18 @@ while true
         cv.update();
         CVTimer.start();
     end
-
-    if(ModelTimer > ModelLoopTime)
-        model.update();
-        ModelTimer.start();
-    end
+% 
+%     if(ModelTimer > ModelLoopTime)
+%         model.update();
+%         ModelTimer.start();
+%     end
 
     switch(state)
         case State.INIT
             disp("Main = INIT")
-            disp("Main-> Home")
             homeObj.state = subState.INIT;
             state = State.DEBUG_WAIT;
-            timer.setTimer(3000);
+            timer = timer.setTimer(10);
             nextState = State.HOME;
             %More init stuff here
 
@@ -93,7 +92,7 @@ while true
                 disp("Main -> APPROACH");
                 nextState = State.APPROACH;
                 state = State.DEBUG_WAIT;
-                timer.setTimer(2000);
+                timer = timer.setTimer(2);
                 apporachObj.state = subState.INIT;
             end
 
@@ -102,7 +101,7 @@ while true
             if(approachObj.state == subState.DONE)
                 nextState = State.GRAB;
                 state = State.DEBUG_WAIT;
-                timer.setTimer(2000);
+                timer = timer.setTimer(2);
                 grabObj.state = subState.INIT;
             end
 
@@ -111,7 +110,7 @@ while true
             if(grabObj.state == subState.DONE)
                 nextState = State.TRAVEL;
                 state = State.DEBUG_WAIT;
-                timer.setTimer(2000);
+                timer = timer.setTimer(2);
                 travelObj.state = subState.INIT;
             end
 
@@ -120,7 +119,7 @@ while true
             if(travelObj.state == subState.DONE)
                 nextState = State.DROP;
                 state = State.DEBUG_WAIT;
-                timer.setTimer(2000);
+                timer = timer.setTimer(2);
                 dropObj.state = subState.INIT;
             end
 
@@ -129,7 +128,7 @@ while true
             if(dropObj.state == subState.DONE)
                 nextState = State.APPROACH;
                 state = State.DEBUG_WAIT;
-                timer.setTimer(2000);
+                timer = timer.setTimer(2);
                 homeObj.state = subState.INIT;
             end
 
@@ -137,6 +136,9 @@ while true
             disp("Debug Wait");
             if(timer.isTimerDone() == 1)
                 state = nextState;
+                if(nextState == State.HOME)
+                    robot.state = robotState.COMMS_WAIT;
+                end 
             end
 
     end

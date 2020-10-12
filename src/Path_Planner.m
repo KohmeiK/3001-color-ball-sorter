@@ -69,7 +69,7 @@ classdef Path_Planner
 %                 disp(obj.segmentDuration)
 %                 disp("Start time") 
 %                 disp(toc(obj.segmentStartTime))
-                timeSinceStart = toc(obj.segmentStartTime);
+                timeSinceStart = toc(obj.segmentStartTime)
                 
                 if timeSinceStart > obj.segmentDuration
                     timeSinceStart = obj.segmentDuration;

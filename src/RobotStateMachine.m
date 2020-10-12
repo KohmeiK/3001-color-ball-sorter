@@ -39,10 +39,10 @@ classdef RobotStateMachine
         function obj = update(obj)
             switch(obj.state)
                 case robotState.INIT
-                    disp("RobotSM = INIT")
-                    obj.robot.setSetpointsSlow([-90 0 0]);
-                    obj.timer = obj.timer.setTimer(3);
-                    obj.state = robotState.COMMS_WAIT;
+                    disp("RobotSM = INIT SENT MOVE COMMAND")
+                    obj.robot.setSetpointsSlow([-70 0 0]);
+                    obj.timer = obj.timer.setTimer(0.003);
+                    obj.state = robotState.IDLE;
                 case robotState.COMMS_WAIT
                     disp("RobotSM = COMMS WAIT")
                     if obj.timer.isTimerDone == 1
@@ -51,9 +51,10 @@ classdef RobotStateMachine
                 case robotState.UPDATE
                     disp("RobotSM = UPDATE")
                     [obj.pathPlanner, obj.isRobotDone, setPoint] = obj.pathPlanner.update();
-                    obj.robot.setSetpoints(setPoint);
+                    obj.robot.setSetpoints(obj.kine.ik3001(setPoint));
                     obj.state = robotState.COMMS_WAIT;
                 case robotState.IDLE
+                    disp("RobotSM = IDLE")
                     %do nothing
                     
             end
