@@ -63,14 +63,14 @@ end
 function J = rotateColorSpace(I)
 
 % Translate the data to the mean of the current image within app
-shiftVec = [-0.006907 -0.005978 0.392708];
+shiftVec = [0.005062 0.005169 0.387753];
 I = I - shiftVec;
 I = [I ones(size(I,1),1)]';
 
 % Apply transformation matrix
-tMat = [-0.274994 -0.886527 0.000000 0.656736;
-    0.560305 -0.333200 0.398445 -0.471337;
-    0.309858 -0.184265 -0.720492 8.970960;
+tMat = [-0.581822 -0.656159 0.000000 0.701392;
+    0.404624 -0.763299 0.378747 -0.137826;
+    0.196606 -0.370886 -0.779477 9.149184;
     0.000000 0.000000 0.000000 1.000000];
 
 J = (tMat*I)';
@@ -79,10 +79,12 @@ end
 function polyBW = applyPolygons(J,polyBW)
 
 % Define each manually generated ROI
-hPoints(1).data = [0.133089 -0.440111;
-    0.386828 -0.464131;
-    0.434093 -0.757176;
-    0.162940 -0.689920];
+hPoints(1).data = [0.306859 -0.345175;
+    0.484864 -0.260237;
+    0.545970 -0.235255;
+    0.636301 -0.375153;
+    0.471580 -0.520048;
+    0.259037 -0.535037];
 
 % Iteratively apply each ROI
 for ii = 1:length(hPoints)

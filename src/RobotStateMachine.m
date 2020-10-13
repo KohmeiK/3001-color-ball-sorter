@@ -67,7 +67,7 @@ classdef RobotStateMachine
                               % Time total duration in ms
                               % number of linspace points
                               % 3 = cubic, 5 = linear, Hard Coded to 5
-            
+            obj.isRobotDone = 0;
             scaledVals = obj.trajScaler(goal);                   
             time = scaledVals(1);
             numPoints = scaledVals(2);

@@ -3,7 +3,7 @@ classdef Approach
      properties
         state;
         dest;
-        Z_Offset = 50; %In mm
+        Z_Offset = 100; %In mm
      end
 
     methods
@@ -20,15 +20,16 @@ classdef Approach
                     if cv.orbList.getlistLength() > 0
                         obj.dest = cv.orbList.getActiveOrb().currentPos;
                         obj.dest(3) = obj.dest(3) + obj.Z_Offset;
-                        robot.pathPlanTo(obj.dest);
+                        disp("Send to place above ball");
+                        robot = robot.pathPlanTo(obj.dest);
                         obj.state = subState.ARM_WAIT;
                     end
 
                 case subState.ARM_WAIT
-                    if cv.orbList.activeOrb.hasMoved == 1 || cv.orbList.length == 0
-                        obj.state = subStates.INIT;
+                    if cv.orbList.getActiveOrb.moved == 1 || cv.orbList.getlistLength == 0
+%                         obj.state = subStates.INIT;
                     else
-                        if robot.isAtTarget() == 1
+                        if robot.isRobotDone == 1
                             obj.state = subState.DONE;
                         end
                     end

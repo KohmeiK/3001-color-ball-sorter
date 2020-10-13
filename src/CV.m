@@ -114,13 +114,13 @@ classdef CV
                 
                 switch obj.orbList.activeColor
                     case Color.PINK
-                        targetPos = [75 -125 50];
+                        targetPos = [75 -125 30];
                     case Color.GREEN
-                        targetPos = [150 50 50];
+                        targetPos = [150 50 30];
                     case Color.YELLOW
-                        targetPos = [75 125 50];
+                        targetPos = [75 125 30];
                     case Color.PURPLE
-                        targetPos = [150 -50 50];
+                        targetPos = [150 -50 30];
                 end
                 
                 newOrb = Orb(obj.orbList.activeColor,newPos,targetPos,0);

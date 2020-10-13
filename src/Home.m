@@ -9,8 +9,7 @@ classdef Home
     end
     
     methods
-        function obj = Home(orblist)
-            obj.orbList = orblist;
+        function obj = Home()
         end
         
         function [obj, robot] = update(obj,robot)
