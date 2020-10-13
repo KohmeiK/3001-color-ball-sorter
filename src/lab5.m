@@ -12,8 +12,8 @@ DEBUG = false;
 STICKMODEL = false;
 DEBUG_CAM = false;
 
-CVLoopTime = 500; % In ms
-ModelLoopTime = 500; % In ms
+CVLoopTime = 0.2; % In s
+ModelLoopTime = 0.5; % In s
 
 %% Place Poses per color
 purple_place = [150, -50, 11];
@@ -52,7 +52,7 @@ robot = RobotStateMachine();
 cv = CV(orbList);
 model = Model();
 homeObj = Home(orbList);
-approachObj = Approach(orbList);
+approachObj = Approach();
 grabObj = Grab(orbList);
 travelObj = Travel(orbList);
 dropObj = Drop();
@@ -66,9 +66,9 @@ while true
 
     robot = robot.update();
 
-    if(CVTimer > CVLoopTime)
-        cv.update();
-        CVTimer.start();
+    if(CVTimer.isTimerDone == 1)
+        cv = cv.update();
+        CVTimer = CVTimer.setTimer(CVLoopTime);
     end
 %
 %     if(ModelTimer > ModelLoopTime)
@@ -81,7 +81,7 @@ while true
             disp("Main = INIT")
             homeObj.state = subState.INIT;
             state = State.DEBUG_WAIT;
-            timer = timer.setTimer(10);
+            timer = timer.setTimer(5);
             nextState = State.HOME;
             %More init stuff here
 
@@ -93,11 +93,13 @@ while true
                 nextState = State.APPROACH;
                 state = State.DEBUG_WAIT;
                 timer = timer.setTimer(2);
+                cv = cv.forceRefreshEveryColor();
                 apporachObj.state = subState.INIT;
             end
 
         case State.APPROACH
-            [approachObj,robot] = approachObj.update(robot);
+            disp("Main = APPROACH");
+            [approachObj,robot, cv] = approachObj.update(robot, cv);
             if(approachObj.state == subState.DONE)
                 nextState = State.GRAB;
                 state = State.DEBUG_WAIT;

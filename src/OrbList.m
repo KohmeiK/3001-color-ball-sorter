@@ -22,13 +22,13 @@ classdef OrbList
         function obj = addOrbToList(obj,Orb)
             color = Orb.color;
             switch color
-                case Colors.PINK
+                case Color.PINK
                     obj.pinkOrb = Orb;
-                case Colors.YELLOW
+                case Color.YELLOW
                     obj.yellowOrb = Orb;
-                case Colors.PURPLE
+                case Color.PURPLE
                     obj.purpleOrb = Orb;
-                case Colors.GREEN
+                case Color.GREEN
                     obj.greenOrb = Orb;
                 otherwise
                     disp("ERROR, Incorrect Orb Color. Not placed in List")
@@ -37,13 +37,13 @@ classdef OrbList
         
         function orb = getActiveOrb(obj)
             switch obj.activeColor
-                case Colors.PINK
+                case Color.PINK
                     orb = obj.pinkOrb;
-                case Colors.YELLOW
+                case Color.YELLOW
                     orb = obj.yellowOrb;
-                case Colors.PURPLE
+                case Color.PURPLE
                     orb = obj.purpleOrb;
-                case Colors.GREEN
+                case Color.GREEN
                     orb = obj.greenOrb;
                 otherwise
                     disp("ERROR, No color speicifed, don't knwo what to return")
@@ -52,13 +52,13 @@ classdef OrbList
         
         function obj = deleteActiveOrb(obj)
             switch obj.activeColor
-                case Colors.PINK
+                case Color.PINK
                     obj.pinkOrb = 0;
-                case Colors.YELLOW
+                case Color.YELLOW
                     obj.yellowOrb = 0;
-                case Colors.PURPLE
+                case Color.PURPLE
                     obj.purpleOrb = 0;
-                case Colors.GREEN
+                case Color.GREEN
                     obj.greenOrb = 0;
                 otherwise
                     disp("ERROR, Incorrect Orb Color. Not removed from List")
@@ -68,13 +68,13 @@ classdef OrbList
         function obj = deleteOrbFromList(obj,Orb)
             color = Orb.color;
             switch color
-                case Colors.PINK
+                case Color.PINK
                     obj.pinkOrb = 0;
-                case Colors.YELLOW
+                case Color.YELLOW
                     obj.yellowOrb = 0;
-                case Colors.PURPLE
+                case Color.PURPLE
                     obj.purpleOrb = 0;
-                case Colors.GREEN
+                case Color.GREEN
                     obj.greenOrb = 0;
                 otherwise
                     disp("ERROR, Incorrect Orb Color. Not removed from List")
@@ -83,10 +83,10 @@ classdef OrbList
         
         function length = getlistLength(obj)
             length = 4;
-            if (obj.pinkOrb == 0), length = length-1; end
-            if (obj.yellowOrb == 0), length = length-1; end
-            if (obj.purpleOrb == 0), length = length-1; end
-            if (obj.greenOrb == 0), length = length-1; end
+            if ~isa(obj.pinkOrb,'Orb'), length = length-1; end
+            if ~isa(obj.greenOrb,'Orb'), length = length-1; end
+            if ~isa(obj.yellowOrb,'Orb'), length = length-1; end
+            if ~isa(obj.purpleOrb,'Orb'), length = length-1; end
         end
         
     end

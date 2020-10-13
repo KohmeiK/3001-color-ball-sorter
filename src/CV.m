@@ -14,7 +14,7 @@ classdef CV
             obj.orbList = masterOrbList;
             obj.Camera = Camera();
             obj.Camera.DEBUG = false;
-            obj.extrinsticCalibration();
+            obj = obj.extrinsticCalibration();
             
             obj.orbList.activeColor = Color.ALL;
             obj.state = CVState.INIT;
@@ -33,29 +33,40 @@ classdef CV
         function obj = update(obj)
             switch(obj.state)
                 case CVState.INIT %Step 1
+                    disp("CV = INIT");
                     %Init something if we need to
                     obj.state = CVState.STEP1;
                 case CVState.STEP1 %Step 1
+                    disp("CV = STEP1");
                     obj = obj.step1();
                     obj.state = CVState.STEP2;
                 case CVState.STEP2 %Step 2
-                    obj = obj.step2();
-                    obj.state = CVState.STEP3;
+                    disp("CV = STEP2");
+                    [obj,noOrbs] = obj.step2();
+                    if noOrbs == 1
+                        obj.state = CVState.STEP1;
+                    else
+                        obj.state = CVState.STEP3;
+                    end
+                    
                 case CVState.STEP3 %Step 2
+                    disp("CV = STEP3");
                     obj = obj.step3();
-                    obj.state = CVState.IDLE;
+                    obj.state = CVState.STEP1;
                 case CVState.IDLE %Step 3
+                    disp("CV = IDLE");
                     %Do nothing
             end
         end
         
         function obj = step1(obj)
-            obj.image = snapshot(cam.cam);
+            obj.image = snapshot(obj.Camera.cam);
         end
         
-        function obj = step2(obj)
-            [obj.image, ~] = undistortImage(newImg, obj.Camera.params.Intrinsics, 'OutputView', 'full');
+        function [obj, noOrbs] = step2(obj)
+            [obj.image, ~] = undistortImage(obj.image, obj.Camera.params.Intrinsics, 'OutputView', 'full');
             
+            noOrbs = 0;
             %use the mask of the active color
             switch obj.orbList.activeColor
                 case Color.PINK
@@ -66,6 +77,9 @@ classdef CV
                     [obj.image,~] = yellowMask(obj.image);
                 case Color.PURPLE
                     [obj.image,~] = purpleMask(obj.image);
+                otherwise
+                    disp("No active color, therefor no centeroid")
+                    noOrbs = 1;
             end
             
             %Dilate the black and white image
@@ -95,7 +109,23 @@ classdef CV
                 
                 %convert the pixel xy to task space and update the orb pos
                 newPos = obj.centeroidToTask(biggestCenteroid);
-                obj.orbList.getActiveOrb().currentPos = newPos;
+               
+                targetPos = 0;
+                
+                switch obj.orbList.activeColor
+                    case Color.PINK
+                        targetPos = [75 -125 50];
+                    case Color.GREEN
+                        targetPos = [150 50 50];
+                    case Color.YELLOW
+                        targetPos = [75 125 50];
+                    case Color.PURPLE
+                        targetPos = [150 -50 50];
+                end
+                
+                newOrb = Orb(obj.orbList.activeColor,newPos,targetPos,0);
+                
+                obj.orbList = obj.orbList.addOrbToList(newOrb);
             end
         end
         
@@ -118,27 +148,49 @@ classdef CV
             
             obj.state = CVState.INIT;
             obj.orbList.activeColor = Color.PINK;
-            while(obj.state ~= CVState.IDLE)
+            i = 0;
+            while(i < 10)
                 obj = obj.update();
+                i = i + 1;
             end
             
             obj.state = CVState.INIT;
             obj.orbList.activeColor = Color.GREEN;
-            while(obj.state ~= CVState.IDLE)
+            i = 0;
+            while(i < 10)
                 obj = obj.update();
+                i = i + 1;
             end
             
             obj.state = CVState.INIT;
             obj.orbList.activeColor = Color.YELLOW;
-            while(obj.state ~= CVState.IDLE)
+            i = 0;
+            while(i < 10)
                 obj = obj.update();
+                i = i + 1;
             end
             
             obj.state = CVState.INIT;
             obj.orbList.activeColor = Color.PURPLE;
-            while(obj.state ~= CVState.IDLE)
+            i = 0;
+            while(i < 10)
                 obj = obj.update();
+                i = i + 1;
             end
+            
+            
+            if isa(obj.orbList.purpleOrb,'Orb')
+                obj.orbList.activeColor = Color.PURPLE;
+            elseif isa(obj.orbList.greenOrb,'Orb')
+                obj.orbList.activeColor = Color.GREEN;
+            elseif isa(obj.orbList.yellowOrb,'Orb')
+                obj.orbList.activeColor = Color.YELLOW;
+            elseif isa(obj.orbList.pinkOrb,'Orb')
+                obj.orbList.activeColor = Color.PINK;
+            else
+                obj.orbList.activeColor = Color.ALL;
+            end
+            
             
         end
         
