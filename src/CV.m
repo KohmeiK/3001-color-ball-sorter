@@ -6,16 +6,17 @@ classdef CV
         state
         Camera
         image
-        orbList
+        orbList        
     end
     
     methods
-        function obj = CV(masterOrbList)
-            obj.orbList = masterOrbList;
+        function obj = CV()
+            obj.orbList = OrbList();
             obj.Camera = Camera();
             obj.Camera.DEBUG = false;
             obj = obj.extrinsticCalibration();
             
+            disp("CV constructor, color to ALL")
             obj.orbList.activeColor = Color.ALL;
             obj.state = CVState.INIT;
         end
@@ -31,10 +32,10 @@ classdef CV
         end
         
         function obj = update(obj)
+            disp(obj.orbList.activeColor);
             switch(obj.state)
                 case CVState.INIT %Step 1
                     disp("CV = INIT");
-                    %Init something if we need to
                     obj.state = CVState.STEP1;
                 case CVState.STEP1 %Step 1
                     disp("CV = STEP1");
@@ -91,6 +92,7 @@ classdef CV
         end
         
         function obj = step3(obj)
+            
             %Label Image
             obj.image = bwlabel(obj.image);
             
@@ -109,7 +111,7 @@ classdef CV
                 
                 %convert the pixel xy to task space and update the orb pos
                 newPos = obj.centeroidToTask(biggestCenteroid);
-               
+                
                 targetPos = 0;
                 
                 switch obj.orbList.activeColor
@@ -123,9 +125,12 @@ classdef CV
                         targetPos = [150 -50 30];
                 end
                 
-                newOrb = Orb(obj.orbList.activeColor,newPos,targetPos,0);
+                hasMoved  = mean(abs(obj.orbList.getActiveOrb().currentPos(1:2) -newPos(1:2))) > 7;
+                    
+                newOrb = Orb(obj.orbList.activeColor,newPos,targetPos,hasMoved);
                 
                 obj.orbList = obj.orbList.addOrbToList(newOrb);
+                
             end
         end
         
@@ -145,6 +150,8 @@ classdef CV
         end
         
         function obj = forceRefreshEveryColor(obj)
+            
+            obj.orbList = OrbList();
             
             obj.state = CVState.INIT;
             obj.orbList.activeColor = Color.PINK;
@@ -188,8 +195,11 @@ classdef CV
             elseif isa(obj.orbList.pinkOrb,'Orb')
                 obj.orbList.activeColor = Color.PINK;
             else
+                disp("No Orbs in forceRefresh color set to ALl")
                 obj.orbList.activeColor = Color.ALL;
             end
+            
+            
             
             
         end

@@ -12,7 +12,7 @@ DEBUG = false;
 STICKMODEL = false;
 DEBUG_CAM = false;
 
-CVLoopTime = 0.2; % In s
+CVLoopTime = 0.05; % In s %0.2
 ModelLoopTime = 0.5; % In s
 
 %% Place Poses per color
@@ -46,10 +46,9 @@ nextState = State.INIT;
 
 
 %Creating objects
-orbList = OrbList();
 robot = RobotStateMachine();
 
-cv = CV(orbList);
+cv = CV();
 model = Model();
 homeObj = Home();
 approachObj = Approach();
@@ -81,7 +80,7 @@ while true
             disp("Main = INIT")
             homeObj.state = subState.INIT;
             state = State.DEBUG_WAIT;
-            timer = timer.setTimer(5);
+            timer = timer.setTimer(0.25);
             nextState = State.HOME;
             %More init stuff here
 
@@ -92,9 +91,9 @@ while true
                 disp("Main -> APPROACH");
                 nextState = State.APPROACH;
                 state = State.DEBUG_WAIT;
-                timer = timer.setTimer(2);
+                timer = timer.setTimer(0.25);
                 cv = cv.forceRefreshEveryColor();
-                apporachObj.state = subState.INIT;
+                approachObj.state = subState.INIT;
             end
 
         case State.APPROACH
@@ -103,16 +102,17 @@ while true
             if(approachObj.state == subState.DONE)
                 nextState = State.GRAB;
                 state = State.DEBUG_WAIT;
-                timer = timer.setTimer(5);
+                timer = timer.setTimer(0.25);
                 grabObj.state = subState.INIT;
             end
 
         case State.GRAB
+            disp("Main = GRAB");
             [grabObj,robot,cv] = grabObj.update(robot, cv);
             if(grabObj.state == subState.DONE)
                 nextState = State.TRAVEL;
                 state = State.DEBUG_WAIT;
-                timer = timer.setTimer(2);
+                timer = timer.setTimer(0.25);
                 travelObj.state = subState.INIT;
             end
 
@@ -121,7 +121,7 @@ while true
             if(travelObj.state == subState.DONE)
                 nextState = State.DROP;
                 state = State.DEBUG_WAIT;
-                timer = timer.setTimer(2);
+                timer = timer.setTimer(0.25);
                 dropObj.state = subState.INIT;
             end
 
@@ -130,7 +130,7 @@ while true
             if(dropObj.state == subState.DONE)
                 nextState = State.HOME;
                 state = State.DEBUG_WAIT;
-                timer = timer.setTimer(2);
+                timer = timer.setTimer(0.25);
                 homeObj.state = subState.INIT;
             end
 

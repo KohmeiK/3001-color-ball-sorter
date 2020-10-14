@@ -81,7 +81,7 @@ classdef RobotStateMachine
             currXYZ = obj.robot.getPositions();
             targetXYZ = finalPos;
             distance = sqrt(sum((targetXYZ - currXYZ) .^ 2));
-            scaledVals = [round((((distance/250) * 10) + 5)) (((distance/250) * 15) + 5)];
+            scaledVals = [round((((distance/250) * 3) + 3)) (((distance/250) * 4) + 2)];
            
         end
     end

@@ -1,7 +1,7 @@
 classdef OrbList
     %UNTITLED3 Summary of this class goes here
     %   Detailed explanation goes here
-      
+    
     properties
         pinkOrb
         yellowOrb
@@ -32,7 +32,7 @@ classdef OrbList
                     obj.greenOrb = Orb;
                 otherwise
                     disp("ERROR, Incorrect Orb Color. Not placed in List")
-            end    
+            end
         end
         
         function orb = getActiveOrb(obj)
@@ -46,7 +46,13 @@ classdef OrbList
                 case Color.GREEN
                     orb = obj.greenOrb;
                 otherwise
-                    disp("ERROR, No color speicifed, don't knwo what to return")
+                    orb = 0;
+                    disp("Color is all, retruing empty orb")
+            end
+            
+            if(~isa(orb,"Orb"))
+                disp("Orb was not here creating a empty orb");
+                orb = Orb(Color.ALL,[0 0 0],[0 0 0],0);
             end
         end
         

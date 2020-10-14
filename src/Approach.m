@@ -26,9 +26,10 @@ classdef Approach
                     end
 
                 case subState.ARM_WAIT
-                    if cv.orbList.getActiveOrb.moved == 1 || cv.orbList.getlistLength == 0
-%                         obj.state = subStates.INIT;
+                    if cv.orbList.getActiveOrb.moved || cv.orbList.getlistLength == 0
+                         obj.state = subState.INIT;
                     else
+                        
                         if robot.isRobotDone == 1
                             obj.state = subState.DONE;
                         end
