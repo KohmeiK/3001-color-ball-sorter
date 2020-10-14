@@ -97,6 +97,10 @@ classdef Kinematics
                 error("Unknown error.");
             end
             
+            if(theta(1) < 0)
+                theta(1) = theta(1) -5;
+            end
+            
         end
         
         
@@ -193,6 +197,8 @@ classdef Kinematics
                 safe = 1;
             end
         end
+        
+        
         
     end
 end

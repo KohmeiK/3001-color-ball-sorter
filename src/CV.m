@@ -16,7 +16,7 @@ classdef CV
             obj.Camera.DEBUG = false;
             obj = obj.extrinsticCalibration();
             
-            disp("CV constructor, color to ALL")
+%             disp("CV constructor, color to ALL")
             obj.orbList.activeColor = Color.ALL;
             obj.state = CVState.INIT;
         end
@@ -32,17 +32,17 @@ classdef CV
         end
         
         function obj = update(obj)
-            disp(obj.orbList.activeColor);
+%             disp(obj.orbList.activeColor);
             switch(obj.state)
                 case CVState.INIT %Step 1
-                    disp("CV = INIT");
+%                     disp("CV = INIT");
                     obj.state = CVState.STEP1;
                 case CVState.STEP1 %Step 1
-                    disp("CV = STEP1");
+%                     disp("CV = STEP1");
                     obj = obj.step1();
                     obj.state = CVState.STEP2;
                 case CVState.STEP2 %Step 2
-                    disp("CV = STEP2");
+%                     disp("CV = STEP2");
                     [obj,noOrbs] = obj.step2();
                     if noOrbs == 1
                         obj.state = CVState.STEP1;
@@ -51,11 +51,11 @@ classdef CV
                     end
                     
                 case CVState.STEP3 %Step 2
-                    disp("CV = STEP3");
+%                     disp("CV = STEP3");
                     obj = obj.step3();
                     obj.state = CVState.STEP1;
                 case CVState.IDLE %Step 3
-                    disp("CV = IDLE");
+%                     disp("CV = IDLE");
                     %Do nothing
             end
         end
@@ -79,7 +79,7 @@ classdef CV
                 case Color.PURPLE
                     [obj.image,~] = purpleMask(obj.image);
                 otherwise
-                    disp("No active color, therefor no centeroid")
+%                     disp("No active color, therefor no centeroid")
                     noOrbs = 1;
             end
             
@@ -104,33 +104,37 @@ classdef CV
                 obj.orbList.deleteActiveOrb();
             else
                 %find the biggest blob
-                [~, index] = max(stats.Area);
+                [biggestArea, index] = max(stats.Area);
                 
-                %get the centeroid [x y] of the biggest blob
-                biggestCenteroid = stats.Centroid(index,:);
-                
-                %convert the pixel xy to task space and update the orb pos
-                newPos = obj.centeroidToTask(biggestCenteroid);
-                
-                targetPos = 0;
-                
-                switch obj.orbList.activeColor
-                    case Color.PINK
-                        targetPos = [75 -125 30];
-                    case Color.GREEN
-                        targetPos = [150 50 30];
-                    case Color.YELLOW
-                        targetPos = [75 125 30];
-                    case Color.PURPLE
-                        targetPos = [150 -50 30];
-                end
-                
-                hasMoved  = mean(abs(obj.orbList.getActiveOrb().currentPos(1:2) -newPos(1:2))) > 7;
+                if(biggestArea > 1000)
                     
-                newOrb = Orb(obj.orbList.activeColor,newPos,targetPos,hasMoved);
-                
-                obj.orbList = obj.orbList.addOrbToList(newOrb);
-                
+                    %get the centeroid [x y] of the biggest blob
+                    biggestCenteroid = stats.Centroid(index,:);
+
+                    %convert the pixel xy to task space and update the orb pos
+                    newPos = obj.centeroidToTask(biggestCenteroid);
+
+                    targetPos = 0;
+
+                    switch obj.orbList.activeColor
+                        case Color.PINK
+                            targetPos = [75 -125 80];
+                        case Color.GREEN
+                            targetPos = [150 50 80];
+                        case Color.YELLOW
+                            targetPos = [75 125 80];
+                        case Color.PURPLE
+                            targetPos = [175 -75 80];
+                    end
+
+                    hasMoved  = mean(abs(obj.orbList.getActiveOrb().currentPos(1:2) -newPos(1:2))) > 7;
+
+                    newOrb = Orb(obj.orbList.activeColor,newPos,targetPos,hasMoved);
+
+                    obj.orbList = obj.orbList.addOrbToList(newOrb);
+                else
+                    obj.orbList.deleteActiveOrb();
+                end
             end
         end
         
@@ -195,7 +199,7 @@ classdef CV
             elseif isa(obj.orbList.pinkOrb,'Orb')
                 obj.orbList.activeColor = Color.PINK;
             else
-                disp("No Orbs in forceRefresh color set to ALl")
+%                 disp("No Orbs in forceRefresh color set to ALl")
                 obj.orbList.activeColor = Color.ALL;
             end
             

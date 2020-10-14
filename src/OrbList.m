@@ -47,11 +47,11 @@ classdef OrbList
                     orb = obj.greenOrb;
                 otherwise
                     orb = 0;
-                    disp("Color is all, retruing empty orb")
+%                     disp("Color is all, retruing empty orb")
             end
             
             if(~isa(orb,"Orb"))
-                disp("Orb was not here creating a empty orb");
+%                 disp("Orb was not here creating a empty orb");
                 orb = Orb(Color.ALL,[0 0 0],[0 0 0],0);
             end
         end

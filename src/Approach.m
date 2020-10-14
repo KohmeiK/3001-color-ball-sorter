@@ -20,7 +20,7 @@ classdef Approach
                     if cv.orbList.getlistLength() > 0
                         obj.dest = cv.orbList.getActiveOrb().currentPos;
                         obj.dest(3) = obj.dest(3) + obj.Z_Offset;
-                        disp("Send to place above ball");
+%                         disp("Send to place above ball");
                         robot = robot.pathPlanTo(obj.dest);
                         obj.state = subState.ARM_WAIT;
                     end

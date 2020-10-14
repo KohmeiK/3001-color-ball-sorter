@@ -15,15 +15,9 @@ DEBUG_CAM = false;
 CVLoopTime = 0.05; % In s %0.2
 ModelLoopTime = 0.5; % In s
 
-%% Place Poses per color
-purple_place = [150, -50, 11];
-green_place = [150, 50, 11];
-pink_place = [75, -125, 11];
-yellow_place = [75, 125, 11];
 
 
 %% Main Loop
-try
 
 %     % Set up camera
 %     if cam.params == 0
@@ -47,23 +41,47 @@ nextState = State.INIT;
 
 %Creating objects
 robot = RobotStateMachine();
-
-cv = CV();
-model = Model();
 homeObj = Home();
 approachObj = Approach();
 grabObj = Grab();
 travelObj = Travel();
 dropObj = Drop();
 
+cv = CV();
+
+
 timer = EventTimer();
 CVTimer = EventTimer();
 ModelTimer = EventTimer();
 
+textprogressbar('Loop Rate (ms): ');
+tic
+currentPeakTimeMs = 10;
 
 while true
-
-    robot = robot.update();
+    
+    elapsedTimeMs = floor(toc*1000);
+    textprogressbar(elapsedTimeMs);
+    
+    if(elapsedTimeMs > currentPeakTimeMs)
+        currentPeakTimeMs = elapsedTimeMs;
+        textprogressbar('Detected New Max Loop Time');
+        textprogressbar('Loop Rate (ms): ');
+    end
+    tic
+    
+    try
+        robot = robot.update();
+    catch exception
+        robot.state = robotState.INIT;
+        homeObj = Home();
+        approachObj = Approach();
+        grabObj = Grab();
+        travelObj = Travel();
+        dropObj = Drop();
+        state = State.INIT;
+        nextState = State.INIT;
+    end
 
     if(CVTimer.isTimerDone == 1)
         cv = cv.update();
@@ -74,13 +92,13 @@ while true
 %         model.update();
 %         ModelTimer.start();
 %     end
-
+    
     switch(state)
         case State.INIT
-            disp("Main = INIT")
+%             disp("Main = INIT")
             homeObj.state = subState.INIT;
             state = State.DEBUG_WAIT;
-            timer = timer.setTimer(0.25);
+            timer = timer.setTimer(3);
             nextState = State.HOME;
             %More init stuff here
 
@@ -88,7 +106,7 @@ while true
             [homeObj,robot] = homeObj.update(robot);
 
             if(homeObj.state == subState.DONE)
-                disp("Main -> APPROACH");
+%                 disp("Main -> APPROACH");
                 nextState = State.APPROACH;
                 state = State.DEBUG_WAIT;
                 timer = timer.setTimer(0.25);
@@ -97,19 +115,21 @@ while true
             end
 
         case State.APPROACH
-            disp("Main = APPROACH");
+%             disp("Main = APPROACH");
             [approachObj,robot, cv] = approachObj.update(robot, cv);
             if(approachObj.state == subState.DONE)
                 nextState = State.GRAB;
+%                 disp("Main -> GRAB");
                 state = State.DEBUG_WAIT;
                 timer = timer.setTimer(0.25);
                 grabObj.state = subState.INIT;
             end
 
         case State.GRAB
-            disp("Main = GRAB");
+%             disp("Main = GRAB");
             [grabObj,robot,cv] = grabObj.update(robot, cv);
             if(grabObj.state == subState.DONE)
+%                 disp("Main -> TRAVEL");
                 nextState = State.TRAVEL;
                 state = State.DEBUG_WAIT;
                 timer = timer.setTimer(0.25);
@@ -119,6 +139,7 @@ while true
         case State.TRAVEL
             [travelObj,robot,cv] = travelObj.update(robot, cv);
             if(travelObj.state == subState.DONE)
+%                 disp("Main -> DROP");
                 nextState = State.DROP;
                 state = State.DEBUG_WAIT;
                 timer = timer.setTimer(0.25);
@@ -128,6 +149,7 @@ while true
         case State.DROP
             [dropObj,robot] = dropObj.update(robot);
             if(dropObj.state == subState.DONE)
+%                 disp("Main -> HOME");
                 nextState = State.HOME;
                 state = State.DEBUG_WAIT;
                 timer = timer.setTimer(0.25);
@@ -135,8 +157,9 @@ while true
             end
 
         case State.DEBUG_WAIT
-            disp("Debug Wait");
+%             disp("Debug Wait");
             if(timer.isTimerDone() == 1)
+%                 disp("Main = DebugWaitDone");
                 state = nextState;
                 if(nextState == State.HOME)
                     robot.state = robotState.COMMS_WAIT;
@@ -144,13 +167,6 @@ while true
             end
 
     end
-end
-
-
-catch exception
-    fprintf('\n ERROR!!! \n \n');
-    disp(getReport(exception));
-    disp('Exited on error, clean shutdown');
 end
 
 %% Shutdown Procedure

@@ -17,11 +17,11 @@ classdef Home
                 case subState.INIT
                     robot = robot.pathPlanTo(obj.HomePos);
                     obj.state = subState.ARM_WAIT;
-                    disp("home-> Arm_WAIT");
+%                     disp("home-> Arm_WAIT");
                 case subState.ARM_WAIT
                     if robot.isRobotDone == 1
                         obj.state = subState.DONE;
-                        disp("home-> DONE");
+%                         disp("home-> DONE");
                     end
                             
                 case subState.DONE
