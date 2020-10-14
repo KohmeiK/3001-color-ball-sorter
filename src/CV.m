@@ -118,13 +118,13 @@ classdef CV
 
                     switch obj.orbList.activeColor
                         case Color.PINK
-                            targetPos = [75 -125 80];
+                            targetPos = [75 -150 80];
                         case Color.GREEN
-                            targetPos = [150 50 80];
+                            targetPos = [175 75 100];
                         case Color.YELLOW
-                            targetPos = [75 125 80];
+                            targetPos = [75 150 80];
                         case Color.PURPLE
-                            targetPos = [175 -75 80];
+                            targetPos = [175 -75 100];
                     end
 
                     hasMoved  = mean(abs(obj.orbList.getActiveOrb().currentPos(1:2) -newPos(1:2))) > 7;

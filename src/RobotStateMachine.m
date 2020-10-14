@@ -72,7 +72,7 @@ classdef RobotStateMachine
             time = scaledVals(1);
             numPoints = scaledVals(2);
             a = obj.kine.FKtoTip(obj.robot.getPositions())';
-            obj.pathPlanner.queueOfPaths.enqueue([a goal time/2 numPoints 5])
+            obj.pathPlanner.queueOfPaths.enqueue([a goal 3 2 5])
             obj.pathPlanner = obj.pathPlanner.startNextPath();
 %             obj.pathPlanner = obj.pathPlanner.startPath(obj.robot.getPositions(),goal,time,numPoints,5);
         end
@@ -81,7 +81,7 @@ classdef RobotStateMachine
             currXYZ = obj.robot.getPositions();
             targetXYZ = finalPos;
             distance = sqrt(sum((targetXYZ - currXYZ) .^ 2));
-            scaledVals = [round((((distance/250) * 3) + 3)) (((distance/250) * 4) + 2)];
+            scaledVals = [round((((distance/250) * 3) + 3)) (((distance/250) * 1) + 1)];
            
         end
     end
