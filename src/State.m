@@ -1,5 +1,7 @@
 classdef State
-   enumeration
-      STOPPED, WAITING, RUNNING, END, STARTNEXT, LONGWAIT, COMPUTE, PRERENDER, RENDER
-   end
+    enumeration
+        %HOME state --> This should correspond to function startHome in Home.m
+        INIT, HOME, APPROACH, GRAB, TRAVEL, DROP, DEBUG_WAIT
+    end
 end
+

@@ -2,42 +2,42 @@ classdef Camera
     % CAMERA Example Camera class for RBE 3001 Lab 5
     %   You can add your image processing in this camera class,
     %   as well as any other functions related to the camera.
-    
+
     properties
         % Flags
-        DEBUG = true;
-        POSE_PLOT = false;  
+        DEBUG = false;
+        POSE_PLOT = false;
         DEBUG_BALLDETECTION = false;
-        
+
         % Image Processing Variables
-        
+
         % Colors
-        
+
         % Properties
         params;
         cam;
         cam_pose;
     end
-    
+
     methods
         function self = Camera()
             % CAMERA Construct an instance of this class
             self.cam = webcam(); % Get camera object
             self.params = self.calibrate(); % Run Calibration Function
-            
+
         end
 
         function shutdown(self)
             % SHUTDOWN shutdown script which clears camera variable
             clear self.cam;
         end
-        
+
         function [pose, color] = detectBestBall(self)
             % DETECTBESTBALL Detect Balls + Report back positions + colors
             % Note: you do NOT need to use this function, this is just a recommendation
-            
+
         end
-        
+
         function params = calibrate(self)
             % CALOBRATE Calibration function
             % This function will run the camera calibration, save the camera parameters,
@@ -59,9 +59,9 @@ classdef Camera
             catch exception
                 getReport(exception);
                 disp("No camerea calibration file found. Plese run camera calibration");
-            end          
+            end
         end
-        
+
         function pose = getCameraPose(self)
             % GETCAMERAPOSE Get transformation from camera to checkerboard frame
             % This function will get the camera position based on checkerboard.
@@ -84,30 +84,29 @@ classdef Camera
             imagePoints = imagePoints + new_origin;
             % 5. Compute transformation
             [R, t] = extrinsics(imagePoints, self.params.WorldPoints, self.params);
-            
+
             pose = [   R,    t';
                     0, 0, 0, 1];
-                
+
             if self.POSE_PLOT
                 axesPoints = worldToImage(self.params, R, t, [0 0 0; 0 50 0; 50 0 0]);
-                
+
                 x1 = [axesPoints(1, 1), axesPoints(2, 1)]';
                 y1 = [axesPoints(1, 2), axesPoints(2, 2)]';
-                
+
                 img = insertText(img, [x1(2), y1(2)], 'Y Axis', 'TextColor', 'green', 'FontSize', 18);
                 x2 = [axesPoints(1, 1), axesPoints(3, 1)]';
                 y2 = [axesPoints(1, 2), axesPoints(3, 2)]';
-                
+
                 img = insertText(img, axesPoints(3, 1:2), 'X Axis', 'TextColor', 'red', 'FontSize', 18);
-                
+
                 imshow(img)
                 title('Undistorted Image with checkerboard axes');
-                
+
                 line(x1, y1, 'linewidth', 5, 'Color', 'green');
                 line(x2, y2, 'linewidth', 5, 'Color', 'red');
-                
-            end     
-        end        
+
+            end
+        end
     end
 end
-

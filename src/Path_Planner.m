@@ -62,7 +62,7 @@ classdef Path_Planner
 %             disp("Running Update");
             if obj.onSegment >= obj.numberOfPoints
                 isPathDone = 1;
-                setPoint = [100 0 195];
+                setPoint = obj.pathPoints(end,:);
             else
                 isPathDone = 0;
 %                 disp("Segment Duration:") 

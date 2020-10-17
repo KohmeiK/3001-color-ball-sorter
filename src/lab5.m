@@ -8,41 +8,34 @@ clear java;
 format short
 
 %% Flags
-DEBUG = true;
+DEBUG = false;
 STICKMODEL = false;
 DEBUG_CAM = false;
 
-%% Setup
-vid = hex2dec('16c0');
-pid = hex2dec('0486');
+CVLoopTime = 0.05; % In s %0.2
+ModelLoopTime = 0.5; % In s
 
-if DEBUG
-    disp(vid);
-    disp(pid);
-end
 
-javaaddpath ../lib/SimplePacketComsJavaFat-0.6.4.jar;
-import edu.wpi.SimplePacketComs.*;
-import edu.wpi.SimplePacketComs.device.*;
-import edu.wpi.SimplePacketComs.phy.*;
-import java.util.*;
-import org.hid4java.*;
-version -java;
-myHIDSimplePacketComs=HIDfactory.get();
-myHIDSimplePacketComs.setPid(pid);
-myHIDSimplePacketComs.setVid(vid);
-myHIDSimplePacketComs.connect();
 
-robot = Robot(myHIDSimplePacketComs);
 
-cam = Camera();
-cam.DEBUG = DEBUG_CAM;
+%% Main Loop
+%Final Version
+>>>>>>> MainState
 
-%% Place Poses per color
-purple_place = [150, -50, 11];
-green_place = [150, 50, 11];
-pink_place = [75, -125, 11];
-yellow_place = [75, 125, 11];
+%     % Set up camera
+%     if cam.params == 0
+%         error("No camera parameters found!");
+%     end
+%
+%
+%     %outputs a transformation Matrix
+%     cam.cam_pose = cam.getCameraPose();
+%     randompoint = pointsToWorld(cam.params.Intrinsics, cam.cam_pose(1:3,1:3), cam.cam_pose(1:3,4), [100 100]);
+%     basePose = cam.cam_pose * cam.check2base;
+%
+%     disp("Cal Done");
+%     pause;
+
 
 %% Main Loop
 try
@@ -51,13 +44,105 @@ try
         error("No camera parameters found!");
     end
     cam.cam_pose = cam.getCameraPose();
-    
-    
-    
-catch exception
-    fprintf('\n ERROR!!! \n \n');
-    disp(getReport(exception));
-    disp('Exited on error, clean shutdown');
+
+
+    try
+        robot = robot.update();
+    catch exception
+        robot.state = robotState.INIT;
+        homeObj = Home();
+        approachObj = Approach();
+        grabObj = Grab();
+        travelObj = Travel();
+        dropObj = Drop();
+        state = State.INIT;
+        nextState = State.INIT;
+    end
+
+    if(CVTimer.isTimerDone == 1)
+        cv = cv.update();
+        CVTimer = CVTimer.setTimer(CVLoopTime);
+    end
+%
+%     if(ModelTimer > ModelLoopTime)
+%         model.update();
+%         ModelTimer.start();
+%     end
+
+    switch(state)
+        case State.INIT
+%             disp("Main = INIT")
+            homeObj.state = subState.INIT;
+            state = State.DEBUG_WAIT;
+            timer = timer.setTimer(3);
+            nextState = State.HOME;
+            %More init stuff here
+
+        case State.HOME
+            [homeObj,robot] = homeObj.update(robot);
+
+            if(homeObj.state == subState.DONE)
+%                 disp("Main -> APPROACH");
+                nextState = State.APPROACH;
+                state = State.DEBUG_WAIT;
+                timer = timer.setTimer(0.25);
+                cv = cv.forceRefreshEveryColor();
+                approachObj.state = subState.INIT;
+            end
+
+        case State.APPROACH
+%             disp("Main = APPROACH");
+            [approachObj,robot, cv] = approachObj.update(robot, cv);
+            if(approachObj.state == subState.DONE)
+                nextState = State.GRAB;
+%                 disp("Main -> GRAB");
+                state = State.DEBUG_WAIT;
+                timer = timer.setTimer(0.25);
+                grabObj.state = subState.INIT;
+            end
+
+        case State.GRAB
+%             disp("Main = GRAB");
+            [grabObj,robot,cv] = grabObj.update(robot, cv);
+            if(grabObj.state == subState.DONE)
+%                 disp("Main -> TRAVEL");
+                nextState = State.TRAVEL;
+                state = State.DEBUG_WAIT;
+                timer = timer.setTimer(0.25);
+                travelObj.state = subState.INIT;
+            end
+
+        case State.TRAVEL
+            [travelObj,robot,cv] = travelObj.update(robot, cv);
+            if(travelObj.state == subState.DONE)
+%                 disp("Main -> DROP");
+                nextState = State.DROP;
+                state = State.DEBUG_WAIT;
+                timer = timer.setTimer(0.25);
+                dropObj.state = subState.INIT;
+            end
+
+        case State.DROP
+            [dropObj,robot] = dropObj.update(robot);
+            if(dropObj.state == subState.DONE)
+%                 disp("Main -> HOME");
+                nextState = State.HOME;
+                state = State.DEBUG_WAIT;
+                timer = timer.setTimer(0.25);
+                homeObj.state = subState.INIT;
+            end
+
+        case State.DEBUG_WAIT
+%             disp("Debug Wait");
+            if(timer.isTimerDone() == 1)
+%                 disp("Main = DebugWaitDone");
+                state = nextState;
+                if(nextState == State.HOME)
+                    robot.state = robotState.COMMS_WAIT;
+                end
+            end
+
+    end
 end
 
 %% Shutdown Procedure
