@@ -18,6 +18,7 @@ ModelLoopTime = 0.5; % In s
 
 
 %% Main Loop
+%Final Version
 
 %     % Set up camera
 %     if cam.params == 0
