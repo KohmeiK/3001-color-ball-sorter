@@ -17,4 +17,4 @@ A robust computer vision algorithm is used to increase data extraction accuracy.
 - Build and setup this [3-DOF arm](https://github.com/Hephaestus-Arm/HephaestusArm2)
 - Download MATLAB and install the Computer Vision Toolkit
 
-This was forked so that I could link this code in my website. Please do not use/copy it if you are currently taking this RBE course.
+This was forked so that I could link this code in [my website](https://kohmeik.com). Please do not use/copy it if you are currently taking this RBE course.
